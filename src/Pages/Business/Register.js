@@ -12,7 +12,7 @@ import {
 	useCompleteBusinessRegistrationMutation,
 	useGetMeQuery,
 } from '../../redux/Api/authApi';
-import { useLazyGetLandmarksQuery } from '../../redux/Api/geoApi';
+import { useLazyGetCityQuery, useLazyGetLgaQuery } from '../../redux/Api/geoApi';
 
 import {
 	useGetCategoriesQuery,
@@ -27,13 +27,13 @@ const Flex = styled(Box)({
 });
 
 const Register = () => {
-	const { data: states } = useGetStatesQuery();
-	const { data: categories, isLoading: getCategoriesLoading } =
-		useGetCategoriesQuery();
-	const { data: budgets, isLoading: getBudgetsLoading } = useGetBudgetsQuery();
+  const { data: states } = useGetStatesQuery();
+  const { data: categories, isLoading: getCategoriesLoading } = useGetCategoriesQuery();
 
-	const [subData, setSubData] = useState([]);
-	const [loading, setIsLoading] = useState(false);
+  const [getCity, { data: city }] = useLazyGetCityQuery();
+  const [getLga, { data: lga }] = useLazyGetLgaQuery();
+  const [subData, setSubData] = useState([]);
+  const [loading, setIsLoading] = useState(false);
 
 	const [businessInfo, setBusinessInfo] = useState({
 		businessName: '',
@@ -218,252 +218,230 @@ const Register = () => {
 							</select>
 						</div>
 
-						<div>
-							{businessInfo && businessInfo?.businessCategory !== '' && (
-								<>
-									<label htmlFor="subCategory">
-										Business Sub Category <span>*</span>
-									</label>
-									<select
-										required
-										id="subCategory"
-										onChange={(e) =>
-											handleChange('businessSubCategory', e.target.value)
-										}
-									>
-                    <option disabled selected>Select a sub category</option>
-										{subData.map((category, i) => (
-											<option value={category.value} key={i}>
-												{category.label}
-											</option>
-										))}
-									</select>
-								</>
-							)}
-						</div>
-						<div>
-							<label htmlFor="email">
-								Business Email <span>*</span>
-							</label>
-							<input
-								id="email"
-								type="email"
-								value={businessInfo?.businessEmail}
-								onChange={(e) => handleChange('businessEmail', e.target.value)}
-							/>
-						</div>
-						<div>
-							<label htmlFor="businessPriceRange">
-								Price Range <span>*</span>
-							</label>
-							<div className="flex gap-[1rem] items-center">
-								<select
-									onChange={(e) =>
-										handleChange('businessBudget', e.target.value)
-									}
-									required
-								>
-									<option disabled selected>
-										Select a Price range
-									</option>
-									{budgets?.map((budget) => (
-										<option key={budget._id} value={budget._id}>
-											{budget.label}
-										</option>
-									))}
-								</select>
-							</div>
-						</div>
-					</div>
-					<div className="col-md-6">
-						<div>
-							<label htmlFor="address">
-								Business Address <span>*</span>
-							</label>
-							<input
-								id="address"
-								value={businessInfo?.businessAddress}
-								onChange={(e) =>
-									handleChange('businessAddress', e.target.value)
-								}
-							/>
-						</div>
-						<div>
-							<label htmlFor="address">
-								Business Address <span>*</span>
-							</label>
-							<div className="mt-2 mb-[1rem] flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-5">
-								<Select
-									placeholder="State"
-									onSelect={(value) => {
-										handleChange('businessState', value);
-									}}
-									// value={queryData.state}
-									showSearch
-									className="!w-[150px]"
-									options={
-										states?.map((state) => ({
-											value: state.state,
-											label: state.state,
-										})) ?? []
-									}
-								/>
-								<Select
-									placeholder="City"
-									showSearch
-									onSelect={(value) => {
-										handleChange('businessCity', value);
-									}}
-									// value={queryData.city}
-									className="!w-[150px]"
-									options={
-										states
-											? states[
-													states.findIndex(
-														(state) => state.state == businessInfo.businessState
-													)
-											  ]?.cities.map((city) => ({ value: city }))
-											: []
-									}
-								/>
-								<Select
-									placeholder="LGA"
-									showSearch
-									onSelect={(value) => {
-										handleChange('businessLGA', value);
-									}}
-									// value={queryData.lga}
-									className="!w-[150px]"
-									options={
-										states
-											? states[
-													states.findIndex(
-														(state) => state.state == businessInfo.businessState
-													)
-											  ]?.lgas.map((city) => ({ value: city }))
-											: []
-									}
-								/>
-							</div>
-						</div>
-						<div>
-							<label htmlFor="phone">
-								Business Telephone <span>*</span>
-							</label>
-							<input
-								id="phone"
-								type="text"
-								min={1}
-								value={businessInfo?.businessTelephone}
-								onChange={(e) =>
-									handleChange('businessTelephone', e.target.value)
-								}
-							/>
-						</div>
-					</div>
-				</div>
-				<div className="row mt-3">
-					<div className="col-md-6">
-						<h4>Upload Documents</h4>
-						<h6>
-							Please ensure to upload clear, concise and correct documents.
-						</h6>
-						<Dropzone
-							acceptedFiles=".jpg,.jpeg,.png"
-							multiple={false}
-							onDrop={(acceptedFiles) =>
-								handleFileDrop(acceptedFiles, 'cacRegistrationProof')
-							}
-						>
-							{({ getRootProps, getInputProps }) => (
-								<section {...getRootProps()}>
-									<input {...getInputProps()} />
-									<FileUpload>
-										{businessInfo.cacRegistrationProof.length === 0 ? (
-											`CAC Registration Proof`
-										) : (
-											<div className="flex gap-3 flex-wrap">
-												{businessInfo.cacRegistrationProof.map(
-													(file, index) => (
-														<Flex key={index}>
-															<Typography sx={{ marginRight: '1px' }}>
-																{file.name}
-															</Typography>
-														</Flex>
-													)
-												)}
-											</div>
-										)}{' '}
-										<i>{CloudUpload}</i>
-									</FileUpload>
-								</section>
-							)}
-						</Dropzone>
-						<Dropzone
-							acceptedFiles=".jpg,.jpeg,.png"
-							multiple={false}
-							onDrop={(acceptedFiles) =>
-								handleFileDrop(acceptedFiles, 'proofOfAddress')
-							}
-						>
-							{({ getRootProps, getInputProps }) => (
-								<section {...getRootProps()}>
-									<input {...getInputProps()} />
-									<FileUpload>
-										{businessInfo.proofOfAddress.length === 0 ? (
-											` Proof Of Address (e.g Utility Bill)`
-										) : (
-											<div className="flex gap-3 flex-wrap">
-												{businessInfo.proofOfAddress.map((file, index) => (
-													<Flex key={index}>
-														<Typography sx={{ marginRight: '1px' }}>
-															{file.name}
-														</Typography>
-													</Flex>
-												))}
-											</div>
-										)}
-										<i>{CloudUpload}</i>
-									</FileUpload>
-								</section>
-							)}
-						</Dropzone>
-						<Dropzone
-							acceptedFiles=".jpg,.jpeg,.png"
-							multiple={true}
-							onDrop={(acceptedFiles) =>
-								handleLocationImagesFileDrop(
-									acceptedFiles,
-									'businessLocationImages'
-								)
-							}
-						>
-							{({ getRootProps, getInputProps }) => (
-								<section {...getRootProps()}>
-									<input {...getInputProps()} />
-									<FileUpload>
-										{businessInfo.businessLocationImages.length === 0 ? (
-											`Pictures of Location`
-										) : (
-											<div className="flex gap-3 flex-wrap">
-												{businessInfo.businessLocationImages.map(
-													(file, index) => (
-														<Flex key={index}>
-															<Typography sx={{ marginRight: '1px' }}>
-																{file.name}
-															</Typography>
-														</Flex>
-													)
-												)}
-											</div>
-										)}
-										<i>{CloudUpload}</i>
-									</FileUpload>
-								</section>
-							)}
-						</Dropzone>
-					</div>
-					{/* <div className="col-md-6">
+            <div>
+              <label htmlFor="subCategory">
+                Business Sub Category <span>*</span>
+              </label>
+              <select
+                required={true}
+                id="subCategory"
+                onChange={(e) =>
+                  handleChange("businessSubCategory", e.target.value)
+                }
+              >
+                <option value="" disabled selected>
+                  Select a Sub-category
+                </option>
+                {subData?.map((category, i) => (
+                  <option
+                    value={category.value}
+                    selected={i === 0 ? true : false}
+                    key={i}
+                  >
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="email">
+                Business Email <span>*</span>
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={businessInfo?.businessEmail}
+                onChange={(e) => handleChange("businessEmail", e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor="businessPriceRange">
+                Price Range <span>*</span>
+              </label>
+              <Select
+                placeholder="Select Your Price Range"
+                className="w-full mt-3"
+                options={[
+                  { value: "free", label: "free" },
+                  { value: "free - 5k", label: "free - 5k" },
+                  { value: "5k - 10k", label: "5k - 10k" },
+                  { value: "10k - 20k", label: "10k - 20k" },
+                ]}
+                onSelect={(value) => handleChange("businessPriceRange", value)}
+              />
+            </div>
+          </div>
+          <div className="col-md-6">
+            <div>
+              <label htmlFor="address">
+                Business Address <span>*</span>
+              </label>
+              <input
+                id="address"
+                value={businessInfo?.businessAddress}
+                onChange={(e) =>
+                  handleChange("businessAddress", e.target.value)
+                }
+              />
+            </div>
+            <div>
+              <label htmlFor="address">
+                Business Address <span>*</span>
+              </label>
+              <div className="mt-2 mb-[1rem] flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-5">
+                <Select
+                  placeholder="State"
+                  onSelect={(value) => {
+                    getLga({ state: value.toUpperCase() });
+                    getCity({ state: value.toUpperCase() });
+                    // getLandMarks({ state: value.toUpperCase() });
+                    handleChange("businessState", value);
+                  }}
+                  // value={queryData.state}
+                  // showSearch
+                  className="!w-[150px]"
+                  options={states}
+                />
+                <Select
+                  placeholder="City"
+                  // showSearch
+                  onSelect={(value) => {
+                    handleChange("businessCity", value);
+                  }}
+                  // value={queryData.city}
+                  className="!w-[150px]"
+                  options={city}
+                />
+                <Select
+                  placeholder="LGA"
+                  // showSearch
+                  onSelect={(value) => {
+                    handleChange("businessLGA", value);
+                  }}
+                  // value={queryData.lga}
+                  className="!w-[150px]"
+                  options={lga}
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="phone">
+                Business Telephone <span>*</span>
+              </label>
+              <input
+                id="phone"
+                type="number"
+                min={1}
+                value={businessInfo?.businessTelephone}
+                onChange={(e) =>
+                  handleChange("businessTelephone", e.target.value)
+                }
+              />
+            </div>
+          </div>
+        </div>
+        <div className="row mt-3">
+          <div className="col-md-6">
+            <h4>Upload Documents</h4>
+            <h6>
+              Please ensure to upload clear, concise and correct documents.
+            </h6>
+            <Dropzone
+              acceptedFiles=".jpg,.jpeg,.png"
+              multiple={false}
+              onDrop={(acceptedFiles) =>
+                handleFileDrop(acceptedFiles, "cacRegistrationProof")
+              }
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <FileUpload>
+                    {businessInfo.cacRegistrationProof.length === 0 ? (
+                      `CAC Registration Proof`
+                    ) : (
+                      <div className="flex gap-3 flex-wrap">
+                        {businessInfo.cacRegistrationProof.map(
+                          (file, index) => (
+                            <Flex key={index}>
+                              <Typography sx={{ marginRight: "1px" }}>
+                                {file.name}
+                              </Typography>
+                            </Flex>
+                          )
+                        )}
+                      </div>
+                    )}{" "}
+                    <i>{CloudUpload}</i>
+                  </FileUpload>
+                </section>
+              )}
+            </Dropzone>
+            <Dropzone
+              acceptedFiles=".jpg,.jpeg,.png"
+              multiple={false}
+              onDrop={(acceptedFiles) =>
+                handleFileDrop(acceptedFiles, "proofOfAddress")
+              }
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <FileUpload>
+                    {businessInfo.proofOfAddress.length === 0 ? (
+                      ` Proof Of Address (e.g Utility Bill)`
+                    ) : (
+                      <div className="flex gap-3 flex-wrap">
+                        {businessInfo.proofOfAddress.map((file, index) => (
+                          <Flex key={index}>
+                            <Typography sx={{ marginRight: "1px" }}>
+                              {file.name}
+                            </Typography>
+                          </Flex>
+                        ))}
+                      </div>
+                    )}
+                    <i>{CloudUpload}</i>
+                  </FileUpload>
+                </section>
+              )}
+            </Dropzone>
+            <Dropzone
+              acceptedFiles=".jpg,.jpeg,.png"
+              multiple={true}
+              onDrop={(acceptedFiles) =>
+                handleLocationImagesFileDrop(
+                  acceptedFiles,
+                  "businessLocationImages"
+                )
+              }
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section {...getRootProps()}>
+                  <input {...getInputProps()} />
+                  <FileUpload>
+                    {businessInfo.businessLocationImages.length === 0 ? (
+                      `Pictures of Location`
+                    ) : (
+                      <div className="flex gap-3 flex-wrap">
+                        {businessInfo.businessLocationImages.map(
+                          (file, index) => (
+                            <Flex key={index}>
+                              <Typography sx={{ marginRight: "1px" }}>
+                                {file.name}
+                              </Typography>
+                            </Flex>
+                          )
+                        )}
+                      </div>
+                    )}
+                    <i>{CloudUpload}</i>
+                  </FileUpload>
+                </section>
+              )}
+            </Dropzone>
+          </div>
+          {/* <div className="col-md-6">
             <h4>Add Card Information</h4>
             <div>
               <label htmlFor="name">Card Name</label>
