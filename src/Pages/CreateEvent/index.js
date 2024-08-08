@@ -61,8 +61,8 @@ const CreateEvent = () => {
       <p className="">
         Follow the Steps below to create an event in next to no time.
       </p>
-      <form className="grid grid-cols-6 gap-10 mt-8" onSubmit={handleSubmit}>
-        <FormControl className="col-span-3">
+      <form className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-10 mt-8" onSubmit={handleSubmit}>
+        <FormControl className="col-span-1 md:col-span-6">
           <h5>Step 1</h5>
           <label>Please upload a picture of your event</label>
           <Dropzone
@@ -98,10 +98,10 @@ const CreateEvent = () => {
             )}
           </Dropzone>
         </FormControl>
-        <FormControl className="col-span-3">
+        <FormControl className="col-span-1 md:col-span-6">
           <h5>Step 2</h5>
           <label>Select a Location</label>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-2.5 md:gap-4">
             <Select
               placeholder="State"
               options={states}
@@ -120,7 +120,7 @@ const CreateEvent = () => {
             />
           </div>
         </FormControl>
-        <FormControl className="col-span-2">
+        <FormControl className="col-span-1 md:col-span-3">
           <h5>Step 3</h5>
           <label>Please select a price range</label>
           <Select
@@ -129,7 +129,7 @@ const CreateEvent = () => {
             onSelect={(value) => handleChange("advertBudget", value)}
           />
         </FormControl>
-        <FormControl className="col-span-2">
+        <FormControl className="col-span-1 md:col-span-5">
           <h5>Step 4</h5>
           <label>Please select a Category of Special Events</label>
           <Select
@@ -138,7 +138,7 @@ const CreateEvent = () => {
             onSelect={(value) => handleChange("advertCategory", value)}
           />
         </FormControl>
-        <FormControl className="col-span-2">
+        <FormControl className="col-span-1 md:col-span-4">
           <h5>Step 5</h5>
           <label>Select an Advert Plan</label>
           <Select
@@ -148,9 +148,9 @@ const CreateEvent = () => {
             className="text-[#9d9d9d]"
           />
         </FormControl>
-        <FormControl className="col-span-6">
-          <h4 className="text-2xl text-[#009F57] font-bold mb-4">Extra Information</h4>  
-          <section className="flex gap-4">
+        <FormControl className="col-span-1 md:col-span-12">
+          <h4 className="text-2xl text-[#009F57] font-bold mb-2.5 md:mb-4">Extra Information</h4>  
+          <section className="flex md:flex-row flex-col gap-3 md:gap-5">
             <div className="flex-1">
               <h5>Event Name</h5>
               <label>Please enter a name for the event</label>
@@ -168,7 +168,7 @@ const CreateEvent = () => {
             </div>
           </section>
         </FormControl>
-        <div className="col-span-6 flex">
+        <div className="col-span-1 md:col-span-12 flex mt-4">
           <button type="submit" className="ml-auto py-2.5 px-16 rounded-xl border-none bg-[#009F57] text-[#F0F0F0] font-semibold text-xl">Post</button>
         </div>
       </form>
@@ -210,7 +210,7 @@ const FormControl = styled.div`
   h5 {
     font-size: 20px;
     line-height: 32px;
-    font-weight: 700;
+    font-weight: 600;
     color: #0c0c0c;
   }
 
