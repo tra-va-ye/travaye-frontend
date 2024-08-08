@@ -367,6 +367,10 @@ const Main = styled.div`
     margin-left: 0;
     /* width: 100%; */
   }
+
+  @media (max-width: 576px) {
+    padding: 10px 20px;
+  }
 `;
 
 export const InsightBox = styled.div`

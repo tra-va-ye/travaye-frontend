@@ -1,11 +1,10 @@
-import CloseIcon from "@mui/icons-material/Close";
 import { Image, notification, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { FiveStars, FourStars } from "../../components/UI/svgs/svgs";
 // import classes from "";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../../assets/user-avatar.png";
 import LocationModal from "../../components/UI/Modal/LocationModal";
@@ -13,6 +12,8 @@ import NewLocation from "../../components/UI/Modal/NewLocation";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
 import { useGetMeQuery, useUpdateProfilePhotoMutation } from "../../redux/Api/authApi";
 import { IoIosCamera } from "react-icons/io";
+import { BsBoxArrowInLeft } from "react-icons/bs";
+import { TogleButton } from "../../components/Layout/BusinessSidebar";
 
 const BusinessProfile = () => {
   const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
@@ -91,21 +92,21 @@ const BusinessProfile = () => {
     }
   }, [userData, navigate, userType]);
 
-  const userLikedLocations = userData?.user?.likedLocations?.map((likedLocationName) =>
-    locations?.find((location) => location.locationName === likedLocationName)
-  );
+  // const userLikedLocations = userData?.user?.likedLocations?.map((likedLocationName) =>
+  //   locations?.find((location) => location.locationName === likedLocationName)
+  // );
 
-  const userId = sessionStorage.getItem("user_id");
-  const userLocations = locations?.filter((location) => {
-    return location.locationAddedBy === userId;
-  });
+  // const userId = sessionStorage.getItem("user_id");
+  // const userLocations = locations?.filter((location) => {
+  //   return location.locationAddedBy === userId;
+  // });
 
   return (
     <Container>
+      <TogleButton showDashboard={showDashboard}>
+        <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
+      </TogleButton>
       <Dashboard showDashboard={showDashboard}>
-        <Profile close={true}>
-          <CloseIcon onClick={toggleDashboard} />
-        </Profile>
         <div className="relative">
           {isLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
           <img
@@ -161,11 +162,11 @@ const BusinessProfile = () => {
       </Dashboard>
       <Main>
         <div className="">
-          <Profile onClick={toggleDashboard}>
+          {/* <Profile onClick={toggleDashboard}>
             <AccountCircleIcon />
-          </Profile>
+          </Profile> */}
           <div className="flex items-center justify-between">
-            <H3 color="#009f57" fontSize="30" fontWeight="700" className="mb-2">
+            <H3 color="#009f57" fontWeight="700" className="mb-1 text-xl md:text-3xl">
               Your Profile
             </H3>
             <button
@@ -343,17 +344,19 @@ export const Dashboard = styled.div`
   flex-direction: column;
   align-items: center;
   text-align: center;
-  width: 30%;
-  height: calc(100vh - 98px);
+  width: 24%;
+  height: calc(100vh - 95px);
+  position: relative;
 
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   background-color: rgb(255, 254, 252);
   border-top: 0;
   border-right: 2px solid transparent;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
-  padding-top: 50px;
-  padding-bottom: 30px;
-  z-index: 10;
+  padding-block: 50px;
+  z-index: 5;
+
   ::-webkit-scrollbar {
     width: 10px; /* Set the width of the scrollbar */
   }
@@ -387,24 +390,31 @@ export const Dashboard = styled.div`
     margin-top: 6px;
   }
 
-  svg {
-    display: none;
-  }
-  @media (max-width: 1150px) {
-    display: ${(props) => (props.showDashboard ? "block" : "none")};
-    padding-top: 100px;
-    svg {
-      display: block;
-    }
-  }
+	@media (max-width: 1150px) {
+		max-width: ${(props) => (props.showDashboard ? "auto" : "0")};
+		width: 25%;
+	}
+
+	@media (max-width: 950px) {
+		width: 34%;
+	}
+
+	@media (max-width: 720px) {
+		width: 42%;
+	}
+
+	@media (max-width: 560px) {
+		width: 56%;
+	}
 `;
+
 const H3 = styled.h3`
   color: ${(props) => props.color};
   font-weight: ${(props) => `${props.fontWeight}`};
   font-size: ${(props) => `${props.fontSize}px`};
 `;
 export const Main = styled.div`
-  width: 100%;
+  flex: 1 1 0%;
   min-height: auto;
   margin-left: 0;
   padding: 20px 40px;
@@ -424,7 +434,11 @@ export const Main = styled.div`
 
   @media (max-width: 1150px) {
     margin-left: 0;
-    width: 100%;
+  }
+
+  
+  @media (max-width: 576px) {
+    padding: 16px;
   }
 `;
 const ReviewContainer = styled.div``;
