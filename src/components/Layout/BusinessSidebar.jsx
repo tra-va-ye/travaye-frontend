@@ -56,7 +56,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 			<div className="relative">
 				{isPhotoLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
 				<img
-					className="rounded-full"
+					className="rounded-full w-[150px] h-[150px]"
 					src={userData?.profilePhoto || Avatar}
 					alt="avatar"
 				/>

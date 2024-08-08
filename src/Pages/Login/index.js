@@ -71,8 +71,10 @@ const Login = () => {
         sessionStorage.setItem("userType", userType);
         sessionStorage.setItem("authToken", authToken);
         sessionStorage.setItem("user_id", data?.user?._id);
-
-        navigate(`/${userType}`);
+        
+        setTimeout(() => {
+          navigate(`/${userType}`);
+        }, 1000);
       } else {
         const authToken = data?.token;
         sessionStorage.setItem("authToken", authToken);
