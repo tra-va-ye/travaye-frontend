@@ -47,6 +47,7 @@ const authSlice = createSlice({
     },
   },
 });
+
 export const {
   timeout,
   updateIdleTimeOut,

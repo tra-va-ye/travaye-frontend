@@ -92,6 +92,8 @@ const UserProfile = () => {
     }
   }, [userData?.user]);
 
+  // console.log(userData?.user);
+
   useEffect(() => {
     // Check if it's the first visit
     if (firstVisit) {
@@ -102,7 +104,8 @@ const UserProfile = () => {
       refetchLocations();
     }
   }, [location.pathname, firstVisit, refetchLocations]);
-  const userLikedLocations = userData?.likedLocations;
+  const userLikedLocations = userInfo?.likedLocations;
+  console.log(userLikedLocations);
 
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
@@ -220,7 +223,7 @@ const UserProfile = () => {
                       key={i}
                     />
                   )
-                )};
+                )}
               </GridContainer>
           }
         </BoxContainer>
