@@ -26,7 +26,14 @@ import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css/bundle";
 import { Navigation } from 'swiper';
+import { useGetMeQuery } from '../../redux/Api/authApi';
 const { TextArea } = Input;
+
+function calculateAverageRating (reviewArray) {
+	if (reviewArray?.length === 0) return 0; // Handle empty reviewArrayay
+	const sum = reviewArray?.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+	return sum / reviewArray?.length;
+  }
 
 const LocationDetails = () => {
 	const { id } = useParams();
@@ -38,11 +45,13 @@ const LocationDetails = () => {
 		reviewerID: sessionStorage.getItem('user_id'),
 		locationID: id,
 	};
+	// locationID, reviewerID, reviewRating, reviewDescription
+
 	const [values, setValues] = useState(initialValues);
 	const [rating, setRating] = useState(2);
-
 	const [location, setLocation] = useState({});
-	const [addLocationToLikedLocations, { isLoading: likeLocationLoading }] = useAddLocationToLikedLocationsMutation();
+	console.log(location);
+
 	const [
 		reviewLocation,
 		{
@@ -52,11 +61,18 @@ const LocationDetails = () => {
 			error: reviewError,
 		},
 	] = useReviewLocationMutation();
-
+	
+	const [addLocationToLikedLocations, { isLoading: likeLocationLoading }] = useAddLocationToLikedLocationsMutation();
 	const [unlike, { isLoading: unliking }] = useUnlikeLocationMutation();
 
 	const userType = sessionStorage.getItem('userType');
-	const userData = useSelector((state) => state.auth.user).payload;
+
+	const {
+		data: userData,
+		// isSuccess,
+		// isLoading,
+		refetch,
+	} = useGetMeQuery({ userType });
 	const { data, isError, error, isLoading } = useGetLocationByIdQuery({ id });
 
 	useEffect(() => {
@@ -102,17 +118,14 @@ const LocationDetails = () => {
 	};
 
 	const handleAddClick = () => {
-		addLocationToLikedLocations({ locationName: location._id });
-	};
-
-	const handleUnlike = (id) => {
-		unlike({ locationName: id })
+		addLocationToLikedLocations({ locationName: location._id })
 			.unwrap()
-			.then((r) => {
+			.then((res) => {
 				notification.success({
-					message: 'Unliked',
+					message: 'Liked',
 					duration: 3,
 				});
+				refetch();
 			})
 			.catch((err) => {
 				notification.error({
@@ -122,13 +135,34 @@ const LocationDetails = () => {
 			});
 	};
 
+	const handleUnlike = () => {
+		unlike({ locationName: location._id })
+			.unwrap()
+			.then((r) => {
+				notification.success({
+					message: 'Unliked',
+					duration: 3,
+				});
+				refetch();
+			})
+			.catch((err) => {
+				notification.error({
+					message: 'An error occurred',
+					duration: 3,
+				});
+			});
+	};
+
+	const reviewRatings = location?.reviews?.map(rev => rev?.reviewRating);
+	const avg = calculateAverageRating(reviewRatings);
+	console.log(avg);
+
 	return (
 		<div className={classes.location}>
-			{isLoading || reviewLoading || likeLocationLoading ? (
+			{isLoading || reviewLoading ? (
 				<Loader />
 			) : (
 				<>
-					{/* {' '} */}
 					<div className="flex justify-center gap-8">
 						<div className="w-6/12">
 							<Swiper
@@ -154,30 +188,30 @@ const LocationDetails = () => {
 							<h6>{location?.businessAddress}</h6>
 							<p className='my-7 text-black text-justify'>{location.businessAbout || "Maryland Mall Cinemas is one of Nigeria's leading cinema developers and operators of multiplex cinemas in Nigeria. The Only ScreenX Cinema with a state of the art spund system and 3D viewing pleasure just for you."}</p>
 							<h5 className='text-xl text-[#009f57] font-semibold mb-7'>
-								Ticket prices:{"  "}
+								Price Range:{"  "}
 								<span className='text-black font-normal'>{location.businessBudget || "Free - 5k"}</span>
 							</h5>
 						
 							<div className="d-flex mb-3">
-								{userData?.likedLocations?.find(
+								{userData?.user?.likedLocations?.find(
 									(l) => l._id == location?._id
 								) ? (
 									<Button
-										color="red"
+										color={unliking ? "#f14f4f" : "red"}
 										location={true}
-										onClick={() => {
-											handleUnlike(location._id);
-										}}
+										onClick={handleUnlike}
+										disabled={unliking}
 									>
-										Unlike
+										{unliking ? "Loading..." : "Unlike"}
 									</Button>
 								) : (
 									<Button
-										color="green"
+										color={likeLocationLoading ? "rgba(0,159,87,0.5)" : "green"}
 										location={true}
 										onClick={handleAddClick}
+										disabled={likeLocationLoading}
 									>
-										Like location
+										{likeLocationLoading ? "Loading..." : "Like location"}
 									</Button>
 								)}
 								<Button
@@ -192,118 +226,113 @@ const LocationDetails = () => {
 					</div>
 					<div
 						className={`${classes.reviewContainer} 
-           				${userType === 'user' ? `row` : `flex justify-center`} mt-5 px-4 py-3`}
+           				${userType === 'user' ? `grid grid-cols-2` : `flex justify-center`} mt-5 px-4 py-3`}
 					>
 						{userType === 'user' && (
-							<div className="col-md-6">
-								<form className="gap-4" onSubmit={handleFormSubmit}>
-									<div className="flex flex-col gap-3 bg-white py-2 px-4 rounded-xl border-brandGreen border-[1px]">
-										<Dropzone
-											acceptedFiles=".jpg,.jpeg,.png"
-											multiple={true}
-											onDrop={(acceptedFiles) => {
-												// seValue("pictures", [...values.pictures, ...acceptedFiles]);
+							<form className="gap-4" onSubmit={handleFormSubmit}>
+								<div className="flex flex-col gap-3 bg-white py-2 px-4 rounded-xl border-brandGreen border-[1px]">
+									<Dropzone
+										acceptedFiles=".jpg,.jpeg,.png"
+										multiple={true}
+										onDrop={(acceptedFiles) => {
+											// seValue("pictures", [...values.pictures, ...acceptedFiles]);
+											setValues((prev) => ({
+												...prev,
+												pictures: [...values.pictures, ...acceptedFiles],
+											}));
+										}}
+									>
+										{({ getRootProps, getInputProps }) => (
+											<Container>
+												<section {...getRootProps()}>
+													<input {...getInputProps()} />
+													{values.pictures.length === 0 ? (
+														<div className='!flex-row !mb-0 !gap-4 !mt-2 scale-75'>
+															<i className=''>{ArrowCloud}</i>
+															<p>Drag and Drop Pictures here to Upload</p>
+														</div>
+													) : (
+														values.pictures.map((file, index) => (
+															<FlexBetween key={index}>
+																<Typography sx={{ marginRight: '5px' }}>
+																	{file.name}
+																</Typography>
+															</FlexBetween>
+														))
+													)}
+												</section>
+											</Container>
+										)}
+									</Dropzone>
+									<div className="flex justify-between ">
+										<Typography className="text-black font-black">
+											Experience Rating
+										</Typography>
+										<Rating
+											name="simple-controlled"
+											value={values.locationRating}
+											onChange={(event, newValue) => {
+												setRating(newValue);
 												setValues((prev) => ({
 													...prev,
-													pictures: [...values.pictures, ...acceptedFiles],
+													reviewRating: newValue,
 												}));
 											}}
-										>
-											{({ getRootProps, getInputProps }) => (
-												<Container>
-													<section {...getRootProps()}>
-														<input {...getInputProps()} />
-														{values.pictures.length === 0 ? (
-															<div>
-																<i>{ArrowCloud}</i>
-																<p>Drag and Drop Pictures here to Upload</p>
-															</div>
-														) : (
-															values.pictures.map((file, index) => (
-																<FlexBetween key={index}>
-																	<Typography sx={{ marginRight: '5px' }}>
-																		{file.name}
-																	</Typography>
-																</FlexBetween>
-															))
-														)}
-													</section>
-												</Container>
-											)}
-										</Dropzone>
-										<div className="flex justify-between ">
-											<Typography className="text-black font-black">
-												Experience Rating
-											</Typography>
-											<Rating
-												name="simple-controlled"
-												value={values.locationRating}
-												onChange={(event, newValue) => {
-													console.log(newValue);
-													setRating(newValue);
-													setValues((prev) => ({
-														...prev,
-														reviewRating: newValue,
-													}));
-												}}
-											/>
-										</div>
-										<TextArea
-											rows="6"
-											required
-											name="reviewDescription"
-											className="mt-2"
-											placeholder="Share your experience here...."
-											onChange={(e) => {
-												setValues((prev) => ({
-													...prev,
-													[e.target.name]: e.target.value,
-												}));
-											}}
-										></TextArea>
-										<AltButton location={true} className="mb-4">
-											Post Review
-										</AltButton>
+										/>
 									</div>
-								</form>
-							</div>
+									<TextArea
+										rows="6"
+										required
+										name="reviewDescription"
+										className="mt-2"
+										placeholder="Share your experience here...."
+										onChange={(e) => {
+											setValues((prev) => ({
+												...prev,
+												[e.target.name]: e.target.value,
+											}));
+										}}
+									></TextArea>
+									<AltButton location={true} className="mb-4">
+										Post Review
+									</AltButton>
+								</div>
+							</form>
 						)}
-						<ReviewContainer
+						<section
 							className={`${
-								userType !== 'user' ? `w-full` : `px-3`
-							} col-md-6  my-4 `}
+								userType !== 'user' ? `w-full` : `px-3 flex flex-col`
+							} overflow-y-hidden h-[26rem]`}
 						>
-							<div className="d-flex justify-content-between mb-4 items-center mt-3">
+							<div className="flex justify-content-between mb-3 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
 									<p className="text-black font-medium">Average Rating</p>{' '}
-									<i>{FourStars}</i>
+									<Rating value={avg} disabled />
 								</div>
 							</div>
-							<Review className={`flex flex-wrap gap-4`}>
+							<Review className={`flex gap-4 flex-col overflow-y-scroll my-1`}>
 								{location && location?.reviews?.length > 0 ? (
 									location?.reviews?.map((review, i) => {
 										return (
 											<ReviewCard key={i}>
-												<div>
-													<div className="flex items-center justify-between mb-3">
-														<ReviewUser>
-															<img
-																src={Avatar}
-																className="img-fluid "
-																alt="pfp"
-															/>
-															<p className="" style={{ color: '#009f57' }}>
-																{review?.reviewerFullname}
-															</p>
-														</ReviewUser>
-														<i>{FiveStars}</i>
-													</div>
-
-													<p>{review?.reviewDescription}</p>
+												<div className="flex items-center justify-between">
+													<ReviewUser>
+														<img
+															src={Avatar}
+															className="img-fluid "
+															alt="pfp"
+														/>
+														<p className="" style={{ color: '#009f57' }}>
+															{review?.reviewerFullname}
+														</p>
+													</ReviewUser>
+													<Rating value={review.reviewRating} disabled />
 												</div>
+
+												<p className='py-2'>{review?.reviewDescription}</p>
 												<div>
-													<div className="flex flex-wrap gap rounded-lg overflow-hidden mt-3 flex-container">
+													<div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
 														<Image.PreviewGroup
 															preview={{
 																onChange: (current, prev) =>
@@ -314,14 +343,12 @@ const LocationDetails = () => {
 														>
 															{review?.reviewImagePaths?.map((image, key) => {
 																return (
-																	<div className={`flex-[1_0_30%]`} key={key}>
-																		<Image
-																			src={image}
-																			width={'100%'}
-																			height={150}
-																			className=" object-cover"
-																		/>
-																	</div>
+																	<Image
+																		key={key}
+																		src={image}
+																		height={100}
+																		className=" object-cover  rounded-lg"
+																	/>
 																);
 															})}
 														</Image.PreviewGroup>
@@ -334,7 +361,7 @@ const LocationDetails = () => {
 									<p>No reviews yet</p>
 								)}
 							</Review>
-						</ReviewContainer>
+						</section>
 					</div>
 				</>
 			)}
@@ -346,7 +373,7 @@ export default LocationDetails;
 const FlexBetween = styled(Box)({
 	display: 'flex',
 	justifyContent: 'space-between',
-	alignItems: 'center',
+	alignItems: 'center'
 });
 const Container = styled.div`
 	display: flex;
@@ -379,12 +406,11 @@ const Container = styled.div`
 	}
 `;
 
-const ReviewContainer = styled.div``;
 const ReviewH4 = styled.h4`
 	color: #009f57;
 `;
 const Review = styled.div`
-	max-height: 50vh;
+	/* max-height: 50vh; */
 	display: flex;
 	overflow-y: auto;
 	padding-right: 15px;
@@ -402,13 +428,14 @@ const Review = styled.div`
 	}
 `;
 
-const ReviewCard = styled.div`
+const ReviewCard = styled.article`
 	background: #ffffff;
 	border: 2px solid rgba(0, 159, 87, 0.5);
 	border-radius: 10px;
 	padding: 16px;
-	margin-bottom: 16px;
 	flex: 1;
+	/* height: 180px; */
+
 	p {
 		color: #9d9d9d;
 		font-weight: 600;
@@ -421,6 +448,7 @@ const ReviewUser = styled.div`
 	display: flex;
 	gap: 1rem;
 	align-items: center;
+
 	img {
 		width: 40px;
 		height: 40px;

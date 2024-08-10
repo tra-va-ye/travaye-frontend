@@ -1,6 +1,7 @@
 import classes from "./Modal.module.css";
 import { createPortal } from "react-dom";
 import { CloseModalBtn } from "../svgs/svgs";
+import styled from "styled-components";
 
 export const BackDrop = (props) => {
   return <div className={classes.backdrop} onClick={props.onClick} />;
@@ -10,10 +11,10 @@ const ModalOverlay = (props) => {
     <div
       className={`${classes.overlay} ${
         props.className === "points-modal" && classes["points-modal"]}
-        ${props.type === 'ad' ? 'w-4/6' : 'w-1/3'}
+        ${props.alignRight === true ? 'w-4/5 md:w-4/6' : 'w-1/3'}
       `}
     >
-      <span onClick={props.onClick} className={`${props.alignRight && "ml-auto"}`}>{CloseModalBtn}</span>
+      <span onClick={props.onClick} className={`${props.alignRight && "ml-auto"} md:scale-100 scale-75`}>{CloseModalBtn}</span>
       {props.children}
     </div>
   );

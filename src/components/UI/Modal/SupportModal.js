@@ -27,11 +27,11 @@ const SupportModal = ({ onClick, username }) => {
 
     return (
         <Modal onClick={onClick} alignRight={true}>
-            <h3 className='-mt-8 !text-xl font-bold'>Chat Support</h3>
-            <p className='text-justify text-black font-normal mt-6'>
+            <h3 className='-mt-8 !text-lg !md:text-xl font-bold'>Chat Support</h3>
+            <p className='text-justify text-black font-normal mt-3 md:mt-6'>
                 Hello <span className='italic'>{username}!</span>
             </p>
-            <p className='text-justify text-black font-normal mb-8'>
+            <p className='text-justify text-black font-normal mb-4 md:mb-8 '>
                 Welcome to the Travaye admin support system. Please check the questions below. One scenario should cater for your need.
             </p>
             <SupportForm onSubmit={handleSubmit}>
@@ -98,10 +98,24 @@ const SupportForm = styled.form`
 		border: 2px solid #CCFFE8;
 		border-radius: 5px;
         color: #9D9D9D;
-
 		/* margin-bottom: 16px; */
 		padding: 4px 10px;
 	}
+
+    @media screen and (max-width: 768px) {
+        gap: 12px;
+
+        label {
+            margin-bottom: 3px;
+            font-size: 14px;
+        }
+        input, textarea {
+            padding: 3px 8px;
+            font-size: 14px;
+        }
+    
+        
+    }
 `
 
 export default SupportModal
