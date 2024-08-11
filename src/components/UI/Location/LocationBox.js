@@ -6,17 +6,17 @@ const LocationBox = (props) => {
     <Box
       onClick={props.onClick}
       search={props.search}
-      className="flex flex-col"
+      className="flex flex-col justify-between gap-1"
     >
       <img
         src={props.location?.businessLocationImages?.[0] || props.location?.locationImagePath?.[0]}
         alt="location"
-        className="!w-[240px] h-[200px]"
+        className="w-full h-[200px]"
       />
-      <h6 className="mt-2 font-extrabold text-lg ">
+      <h6 className="font-extrabold text-lg ">
         {props.location?.locationName || props.location?.businessName}
       </h6>
-      <div className=" flex content-between justify-between">
+      <div className="flex content-between justify-between items-end">
         <p>{props.location?.locationAddress || props.location?.businessAddress}</p>
         <div className="flex items-center">
           <p className="!text-[#009f57] font-bold !text-xl">{props.location?.locationRating}</p>
