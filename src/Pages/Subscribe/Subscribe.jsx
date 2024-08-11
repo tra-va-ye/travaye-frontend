@@ -140,9 +140,9 @@ const Subscribe = () => {
       </h6>
       <div>
         <PaystackButton {...config}>
-          <Button color="green" type="button">
+          <div>
             Add Card
-          </Button>
+          </div>
         </PaystackButton>
       </div>
     </Container>

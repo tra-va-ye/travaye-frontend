@@ -14,27 +14,10 @@ import { Button } from "../../components/UI/Buttons";
 
 const UserSettings = () => {
   const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
-  const [showLocationModal, setShowLocationModal] = useState(false);
-  const [newLocationModal, setNewLocationModal] = useState(false);
-  const [showPointsModal, setShowPointsModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const userType = useSelector((state) => state.auth.userType);
   const navigate = useNavigate();
-  const toggleShowLocationModal = () => {
-    setShowLocationModal((prevState) => !prevState);
-  };
-  const toggleNewLocationModal = () => {
-    setNewLocationModal((prevState) => !prevState);
-  };
 
-  const togglePointsModal = () => {
-    setShowPointsModal((prevState) => !prevState);
-  };
-  const [firstVisit, setFirstVisit] = useState(true);
-
-  const toggleDashboard = () => {
-    setShowDashboard((prevState) => !prevState);
-  };
   const [selectedCategories, updateSelectedCategories] = useState([]);
   const [selectedFilters, updateSelectedFilters] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -75,7 +58,6 @@ const UserSettings = () => {
   useEffect(() => {
     if (userData) {
       setUserInfo(userData);
-      console.log(userData);
     }
   }, [userData, navigate, userType]);
 
@@ -96,6 +78,7 @@ const UserSettings = () => {
     e.preventDefault();
     // setIsLoading(false);
   };
+  
 
   return (
     <Container>
@@ -192,7 +175,7 @@ const UserSettings = () => {
             </label>
             <textarea
               id="about"
-              value={userInfo?.about}
+              value={userInfo?.about || ""}
               onChange={(e) => handleChange("about", e.target.value)}
               rows={5}
               placeholder="We are a sports and rec brand dedicated to helping athletes destress after a workout session or other related activities."
@@ -207,7 +190,6 @@ const UserSettings = () => {
               id="password"
               placeholder="***********"
               disabled
-              // onChange={(e) => handleChange("username", e.target.value)}
             />
           </div>
 

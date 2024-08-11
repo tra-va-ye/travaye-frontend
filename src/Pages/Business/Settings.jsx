@@ -39,14 +39,6 @@ const BusinessSettings = () => {
     refetch,
   } = useGetMeQuery({ userType });
   const { data: categories, isLoading: getCategoriesLoading } = useGetCategoriesQuery();
-
-  // const {
-  //   data: userData,
-  //   isSuccess: userSuccess,
-  //   refetch: refetchUserData,
-  // } = useGetMeQuery({
-  //   userType: userType,
-  // });
   
   const userData = useSelector((store) => store.auth.user).payload;
 

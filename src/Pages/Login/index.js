@@ -71,8 +71,10 @@ const Login = () => {
         sessionStorage.setItem("userType", userType);
         sessionStorage.setItem("authToken", authToken);
         sessionStorage.setItem("user_id", data?.user?._id);
-
-        navigate(`/${userType}`);
+        
+        setTimeout(() => {
+          navigate(`/${userType}`);
+        }, 1000);
       } else {
         const authToken = data?.token;
         sessionStorage.setItem("authToken", authToken);
@@ -98,7 +100,9 @@ const Login = () => {
         sessionStorage.setItem("user_id", businessData?.user?._id);
         if (businessData?.user?.businessVerified === "verified") {
           if (businessData?.user?.addedCard === true) {
-            navigate(`/${userType}`);
+            setTimeout(() => {
+              navigate(`/${userType}`);
+            }, 1000);
           } else {
             navigate(`/subscribe`);
           }
@@ -109,7 +113,9 @@ const Login = () => {
             placement: "bottomRight",
           });
           if (businessData?.user?.addedCard === true) {
-            navigate(`/${userType}`);
+            setTimeout(() => {
+              navigate(`/${userType}`);
+            }, 1000);
           } else {
             navigate(`/subscribe`);
           }
@@ -158,7 +164,6 @@ const Login = () => {
   };
 
   const onSubmit = () => {
-    console.log(values);
     handleClick();
   };
 

@@ -30,7 +30,7 @@
 .location .reviews {
   list-style-type: none;
   padding-inline-start: 0;
-  max-height: 50vh;
+  /* max-height: 50vh; */
   overflow-y: auto;
 }
 

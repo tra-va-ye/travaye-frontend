@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components';
-import { useGetMeQuery, useUpdateProfilePhotoMutation } from '../../redux/Api/authApi';
+import { useUpdateProfilePhotoMutation } from '../../redux/Api/authApi';
 import Avatar from '../../assets/user-avatar.png';
 import { IoIosCamera } from 'react-icons/io';
 import { Spin, notification } from 'antd';
@@ -8,20 +8,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useSelector } from 'react-redux';
 
 const Dashboard = ({ showDashboard, setBusinessInfo }) => {
-		const [updateProfile, { isLoading: isPhotoLoading }] = useUpdateProfilePhotoMutation();
-		const userType = useSelector((state) => state.auth.userType);
-				
-		const userData = useSelector((store) => store.auth.user).payload;
-	
-	const {
-		data: businessData,
-		isSuccess,
-		isLoading,
-		refetch,
-	} = useGetMeQuery({ userType });
+	const [updateProfilePhoto, { isLoading: isPhotoLoading }] = useUpdateProfilePhotoMutation();
+	const userType = useSelector((state) => state.auth.userType);
+			
+	const businessData = useSelector((store) => store.auth.user).payload;
 
 	useEffect(() => {
-		if (isSuccess && businessData?.user) {
+		if (businessData?.user) {
 			setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
 			if (businessData?.user?.businessVerified === "verified") {
 				
@@ -36,28 +29,28 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				// } else {
 				//   navigate(`/subscribe`);
 				// }
-				refetch();
+				// refetch();
 			} else if (businessData?.user?.businessVerified === "false") {
 				notification.error({
 					message: " Business not Verified ",
 					duration: 3,
 					placement: "bottomRight",
 				});
-				refetch();
+				// refetch();
 
 				// Navigate to the verification page
 				// navigate("/register");
 			}
 		}
-	}, [isSuccess, businessData?.user, setBusinessInfo, refetch, userType]);
+	}, [businessData?.user, setBusinessInfo, userType]);
 
 	return (
 		<DashboardContainer showDashboard={showDashboard}>
 			<div className="relative">
 				{isPhotoLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
 				<img
-					className="rounded-full"
-					src={userData?.profilePhoto || Avatar}
+					className="rounded-full w-[150px] h-[150px]"
+					src={businessData?.profilePhoto || Avatar}
 					alt="avatar"
 				/>
 				<label htmlFor="photo">
@@ -65,9 +58,9 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				</label>
 				<input
 					onChange={(e) => {
-					const profileData = new FormData();
-					profileData.append("picture", e.target.files[0]);
-					updateProfile(profileData);
+						const profileData = new FormData();
+						profileData.append("picture", e.target.files[0]);
+						updateProfilePhoto(profileData);
 					}}
 					id="photo"
 					accept="image/*"
@@ -76,16 +69,24 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				/>
 			</div>
 			<div>
-				<h3 className="mt-5 text-[#9D9D9D] text-2xl font-bold mb-2 px-2">{userData?.businessName}</h3>
-				<h6 className="text-[#E9A309] text-xl font-semibold mb-2 px-2">
-					{userData?.businessEmail}
+				<h3 className="mt-5 text-[#9D9D9D] text-2xl font-bold mb-2 px-2">{businessData?.businessName}</h3>
+				<h6 className="text-[#E9A309] text-lg font-semibold mb-2 px-2">
+					{businessData?.businessEmail}
 				</h6>
-				<p className="text-[#E9A309] text-xl px-2">
-					{`${userData?.businessCategory
+				{/* <p className="text-[#E9A309] text-xl px-2">
+					{`${businessData?.businessCategory
 					?.split("-")
 					?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
 					.join(" ")}` || 'Entertainment'}
+				</p> */}
+				<p className="mt-1 text-[#9d9d9d] font-semibold">{businessData?.businessCategory ? `${businessData?.businessCategory
+					?.replace('%26', '&')
+					?.split("-")
+					?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+					?.join(" ")
+					}` : "No Category"}
 				</p>
+        {/* </div> */}
 			</div>
 			<div>
 				<div>
@@ -93,18 +94,18 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 						Address
 						<EditIcon className="!block text-[#D9D9D9]" width={16} />
 					</h6>
-					<p className="mt-1.5 px-2 text-[#9d9d9d] text-lg">{userData?.businessAddress}</p>
+					<p className="mt-1.5 px-2 text-[#9d9d9d] text-lg">{businessData?.businessAddress}</p>
 					<h6 className="text-xl font-bold text-[#009F57] mt-6 flex gap-1 justify-center">
 						About
 						<EditIcon className="!block text-[#D9D9D9]" width={16} />
 					</h6>
 					<p className="mt-1.5 px-2">
-						{userData?.about || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium voluptate temporibus nam incidunt"}
+						{businessData?.about || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium voluptate temporibus nam incidunt"}
 					</p>
 				</div>
 				<div className="mt-6">
 					<h5>User Visits</h5>
-					<p>{userData?.visits || 200}</p>
+					<p>{businessData?.visits || 200}</p>
 				</div>
 				<div className="mt-6">
 					<h5>Average Review</h5>

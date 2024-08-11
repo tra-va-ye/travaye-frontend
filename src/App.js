@@ -9,6 +9,7 @@ import Loader from "./components/UI/Loader";
 import RequireAuth from "./Layout/RequireAuth";
 import CreateEvent from "./Pages/CreateEvent";
 import "./index.css";
+import { useSelector } from "react-redux";
 
 const AddedLocations = lazy(() => {
   return import("./Pages/AddedLocations");
@@ -70,12 +71,12 @@ const Subscribe = lazy(() => {
 });
 
 function App() {
+  const userType = useSelector((state) => state.auth.userType);
   const [showSideNav, setShowSideNav] = useState(false);
 
   const toggleSideNav = () => {
     setShowSideNav((prevState) => !prevState);
   };
-  const userType = sessionStorage.getItem("userType");
 
   return (
     <>

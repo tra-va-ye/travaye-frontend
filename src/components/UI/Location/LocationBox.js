@@ -2,23 +2,22 @@ import { IoIosStar } from "react-icons/io";
 import styled from "styled-components";
 
 const LocationBox = (props) => {
-  // console.log(props.location);
   return (
     <Box
       onClick={props.onClick}
       search={props.search}
-      className="flex flex-col"
+      className="flex flex-col justify-between gap-1"
     >
       <img
         src={props.location?.businessLocationImages?.[0] || props.location?.locationImagePath?.[0]}
         alt="location"
-        className="img-fluid !w-[250px] h-[216px]"
+        className="w-full h-[200px]"
       />
-      <h6 className="mt-2 font-extrabold text-lg ">
-        {props.location?.business?.businessName}
+      <h6 className="font-extrabold text-lg ">
+        {props.location?.locationName || props.location?.businessName}
       </h6>
-      <div className=" flex content-between justify-between">
-        <p>{props.location?.business?.businessAddress}</p>
+      <div className="flex content-between justify-between items-end">
+        <p>{props.location?.locationAddress || props.location?.businessAddress}</p>
         <div className="flex items-center">
           <p className="!text-[#009f57] font-bold !text-xl">{props.location?.locationRating}</p>
           <IoIosStar fill="#E9A309" size={24} />

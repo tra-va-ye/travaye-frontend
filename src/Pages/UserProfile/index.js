@@ -92,6 +92,8 @@ const UserProfile = () => {
     }
   }, [userData?.user]);
 
+  // console.log(userData?.user);
+
   useEffect(() => {
     // Check if it's the first visit
     if (firstVisit) {
@@ -102,7 +104,8 @@ const UserProfile = () => {
       refetchLocations();
     }
   }, [location.pathname, firstVisit, refetchLocations]);
-  const userLikedLocations = userData?.likedLocations;
+  const userLikedLocations = userInfo?.likedLocations;
+  console.log(userLikedLocations);
 
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
@@ -220,7 +223,7 @@ const UserProfile = () => {
                       key={i}
                     />
                   )
-                )};
+                )}
               </GridContainer>
           }
         </BoxContainer>
@@ -263,57 +266,6 @@ const Container = styled.div`
     transform: scale(0.7);
   }
 `;
-
-// const Dashboard = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 16px;
-//   align-items: center;
-//   text-align: center;
-//   width: 320px;
-//   height: 100vh;
-//   position: fixed;
-//   top: 0;
-//   left: 0;
-//   background-color: rgb(255, 254, 252);
-//   border-top: 0;
-//   border-right: 2px solid transparent;
-//   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
-//   padding-top: 100px;
-
-//   z-index: 10;
-//   &:nth-child(5) div {
-//     margin-top: 1rem;
-//   }
-//   img {
-//     width: 150px;
-//     height: 150px;
-//   }
-//   h5 {
-//     color: #009f57;
-//     font-weight: 700;
-//   }
-//   svg {
-//     display: none;
-//   }
-//   @media (max-width: 1150px) {
-//     display: ${(props) => (props.showDashboard ? "block" : "none")};
-//     padding-top: 100px;
-//     svg {
-//       display: block;
-//     }
-//   }
-// `;
-
-// const Main = styled.div`
-//   width: 70%;
-//   margin-left: 30%;
-//   min-height: 100vh;
-//   @media (max-width: 1150px) {
-//     margin-left: 0;
-//     width: 100%;
-//   }
-// `;
 
 export const GridContainer = styled.div`
   display: grid;

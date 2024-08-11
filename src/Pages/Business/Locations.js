@@ -39,7 +39,7 @@ const Locations = () => {
 
   useEffect(() => {
     if (searchTerm) {
-      const searched = data?.data.filter((loc) => loc.businessName.toLowerCase().includes(searchTerm.toLowerCase()));
+      const searched = searchTerm && data?.data?.filter((loc) => loc?.locationName?.toLowerCase().includes(searchTerm.toLowerCase()));
       setLocations(searched);
     } else {
       data && setLocations(data?.data);
@@ -108,7 +108,7 @@ const Locations = () => {
                     return (
                       <LocationBox
                         search={true}
-                        location={location?.business}
+                        location={location}
                         key={i}
                         onClick={() => {
                           navigate(`/location/${location?._id}`);

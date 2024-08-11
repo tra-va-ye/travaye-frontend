@@ -1,8 +1,6 @@
 import { Image, notification, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { FiveStars, FourStars } from "../../components/UI/svgs/svgs";
-// import classes from "";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -14,24 +12,25 @@ import { useGetMeQuery, useUpdateProfilePhotoMutation } from "../../redux/Api/au
 import { IoIosCamera } from "react-icons/io";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { TogleButton } from "../../components/Layout/BusinessSidebar";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import "swiper/css/bundle";
+import { Navigation } from "swiper";
+import ChatIcon from "../../assets/Icons/ChatIcon";
+import SupportModal from "../../components/UI/Modal/SupportModal";
 
 const BusinessProfile = () => {
   const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [newLocationModal, setNewLocationModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showSupportModal, setShowSupportModal] = useState(false);
+
   const userType = useSelector((state) => state.auth.userType);
   const navigate = useNavigate();
   const toggleShowLocationModal = () => {
     setShowLocationModal((prevState) => !prevState);
   };
-  // const toggleNewLocationModal = () => {
-  //   setNewLocationModal((prevState) => !prevState);
-  // };
 
-  const toggleDashboard = () => {
-    setShowDashboard((prevState) => !prevState);
-  };
   const [selectedCategories, updateSelectedCategories] = useState([]);
   const [selectedFilters, updateSelectedFilters] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -92,14 +91,7 @@ const BusinessProfile = () => {
     }
   }, [userData, navigate, userType]);
 
-  // const userLikedLocations = userData?.user?.likedLocations?.map((likedLocationName) =>
-  //   locations?.find((location) => location.locationName === likedLocationName)
-  // );
-
-  // const userId = sessionStorage.getItem("user_id");
-  // const userLocations = locations?.filter((location) => {
-  //   return location.locationAddedBy === userId;
-  // });
+  console.log(userData);
 
   return (
     <Container>
@@ -110,7 +102,7 @@ const BusinessProfile = () => {
         <div className="relative">
           {isLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
           <img
-            className="rounded-full"
+            className="rounded-full w-[150px] h-[150px]"
             src={userData?.profilePhoto || Avatar}
             alt="avatar"
           />
@@ -161,6 +153,9 @@ const BusinessProfile = () => {
         </div>
       </Dashboard>
       <Main>
+        <button className="absolute right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
+          <ChatIcon />
+        </button>
         <div className="">
           {/* <Profile onClick={toggleDashboard}>
             <AccountCircleIcon />
@@ -176,40 +171,25 @@ const BusinessProfile = () => {
               Settings{">"}
             </button>
           </div>
-          {/* Check the length of businessLocationImages array */}
-          {userData?.businessLocationImages &&
-            userData?.businessLocationImages?.length > 0 && (
-              <div className="md:grid md:grid-cols-3  gap-3 flex flex-wrap flex-auto h-auto">
-                {userData?.businessLocationImages?.length === 1 ? (
-                  // If there is only one image, render a single image
-                  <Image
-                    src={userData?.businessLocationImages[0]}
-                    alt="Location"
-                    class="col-span-2 object-contain w-[100%]"
-                  />
-                ) : (
-                  // If there are more than one images, render a grid of three images
-                  userData?.businessLocationImages
-                    .slice(0, 3)
-                    .map((image, index) => (
-                      <div
-                        className={`${
-                          index === 0
-                            ? "col-span-2 md:row-span-2"
-                            : "col-span-1 w-full"
-                        } object-cover rounded-lg`}
-                      >
-                        <Image
-                          key={index}
-                          src={image}
-                          alt={`Location ${index + 1}`}
-                        />
-                      </div>
-                    ))
-                )}
-              </div>
-            )}
-
+          <div>
+            <Swiper
+              className='!scale-100'
+              slidesPerView={1}
+              modules={[ Navigation ]}
+              spaceBetween={20}
+              loop={true}
+              navigation
+            >
+              {
+                userData?.businessLocationImages?.map((imag, i) => (
+                  <SwiperSlide key={i}>
+                    <img src={imag} className='h-[20rem] w-4/5 rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
+                  </SwiperSlide>
+                ))
+              }
+            </Swiper>
+          </div>
+                
           <div>
             {" "}
             <ReviewContainer
@@ -284,6 +264,9 @@ const BusinessProfile = () => {
         <BoxContainer>
           {showLocationModal && (
             <LocationModal onClick={toggleShowLocationModal} />
+          )}
+          {showSupportModal && (
+            <SupportModal onClick={() => setShowSupportModal((prev) => !prev)} />
           )}
           <NewLocation open={newLocationModal} setOpen={setNewLocationModal} />
         </BoxContainer>
