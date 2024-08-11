@@ -5,11 +5,7 @@ import styled from 'styled-components';
 import Avatar from '../../assets/user-avatar.png';
 import { AltButton, Button } from '../../components/UI/Buttons';
 import Loader from '../../components/UI/Loader';
-import {
-	ArrowCloud,
-	FiveStars,
-	FourStars,
-} from '../../components/UI/svgs/svgs';
+import { ArrowCloud } from '../../components/UI/svgs/svgs';
 import {
 	useAddLocationToLikedLocationsMutation,
 	useGetLocationByIdQuery,
@@ -20,7 +16,6 @@ import classes from './LocationDetails.module.css';
 
 import { Image, Input, notification } from 'antd';
 import Dropzone from 'react-dropzone';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 // import { useUserLoginMutation } from '../../redux/Api/authApi';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -50,7 +45,6 @@ const LocationDetails = () => {
 	const [values, setValues] = useState(initialValues);
 	const [rating, setRating] = useState(2);
 	const [location, setLocation] = useState({});
-	console.log(location);
 
 	const [
 		reviewLocation,
@@ -77,7 +71,6 @@ const LocationDetails = () => {
 
 	useEffect(() => {
 		if (data) {
-			console.log(data);
 			setLocation(data);
 		}
 		if (isError || reviewIsError) {
@@ -155,7 +148,9 @@ const LocationDetails = () => {
 
 	const reviewRatings = location?.reviews?.map(rev => rev?.reviewRating);
 	const avg = calculateAverageRating(reviewRatings);
-	console.log(avg);
+	// console.log({ myID: userData?.user._id, location });
+	const isMyLocation = userData?.user._id === location._id;
+	console.log(isMyLocation);
 
 	return (
 		<div className={classes.location}>
@@ -176,7 +171,7 @@ const LocationDetails = () => {
 								{
 									location?.businessLocationImages?.map((imag, i) => (
 										<SwiperSlide key={i}>
-											<img src={imag} className='h-[25rem] rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
+											<img src={imag} className='h-[25rem] rounded-lg border border-red-500 w-5/6' alt={`Poster ${i+1}`} />
 										</SwiperSlide>
 									))
 								}
@@ -193,27 +188,31 @@ const LocationDetails = () => {
 							</h5>
 						
 							<div className="d-flex mb-3">
-								{userData?.user?.likedLocations?.find(
-									(l) => l._id == location?._id
-								) ? (
-									<Button
-										color={unliking ? "#f14f4f" : "red"}
-										location={true}
-										onClick={handleUnlike}
-										disabled={unliking}
-									>
-										{unliking ? "Loading..." : "Unlike"}
-									</Button>
-								) : (
-									<Button
-										color={likeLocationLoading ? "rgba(0,159,87,0.5)" : "green"}
-										location={true}
-										onClick={handleAddClick}
-										disabled={likeLocationLoading}
-									>
-										{likeLocationLoading ? "Loading..." : "Like location"}
-									</Button>
-								)}
+								{
+									userType === 'user' && <>
+										{userData?.user?.likedLocations?.find(
+											(l) => l._id == location?._id
+										) ? (
+											<Button
+												color={unliking ? "#f14f4f" : "red"}
+												location={true}
+												onClick={handleUnlike}
+												disabled={unliking}
+											>
+												{unliking ? "Loading..." : "Unlike"}
+											</Button>
+										) : (
+											<Button
+												color={likeLocationLoading ? "rgba(0,159,87,0.5)" : "green"}
+												location={true}
+												onClick={handleAddClick}
+												disabled={likeLocationLoading}
+											>
+												{likeLocationLoading ? "Loading..." : "Like location"}
+											</Button>
+										)}
+									</>
+								}
 								<Button
 									onClick={() => navigate(`/location/map?address=${location?.businessAddress}&name=${location?.businessName}`)}
 									location={true}
@@ -226,10 +225,10 @@ const LocationDetails = () => {
 					</div>
 					<div
 						className={`${classes.reviewContainer} 
-           				${userType === 'user' ? `grid grid-cols-2` : `flex justify-center`} mt-5 px-4 py-3`}
+           				${userType === 'user' ? `grid grid-cols-12 gap-3` : `flex justify-center`} py-4`}
 					>
 						{userType === 'user' && (
-							<form className="gap-4" onSubmit={handleFormSubmit}>
+							<form className="col-span-5 md:col-span-6" onSubmit={handleFormSubmit}>
 								<div className="flex flex-col gap-3 bg-white py-2 px-4 rounded-xl border-brandGreen border-[1px]">
 									<Dropzone
 										acceptedFiles=".jpg,.jpeg,.png"
@@ -247,8 +246,8 @@ const LocationDetails = () => {
 												<section {...getRootProps()}>
 													<input {...getInputProps()} />
 													{values.pictures.length === 0 ? (
-														<div className='!flex-row !mb-0 !gap-4 !mt-2 scale-75'>
-															<i className=''>{ArrowCloud}</i>
+														<div className='!flex-row !mb-0 !gap-4 !mt-0'>
+															<i className='scale-90'>{ArrowCloud}</i>
 															<p>Drag and Drop Pictures here to Upload</p>
 														</div>
 													) : (
@@ -301,19 +300,20 @@ const LocationDetails = () => {
 						)}
 						<section
 							className={`${
-								userType !== 'user' ? `w-full` : `px-3 flex flex-col`
-							} overflow-y-hidden h-[26rem]`}
+								userType !== 'user' && ` md:col-span-6`
+							} overflow-y-hidden h-[27.5rem] md:h-[26rem] flex flex-col py-1`}
 						>
-							<div className="flex justify-content-between mb-3 items-center">
+							<div className="flex justify-content-between mb-2 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
 									<p className="text-black font-medium">Average Rating</p>{' '}
 									<Rating value={avg} disabled />
 								</div>
 							</div>
-							<Review className={`flex gap-4 flex-col overflow-y-scroll my-1`}>
+							<Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
 								{location && location?.reviews?.length > 0 ? (
 									location?.reviews?.map((review, i) => {
+										console.log(review);
 										return (
 											<ReviewCard key={i}>
 												<div className="flex items-center justify-between">
@@ -326,6 +326,7 @@ const LocationDetails = () => {
 														<p className="" style={{ color: '#009f57' }}>
 															{review?.reviewerFullname}
 														</p>
+														
 													</ReviewUser>
 													<Rating value={review.reviewRating} disabled />
 												</div>
@@ -382,9 +383,9 @@ const Container = styled.div`
 	background: #fff;
 	box-shadow: 4px 4px 32px 2px rgba(0, 0, 0, 0.08);
 	border-radius: 10px;
-	height: 20vh;
+	/* height: 20vh; */
 	padding: 15px;
-	margin-top: 5%;
+	margin-top: 3%;
 	p {
 		text-align: center;
 	}
@@ -401,7 +402,7 @@ const Container = styled.div`
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			margin-bottom: 5%;
+			margin-bottom: 3%;
 		}
 	}
 `;
