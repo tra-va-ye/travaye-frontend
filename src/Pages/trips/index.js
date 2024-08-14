@@ -1,5 +1,5 @@
+import { Rating } from "@mui/material";
 import { Link } from "react-router-dom";
-import { Rating } from "react-simple-star-rating";
 
 const index = () => {
   return (

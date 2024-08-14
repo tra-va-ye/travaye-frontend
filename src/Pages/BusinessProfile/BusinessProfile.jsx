@@ -1,6 +1,5 @@
 import { Image, notification, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { FiveStars, FourStars } from "../../components/UI/svgs/svgs";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -16,7 +15,9 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css/bundle";
 import { Navigation } from "swiper";
 import ChatIcon from "../../assets/Icons/ChatIcon";
-import SupportModal from "../../components/UI/Modal/SupportModal";
+import { Rating } from "@mui/material";
+import { calculateAverageRating } from "../LocationDetails";
+import BusinessSupportModal from "../../components/UI/Modal/BusinessSupportModal";
 
 const BusinessProfile = () => {
   const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
@@ -93,6 +94,9 @@ const BusinessProfile = () => {
 
   console.log(userData);
 
+  const reviewRatings = userData?.reviews?.map(rev => rev?.reviewRating);
+	const avg = calculateAverageRating(reviewRatings);
+
   return (
     <Container>
       <TogleButton showDashboard={showDashboard}>
@@ -124,7 +128,7 @@ const BusinessProfile = () => {
         <div>
           <h4 className="mt-2 text-2xl font-bold text-[#9d9d9d] px-3">{userData?.businessName}</h4>
           <h6 className="mt-2 text-[#E9A309] text-lg font-medium">{userData?.businessEmail}</h6>
-          <h6 className="mt-1 text-[#9d9d9d] font-semibold">{userData?.businessCategory ? `${userData?.businessCategory
+          <h6 className="mt-1 text-[#9d9d9d] font-semibold">{userData?.businessCategory ? `${userData?.businessCategory.replace('%26', '&')
             ?.split("-")
             ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ")}` : "Parks and Recreation"}</h6>
@@ -153,13 +157,10 @@ const BusinessProfile = () => {
         </div>
       </Dashboard>
       <Main>
-        <button className="absolute right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
+        <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
         </button>
         <div className="">
-          {/* <Profile onClick={toggleDashboard}>
-            <AccountCircleIcon />
-          </Profile> */}
           <div className="flex items-center justify-between">
             <H3 color="#009f57" fontWeight="700" className="mb-1 text-xl md:text-3xl">
               Your Profile
@@ -171,102 +172,99 @@ const BusinessProfile = () => {
               Settings{">"}
             </button>
           </div>
-          <div>
-            <Swiper
-              className='!scale-100'
-              slidesPerView={1}
-              modules={[ Navigation ]}
-              spaceBetween={20}
-              loop={true}
-              navigation
-            >
-              {
-                userData?.businessLocationImages?.map((imag, i) => (
-                  <SwiperSlide key={i}>
-                    <img src={imag} className='h-[20rem] w-4/5 rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
-                  </SwiperSlide>
-                ))
-              }
-            </Swiper>
-          </div>
+          <Swiper
+            className='!scale-100 w-4/5 mx-auto'
+            slidesPerView={1}
+            modules={[ Navigation ]}
+            spaceBetween={20}
+            loop={true}
+            navigation
+          >
+            {
+              userData?.businessLocationImages?.map((imag, i) => (
+                <SwiperSlide key={i}>
+                  <img src={imag} className='h-[20rem] w-full rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
+                </SwiperSlide>
+              ))
+            }
+          </Swiper>
                 
-          <div>
+          <section className="grid grid-cols-7 gap-4 mt-6">
             {" "}
-            <ReviewContainer
-              className={`${
-                userType !== "user" ? `w-full` : `px-3`
-              } col-md-6  my-4 `}
-            >
-              <div className="d-flex justify-content-between mb-4 items-center mt-3">
-                <ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
-                <div className="flex gap-2 md:gap-4 flex-col md:flex-row">
-                  <p className="text-black font-medium">Average Rating</p>{" "}
-                  <i>{FourStars}</i>
-                </div>
-              </div>
-              <Review className={`flex flex-wrap gap-4 flex-1`}>
-                {userData?.reviews?.length > 0 ? (
-                  userData?.reviews?.map((review, i) => {
-                    return (
-                      <ReviewCard className="flex-[1_0_30%]" key={i}>
-                        <div>
-                          <div className="flex items-center justify-between mb-3">
+            <section className="col-span-4">
+              <div className="flex justify-content-between mb-2 items-center">
+								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
+								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
+									<p className="text-black font-medium">Average Rating</p>{' '}
+									<Rating value={avg} readOnly precision={0.5} />
+								</div>
+							</div>
+                <Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
+                  {userData && userData?.reviews?.length > 0 ? (
+                    userData?.reviews?.map((review, i) => {
+                      return (
+                        <ReviewCard key={i}>
+                          <div className="flex items-center justify-between">
                             <ReviewUser>
                               <img
                                 src={Avatar}
                                 className="img-fluid "
                                 alt="pfp"
                               />
-                              <p className="" style={{ color: "#009f57" }}>
+                              <p className="" style={{ color: '#009f57', fontSize: 20 }}>
                                 {review?.reviewerFullname}
                               </p>
+                              
                             </ReviewUser>
-                            <i>{FiveStars}</i>
+                            <Rating value={review.reviewRating} readOnly />
                           </div>
 
-                          <p>{review?.reviewDescription}</p>
-                        </div>
-                        <div>
-                          <div className="flex flex-wrap gap rounded-lg overflow-hidden mt-3 flex-container">
-                            <Image.PreviewGroup
-                              preview={{
-                                onChange: (current, prev) =>
-                                  console.log(
-                                    `current index: ${current}, prev index: ${prev}`
-                                  ),
-                              }}
-                            >
-                              {review?.reviewImagePaths?.map((image, key) => {
-                                return (
-                                  <div className={`flex-[1_0_30%] `}>
+                          <p className='py-2'>{review?.reviewDescription}</p>
+                          <div>
+                            <div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
+                              <Image.PreviewGroup
+                                preview={{
+                                  onChange: (current, prev) =>
+                                    console.log(
+                                      `current index: ${current}, prev index: ${prev}`
+                                    ),
+                                }}
+                              >
+                                {review?.reviewImagePaths?.map((image, key) => {
+                                  return (
                                     <Image
+                                      key={key}
                                       src={image}
-                                      width={"100%"}
-                                      height={150}
-                                      className=" object-cover"
+                                      height={100}
+                                      className=" object-cover  rounded-lg"
                                     />
-                                  </div>
-                                );
-                              })}
-                            </Image.PreviewGroup>
+                                  );
+                                })}
+                              </Image.PreviewGroup>
+                            </div>
                           </div>
-                        </div>
-                      </ReviewCard>
-                    );
-                  })
-                ) : (
-                  <p>No reviews yet</p>
-                )}
-              </Review>
-            </ReviewContainer>
-          </div>
+                        </ReviewCard>
+                      );
+                    })
+                  ) : (
+                    <p>No reviews yet</p>
+                  )}
+                </Review>
+
+            </section>
+            <div className="col-span-3">
+              <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
+              <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
+              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
+            </div>
+          </section>
         </div>
         <BoxContainer>
           {showLocationModal && (
             <LocationModal onClick={toggleShowLocationModal} />
           )}
           {showSupportModal && (
-            <SupportModal onClick={() => setShowSupportModal((prev) => !prev)} />
+            <BusinessSupportModal onClick={() => setShowSupportModal((prev) => !prev)} />
           )}
           <NewLocation open={newLocationModal} setOpen={setNewLocationModal} />
         </BoxContainer>
@@ -277,18 +275,6 @@ const BusinessProfile = () => {
 
 export default BusinessProfile;
 
-const Profile = styled.i`
-  margin-right: 10px;
-  margin-left: 10px;
-
-  svg {
-    transform: scale(${(props) => !props.close && "1.5"});
-    cursor: pointer;
-  }
-  @media (min-width: 1151px) {
-    display: none;
-  }
-`;
 const BoxContainer = styled.div`
   @media (max-width: 532px) {
     display: grid;
@@ -300,7 +286,7 @@ const Container = styled.div`
   display: flex;
   background-color: #c4c5c72d;
 
-  height: calc(100vh - 95px);
+  /* height: calc(100vh - 95px); */
   overflow: auto;
   ::-webkit-scrollbar {
     width: 12px; /* Set the width of the scrollbar */
@@ -328,7 +314,6 @@ export const Dashboard = styled.div`
   align-items: center;
   text-align: center;
   width: 24%;
-  height: calc(100vh - 95px);
   position: relative;
 
   overflow-y: auto;
@@ -337,7 +322,7 @@ export const Dashboard = styled.div`
   border-top: 0;
   border-right: 2px solid transparent;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
-  padding-block: 50px;
+  padding-block: 30px;
   z-index: 5;
 
   ::-webkit-scrollbar {
@@ -383,7 +368,7 @@ export const Dashboard = styled.div`
 	}
 
 	@media (max-width: 720px) {
-		width: 42%;
+		width: 45%;
 	}
 
 	@media (max-width: 560px) {
@@ -402,6 +387,7 @@ export const Main = styled.div`
   margin-left: 0;
   padding: 20px 40px;
   overflow: auto;
+
   ::-webkit-scrollbar {
     width: 12px;
   }
@@ -418,53 +404,57 @@ export const Main = styled.div`
   @media (max-width: 1150px) {
     margin-left: 0;
   }
-
   
   @media (max-width: 576px) {
     padding: 16px;
   }
 `;
-const ReviewContainer = styled.div``;
+
 const ReviewH4 = styled.h4`
-  color: #009f57;
+	color: #009f57;
 `;
 const Review = styled.div`
-  max-height: 50vh;
-  display: flex;
-  overflow-y: auto;
-  padding-right: 15px;
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
+	display: flex;
+	overflow-y: auto;
+	padding-inline: 8px;
 
-  ::-webkit-scrollbar-thumb {
-    background-color: #9d9d9d;
-    border-radius: 8px;
-  }
+	::-webkit-scrollbar {
+		width: 12px;
+	}
 
-  ::-webkit-scrollbar-track {
-    background-color: #d9d9d9;
-  }
+	::-webkit-scrollbar-thumb {
+		background-color: #9d9d9d;
+		border-radius: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background-color: #d9d9d9;
+	}
 `;
-const ReviewCard = styled.div`
-  background: #ffffff;
-  border: 2px solid rgba(0, 159, 87, 0.5);
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 16px;
-  p {
-    color: #9d9d9d;
-    font-weight: 600;
-    font-size: 15px;
-    line-height: 24px;
-  }
+
+const ReviewCard = styled.article`
+	background: #ffffff;
+	border: 2px solid rgba(0, 159, 87, 0.5);
+	border-radius: 10px;
+	padding: 16px;
+	flex: 1;
+	position: relative;
+
+	p {
+		color: #9d9d9d;
+		font-weight: 600;
+		font-size: 15px;
+		line-height: 24px;
+	}
 `;
+
 const ReviewUser = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  img {
-    width: 40px;
-    height: 40px;
-  }
+	display: flex;
+	gap: 1rem;
+	align-items: center;
+
+	img {
+		width: 40px;
+		height: 40px;
+	}
 `;

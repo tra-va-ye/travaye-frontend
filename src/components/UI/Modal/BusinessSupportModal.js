@@ -5,12 +5,11 @@ import { Button } from '../Buttons'
 import TextArea from 'antd/es/input/TextArea';
 
 const supportObject = {
-    newLocation: '',
     newFeature: '',
     complaint: ''
 }
 
-const SupportModal = ({ onClick, username }) => {
+const BusinessSupportModal = ({ onClick, username }) => {
     const [supportForm, setSupportForm] = useState(supportObject);
 
     const handleSubmit = (e) => {
@@ -32,10 +31,10 @@ const SupportModal = ({ onClick, username }) => {
                 Hello <span className='italic'>{username}!</span>
             </p>
             <p className='text-justify text-black font-normal mb-4 md:mb-8 '>
-                Welcome to the Travaye admin support system. Please check the questions below. One scenario should cater for your need.
+                Welcome to the Travaye admin support system. Please check the questions below. Help us serve you better.
             </p>
             <SupportForm onSubmit={handleSubmit}>
-                <div>
+                {/* <div>
                     <label htmlFor="newLocation">
                         Suggest a New Location for Travaye
                     </label>
@@ -45,10 +44,10 @@ const SupportModal = ({ onClick, username }) => {
                         value={supportForm.newLocation}
                         onChange={(e) => handleChange("newLocation", e.target.value)}
                     />
-                </div>
+                </div> */}
                 <div>
                     <label htmlFor="newFeature">
-                        Suggest an addition to existing features
+                        Tell us one way you think travaye.ng might be able to help your business (e.g new features)
                     </label>
                     <TextArea
                         placeholder="Enter suggestion"
@@ -118,4 +117,4 @@ const SupportForm = styled.form`
     }
 `
 
-export default SupportModal
+export default BusinessSupportModal
