@@ -1,7 +1,7 @@
-import { Image, notification, Spin } from "antd";
+import { notification, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Avatar from "../../assets/user-avatar.png";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
@@ -21,7 +21,6 @@ const UserSettings = () => {
   const [selectedCategories, updateSelectedCategories] = useState([]);
   const [selectedFilters, updateSelectedFilters] = useState([]);
   const [locations, setLocations] = useState([]);
-  const location = useLocation();
   const { data, isError, error, isSuccess } = useGetLocationsQuery({
     page: 1,
     count: 10,
@@ -31,13 +30,6 @@ const UserSettings = () => {
     locationCity: selectedFilters.join(","),
   });
 
-  // const {
-  //   data: userData,
-  //   isSuccess: userSuccess,
-  //   refetch: refetchUserData,
-  // } = useGetMeQuery({
-  //   userType: userType,
-  // });
   const userData = useSelector((store) => store.auth.user).payload;
   const [userInfo, setUserInfo] = useState({});
 
@@ -82,7 +74,7 @@ const UserSettings = () => {
 
   return (
     <Container>
-        <TogleButton showDashboard={showDashboard}>
+      <TogleButton showDashboard={showDashboard}>
         <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
       </TogleButton>
       <DashboardContainer showDashboard={showDashboard}>
@@ -192,7 +184,6 @@ const UserSettings = () => {
               disabled
             />
           </div>
-
           </div>
         </form>
 

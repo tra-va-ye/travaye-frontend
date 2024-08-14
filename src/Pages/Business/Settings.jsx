@@ -285,7 +285,7 @@ const Container = styled.div`
   display: flex;
   background-color: #c4c5c72d;
 
-  height: calc(100vh - 95px);
+  /* height: calc(100vh - 95px); */
   overflow: auto;
 
   ::-webkit-scrollbar {

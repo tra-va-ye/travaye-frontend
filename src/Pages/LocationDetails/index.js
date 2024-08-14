@@ -22,9 +22,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css/bundle";
 import { Navigation } from 'swiper';
 import { useGetMeQuery } from '../../redux/Api/authApi';
-const { TextArea } = Input;
+import { FaTrashAlt } from "react-icons/fa";
 
-function calculateAverageRating (reviewArray) {
+const { TextArea } = Input;
+export function calculateAverageRating (reviewArray) {
 	if (reviewArray?.length === 0) return 0; // Handle empty reviewArrayay
 	const sum = reviewArray?.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 	return sum / reviewArray?.length;
@@ -107,7 +108,14 @@ const LocationDetails = () => {
 		values.pictures.forEach((file) => {
 			formData.append('pictures', file);
 		});
-		await reviewLocation(formData);
+		if (values.reviewDescription && values.reviewRating) await reviewLocation(formData);
+		else {
+			notification.error({
+				message: "Please complete your review",
+				duration: 3,
+				placement: 'bottomRight',
+			});
+		}
 	};
 
 	const handleAddClick = () => {
@@ -150,7 +158,6 @@ const LocationDetails = () => {
 	const avg = calculateAverageRating(reviewRatings);
 	// console.log({ myID: userData?.user._id, location });
 	const isMyLocation = userData?.user._id === location._id;
-	console.log(isMyLocation);
 
 	return (
 		<div className={classes.location}>
@@ -224,8 +231,7 @@ const LocationDetails = () => {
 
 					</div>
 					<div
-						className={`${classes.reviewContainer} 
-           				${userType === 'user' ? `grid grid-cols-12 gap-3` : `flex justify-center`} py-4`}
+						className={`${classes.reviewContainer} grid grid-cols-12 gap-3 py-4`}
 					>
 						{userType === 'user' && (
 							<form className="col-span-5 md:col-span-6" onSubmit={handleFormSubmit}>
@@ -263,19 +269,17 @@ const LocationDetails = () => {
 											</Container>
 										)}
 									</Dropzone>
-									<div className="flex justify-between ">
+									<div className="flex justify-between items-center">
 										<Typography className="text-black font-black">
 											Experience Rating
 										</Typography>
 										<Rating
-											name="simple-controlled"
+											size="large"
+											precision={0.5}
 											value={values.locationRating}
 											onChange={(event, newValue) => {
 												setRating(newValue);
-												setValues((prev) => ({
-													...prev,
-													reviewRating: newValue,
-												}));
+												setValues((prev) => ({ ...prev, reviewRating: newValue }));
 											}}
 										/>
 									</div>
@@ -300,20 +304,19 @@ const LocationDetails = () => {
 						)}
 						<section
 							className={`${
-								userType !== 'user' && ` md:col-span-6`
+								userType !== 'user' ? 'col-span-10' : 'col-span-7 md:col-span-6'
 							} overflow-y-hidden h-[27.5rem] md:h-[26rem] flex flex-col py-1`}
 						>
 							<div className="flex justify-content-between mb-2 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
 									<p className="text-black font-medium">Average Rating</p>{' '}
-									<Rating value={avg} disabled />
+									<Rating value={avg} readOnly precision={0.5} />
 								</div>
 							</div>
 							<Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
 								{location && location?.reviews?.length > 0 ? (
 									location?.reviews?.map((review, i) => {
-										console.log(review);
 										return (
 											<ReviewCard key={i}>
 												<div className="flex items-center justify-between">
@@ -323,12 +326,18 @@ const LocationDetails = () => {
 															className="img-fluid "
 															alt="pfp"
 														/>
-														<p className="" style={{ color: '#009f57' }}>
+														<p className="" style={{ color: '#009f57', fontSize: 20 }}>
 															{review?.reviewerFullname}
 														</p>
 														
 													</ReviewUser>
-													<Rating value={review.reviewRating} disabled />
+													<div className="flex gap-5 items-center">
+														<Rating value={review.reviewRating} readOnly />
+														{
+															userData.user._id === review?.reviewerID._id
+															&& <FaTrashAlt size={28} className='cursor-pointer' onClick={() => alert('Deleting')} />
+														}
+													</div>
 												</div>
 
 												<p className='py-2'>{review?.reviewDescription}</p>
@@ -376,6 +385,7 @@ const FlexBetween = styled(Box)({
 	justifyContent: 'space-between',
 	alignItems: 'center'
 });
+
 const Container = styled.div`
 	display: flex;
 	justify-content: center;
@@ -411,10 +421,10 @@ const ReviewH4 = styled.h4`
 	color: #009f57;
 `;
 const Review = styled.div`
-	/* max-height: 50vh; */
 	display: flex;
 	overflow-y: auto;
-	padding-right: 15px;
+	padding-inline: 8px;
+
 	::-webkit-scrollbar {
 		width: 12px;
 	}
@@ -435,7 +445,7 @@ const ReviewCard = styled.article`
 	border-radius: 10px;
 	padding: 16px;
 	flex: 1;
-	/* height: 180px; */
+	position: relative;
 
 	p {
 		color: #9d9d9d;

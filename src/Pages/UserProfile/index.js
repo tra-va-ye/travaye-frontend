@@ -1,5 +1,3 @@
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -16,7 +14,9 @@ import NewLocation from "../../components/UI/Modal/NewLocation";
 import ChatIcon from "../../assets/Icons/ChatIcon";
 import { Dashboard, Main } from "../BusinessProfile/BusinessProfile";
 import ScanIcon from "../../assets/Icons/ScanIcon";
-import SupportModal from "../../components/UI/Modal/SupportModal";
+import SupportModal from "../../components/UI/Modal/UserSupportModal";
+import { TogleButton } from "../../components/Layout/BusinessSidebar";
+import { BsBoxArrowInLeft } from "react-icons/bs";
 
 const UserProfile = () => {
   const [updateProfile, { isLoading: updatingPhoto }] = useUpdateProfilePhotoMutation();
@@ -38,9 +38,6 @@ const UserProfile = () => {
   //   setShowPointsModal((prevState) => !prevState);
   // };
   const [firstVisit, setFirstVisit] = useState(true);
-  const toggleDashboard = () => {
-    setShowDashboard((prevState) => !prevState);
-  };
   const [locations, setLocations] = useState([]);
 
   // Categories and locationCity are queries for the backend and they are in array formats
@@ -105,18 +102,17 @@ const UserProfile = () => {
     }
   }, [location.pathname, firstVisit, refetchLocations]);
   const userLikedLocations = userInfo?.likedLocations;
-  console.log(userLikedLocations);
 
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
+  console.log(filteredUserLikedLocations);
 
   return (
     <Container>
+      <TogleButton showDashboard={showDashboard}>
+        <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
+      </TogleButton>
       <Dashboard showDashboard={showDashboard}>
-        <Profile close={true}>
-          <CloseIcon onClick={toggleDashboard} />
-        </Profile>
-
         <div className="relative">
           {updatingPhoto && (
             <Spin className="absolute bottom-[50%] left-[50%]" />
@@ -166,16 +162,13 @@ const UserProfile = () => {
         </div>
       </Dashboard>
       <Main>
-        <button className="absolute right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
+        <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
         </button>
-        <button className="absolute right-9 bottom-24 p-2.5 bg-[#FDEECE] rounded-full shadow-md">
+        <button className="fixed right-9 bottom-24 p-2.5 bg-[#FDEECE] rounded-full shadow-md">
           <ScanIcon />
         </button>
         <div className="d-flex justify-content-between align-items-center mb-5 mt-3">
-          <Profile onClick={toggleDashboard}>
-            <AccountCircleIcon />
-          </Profile>
           <div className="flex justify-start items-center gap-[0.3rem]">
             <Link to="/create-event">
               <Button color="green">

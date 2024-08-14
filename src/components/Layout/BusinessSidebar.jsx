@@ -126,8 +126,7 @@ export const DashboardContainer = styled.aside`
 	flex-direction: column;
 	align-items: center;
 	text-align: center;
-	width: 20%;
-	height: calc(100vh - 95px);
+	width: 24%;
 	position: relative;
 
 	overflow-y: auto;
@@ -136,7 +135,7 @@ export const DashboardContainer = styled.aside`
 	border-top: 0;
 	border-right: 2px solid transparent;
 	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);
-	padding-block: 50px;
+	padding-block: 30px;
 	z-index: 5;
 	transition: all ease-in-out 500ms !important;
 
@@ -171,7 +170,7 @@ export const DashboardContainer = styled.aside`
 	}
 
 	@media (max-width: 720px) {
-		width: 42%;
+		width: 45%;
 	}
 
 	@media (max-width: 560px) {
