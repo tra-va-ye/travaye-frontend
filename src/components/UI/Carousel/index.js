@@ -26,19 +26,17 @@ const Carousel = () => {
         grabCursor={true}
         loop={true}
         speed={700}
+        slidesPerView={1}
+        slidesPerGroup={1}
         breakpoints={{
-          1000: {
+          860: {
             slidesPerGroup: 1,
             slidesPerView: 3,
           },
-          800: {
+          500: {
             slidesPerView: 2,
             slidesPerGroup: 1,
-          },
-          0: {
-            slidesPerGroup: 1,
-            slidesPerView: 1,
-          },
+          }
         }}
         keyboard={{
           enabled: true,
