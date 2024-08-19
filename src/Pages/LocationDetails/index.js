@@ -350,6 +350,7 @@ const LocationDetails = () => {
 																		`current index: ${current}, prev index: ${prev}`
 																	),
 															}}
+															
 														>
 															{review?.reviewImagePaths?.map((image, key) => {
 																return (
@@ -357,7 +358,7 @@ const LocationDetails = () => {
 																		key={key}
 																		src={image}
 																		height={100}
-																		className=" object-cover  rounded-lg"
+																		className=" object-cover rounded-lg"
 																	/>
 																);
 															})}

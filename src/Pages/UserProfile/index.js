@@ -23,7 +23,6 @@ const UserProfile = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [newLocationModal, setNewLocationModal] = useState(false);
-  // const [showPointsModal, setShowPointsModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const userType = useSelector((state) => state.auth.userType);
 
@@ -34,9 +33,7 @@ const UserProfile = () => {
     setNewLocationModal((prevState) => !prevState);
   };
   const navigate = useNavigate();
-  // const togglePointsModal = () => {
-  //   setShowPointsModal((prevState) => !prevState);
-  // };
+
   const [firstVisit, setFirstVisit] = useState(true);
   const [locations, setLocations] = useState([]);
 
@@ -63,7 +60,7 @@ const UserProfile = () => {
   const {
     data: userData,
     isSuccess: userSuccess,
-    refetch: refetchUserData,
+    refetch,
     isLoading: isFetching,
   } = useGetMeQuery({
     userType: userType,
@@ -89,8 +86,6 @@ const UserProfile = () => {
     }
   }, [userData?.user]);
 
-  // console.log(userData?.user);
-
   useEffect(() => {
     // Check if it's the first visit
     if (firstVisit) {
@@ -105,7 +100,7 @@ const UserProfile = () => {
 
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
-  console.log(filteredUserLikedLocations);
+  // console.log(filteredUserLikedLocations);
 
   return (
     <Container>
@@ -227,18 +222,6 @@ const UserProfile = () => {
 
 export default UserProfile;
 
-const Profile = styled.i`
-  margin-right: 10px;
-  margin-left: 10px;
-
-  svg {
-    transform: scale(${(props) => !props.close && "1.5"});
-    cursor: pointer;
-  }
-  @media (min-width: 1151px) {
-    display: none;
-  }
-`;
 const BoxContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
