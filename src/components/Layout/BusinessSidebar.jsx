@@ -99,7 +99,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 						About
 						<EditIcon className="!block text-[#D9D9D9]" width={16} />
 					</h6>
-					<p className="mt-1.5 px-2">
+					<p className="mt-1.5 px-4">
 						{businessData?.about || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium voluptate temporibus nam incidunt"}
 					</p>
 				</div>

@@ -82,6 +82,14 @@ export const LocationApi = createApi({
       }),
       invalidatesTags: ["Location"],
     }),
+    deleteLocationReview: builder.mutation({
+      query: (body) => ({
+        url: "locations/review",
+        method: "DELETE",
+        body,
+      }),
+      invalidatesTags: ["Location"],
+    }),
     getStates: builder.query({
       query: () => ({
         url: "states",
@@ -114,6 +122,7 @@ export const {
   useUnlikeLocationMutation,
   useGetPlanATripQuery,
   useReviewLocationMutation,
+  useDeleteLocationReviewMutation,
   useGetStatesQuery,
   useGetBudgetsQuery,
 } = LocationApi;

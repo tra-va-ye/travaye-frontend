@@ -138,20 +138,20 @@ const UserProfile = () => {
           <p className="mt-0">{userInfo?.occupation || "No Occupation Provided"}</p>
         </div>
         <div>
-          <div>
-            <h5 className="mb-1">About</h5>
-            <h6>{userInfo?.about || "No User bio"}</h6>
+          <div className="px-3">
+            <h5 className="mb-1 text-xl">About</h5>
+            <h6>{userInfo?.aboutUser || "No User bio"}</h6>
           </div>
           <div className="mt-4">
-            <h5>Total Outings</h5>
+            <h5 className="text-xl">Total Outings</h5>
             <h6>27 Outings</h6>
           </div>
           <div className="mt-4">
-            <h5>{userInfo?.fullName ? "Total Posts" : "User Visits"}</h5>
+            <h5 className="text-xl">{userInfo?.fullName ? "Total Posts" : "User Visits"}</h5>
             <h6>{userInfo?.fullName ? "6 Posts" : "null"}</h6>
           </div>
           <div className="mt-4">
-            <h5>Average Review</h5>
+            <h5 className="text-xl">Average Review</h5>
             <h6>4.5 stars</h6>
           </div>
         </div>
@@ -164,7 +164,7 @@ const UserProfile = () => {
           <ScanIcon />
         </button>
         <div className="d-flex justify-content-between align-items-center mb-5 mt-3">
-          <div className="flex justify-start items-center gap-[0.3rem]">
+          <div className="flex justify-start items-center gap-2 flex-wrap">
             <Link to="/create-event">
               <Button color="green">
                 Create an Event

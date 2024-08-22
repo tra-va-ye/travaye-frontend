@@ -354,7 +354,7 @@ export const Dashboard = styled.div`
 
   p {
     color: #9d9d9d;
-    padding-inline: 30px;
+    padding-inline: 16px;
     margin-top: 6px;
   }
 
