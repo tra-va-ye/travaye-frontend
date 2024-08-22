@@ -8,6 +8,7 @@ import Loader from '../../components/UI/Loader';
 import { ArrowCloud } from '../../components/UI/svgs/svgs';
 import {
 	useAddLocationToLikedLocationsMutation,
+	useDeleteLocationReviewMutation,
 	useGetLocationByIdQuery,
 	useReviewLocationMutation,
 	useUnlikeLocationMutation,
@@ -41,7 +42,6 @@ const LocationDetails = () => {
 		reviewerID: sessionStorage.getItem('user_id'),
 		locationID: id,
 	};
-	// locationID, reviewerID, reviewRating, reviewDescription
 
 	const [values, setValues] = useState(initialValues);
 	const [rating, setRating] = useState(2);
@@ -56,6 +56,12 @@ const LocationDetails = () => {
 			error: reviewError,
 		},
 	] = useReviewLocationMutation();
+
+	const [deleteLocationReview, {
+		isLoading: deleteLoading,
+		// isError: deleteError,
+		error: deleteReviewError,
+	},] = useDeleteLocationReviewMutation();
 	
 	const [addLocationToLikedLocations, { isLoading: likeLocationLoading }] = useAddLocationToLikedLocationsMutation();
 	const [unlike, { isLoading: unliking }] = useUnlikeLocationMutation();
@@ -154,10 +160,17 @@ const LocationDetails = () => {
 			});
 	};
 
+	const handleDeleteReview = async (reviewID) => {
+		deleteLocationReview({ reviewID })
+		.then((res) => {
+			console.log(res);
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
+
 	const reviewRatings = location?.reviews?.map(rev => rev?.reviewRating);
 	const avg = calculateAverageRating(reviewRatings);
-	// console.log({ myID: userData?.user._id, location });
-	const isMyLocation = userData?.user._id === location._id;
 
 	return (
 		<div className={classes.location}>
@@ -198,7 +211,7 @@ const LocationDetails = () => {
 								{
 									userType === 'user' && <>
 										{userData?.user?.likedLocations?.find(
-											(l) => l._id == location?._id
+											(l) => l._id === location?._id
 										) ? (
 											<Button
 												color={unliking ? "#f14f4f" : "red"}
@@ -322,20 +335,19 @@ const LocationDetails = () => {
 												<div className="flex items-center justify-between">
 													<ReviewUser>
 														<img
-															src={Avatar}
-															className="img-fluid "
+															src={review.reviewerID.profilePhoto}
+															className="img-fluid rounded-full"
 															alt="pfp"
 														/>
 														<p className="" style={{ color: '#009f57', fontSize: 20 }}>
 															{review?.reviewerFullname}
 														</p>
-														
 													</ReviewUser>
 													<div className="flex gap-5 items-center">
 														<Rating value={review.reviewRating} readOnly />
 														{
 															userData.user._id === review?.reviewerID._id
-															&& <FaTrashAlt size={28} className='cursor-pointer' onClick={() => alert('Deleting')} />
+															&& <FaTrashAlt size={28} className='cursor-pointer' onClick={() => handleDeleteReview(review?._id)} />
 														}
 													</div>
 												</div>
@@ -350,6 +362,7 @@ const LocationDetails = () => {
 																		`current index: ${current}, prev index: ${prev}`
 																	),
 															}}
+															
 														>
 															{review?.reviewImagePaths?.map((image, key) => {
 																return (
@@ -357,7 +370,7 @@ const LocationDetails = () => {
 																		key={key}
 																		src={image}
 																		height={100}
-																		className=" object-cover  rounded-lg"
+																		className=" object-cover rounded-lg"
 																	/>
 																);
 															})}

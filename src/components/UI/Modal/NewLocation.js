@@ -138,9 +138,9 @@ const NewLocation = ({ open, setOpen }) => {
             <Typography component="legend">Experience rating</Typography>
             <Rating
               name="simple-controlled"
+              precision={0.5}
               value={values.locationRating}
               onChange={(event, newValue) => {
-                console.log(newValue);
                 setRating(newValue);
                 setValues((prev) => ({ ...prev, locationRating: newValue }));
               }}

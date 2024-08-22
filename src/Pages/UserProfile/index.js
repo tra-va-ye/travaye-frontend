@@ -23,7 +23,6 @@ const UserProfile = () => {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [newLocationModal, setNewLocationModal] = useState(false);
-  // const [showPointsModal, setShowPointsModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const userType = useSelector((state) => state.auth.userType);
 
@@ -34,9 +33,7 @@ const UserProfile = () => {
     setNewLocationModal((prevState) => !prevState);
   };
   const navigate = useNavigate();
-  // const togglePointsModal = () => {
-  //   setShowPointsModal((prevState) => !prevState);
-  // };
+
   const [firstVisit, setFirstVisit] = useState(true);
   const [locations, setLocations] = useState([]);
 
@@ -63,7 +60,7 @@ const UserProfile = () => {
   const {
     data: userData,
     isSuccess: userSuccess,
-    refetch: refetchUserData,
+    refetch,
     isLoading: isFetching,
   } = useGetMeQuery({
     userType: userType,
@@ -89,8 +86,6 @@ const UserProfile = () => {
     }
   }, [userData?.user]);
 
-  // console.log(userData?.user);
-
   useEffect(() => {
     // Check if it's the first visit
     if (firstVisit) {
@@ -105,7 +100,7 @@ const UserProfile = () => {
 
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
-  console.log(filteredUserLikedLocations);
+  // console.log(filteredUserLikedLocations);
 
   return (
     <Container>
@@ -143,20 +138,20 @@ const UserProfile = () => {
           <p className="mt-0">{userInfo?.occupation || "No Occupation Provided"}</p>
         </div>
         <div>
-          <div>
-            <h5 className="mb-1">About</h5>
-            <h6>{userInfo?.about || "No User bio"}</h6>
+          <div className="px-3">
+            <h5 className="mb-1 text-xl">About</h5>
+            <h6>{userInfo?.aboutUser || "No User bio"}</h6>
           </div>
           <div className="mt-4">
-            <h5>Total Outings</h5>
+            <h5 className="text-xl">Total Outings</h5>
             <h6>27 Outings</h6>
           </div>
           <div className="mt-4">
-            <h5>{userInfo?.fullName ? "Total Posts" : "User Visits"}</h5>
+            <h5 className="text-xl">{userInfo?.fullName ? "Total Posts" : "User Visits"}</h5>
             <h6>{userInfo?.fullName ? "6 Posts" : "null"}</h6>
           </div>
           <div className="mt-4">
-            <h5>Average Review</h5>
+            <h5 className="text-xl">Average Review</h5>
             <h6>4.5 stars</h6>
           </div>
         </div>
@@ -169,7 +164,7 @@ const UserProfile = () => {
           <ScanIcon />
         </button>
         <div className="d-flex justify-content-between align-items-center mb-5 mt-3">
-          <div className="flex justify-start items-center gap-[0.3rem]">
+          <div className="flex justify-start items-center gap-2 flex-wrap">
             <Link to="/create-event">
               <Button color="green">
                 Create an Event
@@ -227,18 +222,6 @@ const UserProfile = () => {
 
 export default UserProfile;
 
-const Profile = styled.i`
-  margin-right: 10px;
-  margin-left: 10px;
-
-  svg {
-    transform: scale(${(props) => !props.close && "1.5"});
-    cursor: pointer;
-  }
-  @media (min-width: 1151px) {
-    display: none;
-  }
-`;
 const BoxContainer = styled.div`
   display: flex;
   flex-wrap: wrap;

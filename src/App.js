@@ -11,6 +11,15 @@ import CreateEvent from "./Pages/CreateEvent";
 import "./index.css";
 import { useSelector } from "react-redux";
 
+
+const AdminPage = lazy(() => {
+  return import("./Pages/Admin");
+});
+
+const BusinessDetails = lazy(() => {
+  return import("./Pages/Admin/BusinessDetails");
+});
+
 const AddedLocations = lazy(() => {
   return import("./Pages/AddedLocations");
 });
@@ -85,6 +94,10 @@ function App() {
       <section className="iconBg">
         <Suspense fallback={<Loader />}>
           <Routes>
+            {/* {userType === "admin" && ( */}
+                <Route path="/admin/businesses" element={<AdminPage />} />
+                <Route path="/admin/businesses/:id" element={<BusinessDetails />} />
+            {/* )} */}
             <Route path="/" element={<Home />} />
             {<Route path="/login" element={<Login />} />}
             {<Route path="/signup" element={<SignUp />} />}
@@ -99,14 +112,12 @@ function App() {
               {userType === "user" && (
                 <Route path="/business" element={<Navigate to='/user' />} />
               )}
-
               {userType === "business" &&  (
                 <Route path="/settings" element={<BusinessSettings />} />
               )}
               {userType === "user" &&  (
                 <Route path="/settings" element={<UserSettings />} />
               )}
-
               {/* Redirect to the appropriate route if user tries to access the wrong route */}
               {userType === "user" && (
                 <Route path="/user" element={<UserProfile />} />
