@@ -73,12 +73,6 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				<h6 className="text-[#E9A309] text-lg font-semibold mb-2 px-2">
 					{businessData?.businessEmail}
 				</h6>
-				{/* <p className="text-[#E9A309] text-xl px-2">
-					{`${businessData?.businessCategory
-					?.split("-")
-					?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-					.join(" ")}` || 'Entertainment'}
-				</p> */}
 				<p className="mt-1 text-[#9d9d9d] font-semibold">{businessData?.businessCategory ? `${businessData?.businessCategory
 					?.replace('%26', '&')
 					?.split("-")
@@ -100,7 +94,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 						<EditIcon className="!block text-[#D9D9D9]" width={16} />
 					</h6>
 					<p className="mt-1.5 px-4">
-						{businessData?.about || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium voluptate temporibus nam incidunt"}
+						{businessData?.description || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium nam incidunt"}
 					</p>
 				</div>
 				<div className="mt-6">
@@ -113,7 +107,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				</div>
 				<div className="mt-6">
 					<h5>Price Range</h5>
-					<p>#5k - #50k</p>
+					<p>{businessData?.budgetClass.label}</p>
 				</div>
 			</div>
 		</DashboardContainer>

@@ -4,18 +4,26 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useGetCategoriesQuery } from "../../redux/Api/locationApi";
-import { useGetMeQuery } from "../../redux/Api/authApi";
+import { useGetBudgetsQuery, useGetCategoriesQuery } from "../../redux/Api/locationApi";
+import { useGetMeQuery, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { useGetStatesQuery, useLazyGetCityQuery, useLazyGetLgaQuery } from "../../redux/Api/geoApi";
 import Dashboard, { TogleButton } from "../../components/Layout/BusinessSidebar";
 import { Button } from "../../components/UI/Buttons";
+import { FaEyeSlash } from "react-icons/fa6";
+import { IoEyeSharp } from "react-icons/io5";
+import { passwordRegex } from "../UserSettings/UserSettings";
 
 const BusinessSettings = () => {
+  const [seePass, setSeePass] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [updateProfile, { isLoading: updateProfileLoading }] = useUpdateBusinessProfileMutation();
+
   const { data: states } = useGetStatesQuery();
   const [getCity, { data: city }] = useLazyGetCityQuery();
   const [getLga, { data: lga }] = useLazyGetLgaQuery();
+  const { data: budgets } = useGetBudgetsQuery();
+
   const userType = useSelector((state) => state.auth.userType);
 
   const navigate = useNavigate();
@@ -23,13 +31,13 @@ const BusinessSettings = () => {
   const [businessInfo, setBusinessInfo] = useState({
     businessName: "",
     businessCategory: "default",
-    businessAbout: "",
     businessAddress: "",
     businessLGA: "",
     businessState: "",
     businessCity: "",
-    businessPriceRangeFrom: "",
-    businessPriceRangeTo: "",
+    budgetClass: "",
+    description: "",
+    businessSubCategory: ""
   });
 
   const {
@@ -38,13 +46,22 @@ const BusinessSettings = () => {
     isLoading,
     refetch,
   } = useGetMeQuery({ userType });
-  const { data: categories, isLoading: getCategoriesLoading } = useGetCategoriesQuery();
+  const { data: categories } = useGetCategoriesQuery();
+  const [subData, setSubData] = useState([]);
   
   const userData = useSelector((store) => store.auth.user).payload;
-
+  
   useEffect(() => {
     if (isSuccess && businessData?.user) {
+      // Fetching State and LGA Data from state data
+      setSubData(categories?.find((cat) => cat.value === businessData?.user.businessCategory)?.sub);
+      getLga({ state: businessData?.user?.businessState?.toUpperCase() });
+      getCity({ state: businessData?.user?.businessState?.toUpperCase() });
+      
       setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
+      // eslint-disable-next-line no-useless-computed-key
+      setBusinessInfo((prev) => ({...prev, ["budgetClass"]: businessData?.user?.budgetClass?.label }));
+
       if (businessData?.user?.businessVerified === "verified") {
         
       } else if (businessData?.user?.businessVerified === "pending") {
@@ -53,11 +70,11 @@ const BusinessSettings = () => {
           duration: 3,
           placement: "bottomRight",
         });
-        // if (businessData?.user?.addedCard === true) {
-        //   navigate(`/${userType}`);
-        // } else {
-        //   navigate(`/subscribe`);
-        // }
+        if (businessData?.user?.addedCard === true) {
+          navigate(`/${userType}`);
+        } else {
+          navigate(`/subscribe`);
+        }
         refetch();
       } else if (businessData?.user?.businessVerified === "false") {
         notification.error({
@@ -80,16 +97,53 @@ const BusinessSettings = () => {
     }));
   };
 
+  // console.log(businessInfo);
+  console.log(businessInfo?.budgetClass);
+  
   const handleSubmit = async (e) => {
-    // setIsLoading(true);
-    const formData = new FormData();
-    Object.entries(businessInfo).forEach(([key, value]) => {
-      formData.append(key, value);
-    });
-    console.log(formData);
     e.preventDefault();
-    // setIsLoading(false);
+    if (businessInfo?.password) {
+      return notification.warning({
+        message: "Are you sure you want to change your password?",
+        duration: 5,
+        type: "warning",
+        placement: "bottomRight",
+        closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
+        onClose: async () => {
+          if (!passwordRegex.test(businessInfo?.password)) {
+            return notification.error({
+              message:
+              "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+              duration: 3,
+              placement: "bottomRight",
+            });
+          }
+          sendUpdateData();
+        }
+      });
+    }
+    sendUpdateData();
   };
+
+  const sendUpdateData = async () => {
+    console.log(businessInfo?.budgetClass);
+    const response = await updateProfile(businessInfo);
+    if (response?.data?.message) {
+      notification.success({
+        message: response?.data?.message,
+        duration: 3,
+        type: "success",
+        placement: "bottomRight"
+      })
+    } else {
+      notification.error({
+        message: response?.error?.data?.error,
+        duration: 3,
+        type: "error",
+        placement: "bottomRight"
+      })
+    }
+  }
 
   return (
     <Container>
@@ -140,13 +194,34 @@ const BusinessSettings = () => {
             </div>
 
             <div>
+              <label htmlFor="category">
+                Business SubCategory
+              </label>
+              <select
+                value={businessInfo?.businessSubCategory}
+                required={true}
+                id="subCategory"
+                onChange={(e) => handleChange("businessSubCategory", e.target.value)}
+              >
+                <option value="default" disabled>
+                  Select a Sub-Category
+                </option>
+                {subData?.map((subCat, i) => (
+                  <option value={subCat.value} key={i}>
+                    {subCat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
               <label htmlFor="about">
                 About Business
               </label>
               <textarea
                 id="about"
-                value={businessInfo?.businessAbout}
-                onChange={(e) => handleChange("businessAbout", e.target.value)}
+                value={businessInfo?.description}
+                onChange={(e) => handleChange("description", e.target.value)}
                 rows={5}
                 placeholder="We are a sports and rec brand dedicated to helping athletes destress after a workout session or other related activities."
               />
@@ -169,7 +244,7 @@ const BusinessSettings = () => {
               <label htmlFor="address">
                 Business Address
               </label>
-              <div className="mt-2 mb-[1rem] flex flex-wrap gap-3 md:gap-5">
+              <div className="mt-2 mb-3.5 flex flex-wrap gap-3 md:gap-5">
                 <Select
                   placeholder="State"
                   onSelect={(value) => {
@@ -177,29 +252,30 @@ const BusinessSettings = () => {
                     getCity({ state: value.toUpperCase() });
                     handleChange("businessState", value);
                   }}
-                  // value={queryData.state}
-                  // showSearch
+                  showSearch
                   className="flex-1"
                   options={states}
+                  value={businessInfo?.businessState}
                 />
                 <Select
                   placeholder="City"
-                  // showSearch
+                  showSearch
                   onSelect={(value) => {
                     handleChange("businessCity", value);
                   }}
                   // value={queryData.city}
                   className="flex-1"
                   options={city}
-                />
+                  value={businessInfo?.businessCity}
+                  />
                 <Select
                   placeholder="LGA"
                   // showSearch
                   onSelect={(value) => {
                     handleChange("businessLGA", value);
                   }}
-                  // value={queryData.lga}
                   className="flex-1"
+                  value={businessInfo?.businessLGA}
                   options={lga}
                 />
               </div>
@@ -208,40 +284,37 @@ const BusinessSettings = () => {
               <label htmlFor="businessPriceRange">
                 Price Range
               </label>
-              <div className="flex gap-[1rem] items-center">
-              <Select
-                  placeholder="Select Your Budget "
-                  className="!w-[250px] mt-3"
-                  options={[
-                    { value: "free", label: "free" },
-                    { value: "free - 5k", label: "free - 5k" },
-                    { value: "5k - 10k", label: "5k - 10k" },
-                    { value: "10k - 20k", label: "10k - 20k" },
-                  ]}
-                  // onSelect={(value) => {
-                  //   setQueryData((prev) => ({ ...prev, budget: value }));
-                  // }}
+              <div className="mb-4 flex">
+                <Select
+                  placeholder="Select Your Budget"
+                  className="flex-1"
+                  options={budgets?.map(b => ({ value: b.label, label: b.label }))}
+                  value={businessInfo?.budgetClass}
+                  onSelect={(value) => handleChange("budgetClass", value)}
                 />
-                {/* <input
-                  id="businessPriceRangeFrom"
-                  // value={businessInfo?.expiryDate}
-                  onChange={(e) =>
-                    handleChange("businessPriceRangeFrom", e.target.value)
-                  }
-                  type="number"
-                  min={1}
-                  placeholder="from"
-                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="password"  className="!mb-2">Password</label>
+              <div className="relative mb-4">
                 <input
-                  id="businessPriceRangeFromTo"
-                  // value={businessInfo?.cvv}
-                  type="number"
-                  min={1}
-                  onChange={(e) =>
-                    handleChange("businessPriceRangeFromTo", e.target.value)
-                  }
-                  placeholder="to"
-                /> */}
+                  id="password"
+                  placeholder="*********"
+                  type={seePass ? "text" : "password"}
+                  value={businessInfo?.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
+                />
+                {seePass ? (
+                  <FaEyeSlash
+                    className="absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer"
+                    onClick={() => setSeePass((prev) => !prev)}
+                  />
+                ) : (
+                  <IoEyeSharp
+                    className="absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer"
+                    onClick={() => setSeePass((prev) => !prev)}
+                  />
+                )}
               </div>
             </div>
           </div>

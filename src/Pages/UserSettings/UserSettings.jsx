@@ -20,8 +20,7 @@ import { FaEyeSlash } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import Loader from "../../components/UI/Loader";
 
-const passwordRegex = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
-
+export const passwordRegex = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
 
 const UserSettings = () => {
   const [seePass, setSeePass] = useState(false);
@@ -36,7 +35,7 @@ const UserSettings = () => {
   });
 
   const userData = useSelector((store) => store.auth.user).payload;
-  const [userInfo, setUserInfo] = useState({ 
+  const [userInfo, setUserInfo] = useState({
     fullName: userData?.fullName,
     username: userData?.username,
     password: "",
@@ -65,7 +64,6 @@ const UserSettings = () => {
   };
 
   const handleSubmit = async (e) => {
-    
     e.preventDefault();
     if (userInfo?.password) {
       return notification.warning({
