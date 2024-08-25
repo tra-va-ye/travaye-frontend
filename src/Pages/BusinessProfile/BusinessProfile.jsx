@@ -140,7 +140,7 @@ const BusinessProfile = () => {
           </div>
           <div className="mt-4">
             <h3 className="">About</h3>
-            <p className="">{userData?.businessAbout || "Maryland Mall Cinemas is one of Nigeria's leading cinema developers and operators of multiplex cinemas in Nigeria."}</p>
+            <p className="">{userData?.description || "Maryland Mall Cinemas is one of Nigeria's leading cinema developers and operators of multiplex cinemas in Nigeria."}</p>
           </div>
           <div className="mt-4">
             <h3>User Visits</h3>
@@ -152,7 +152,7 @@ const BusinessProfile = () => {
           </div>
           <div className="my-4">
             <h3>Price Range</h3>
-            <p>{userData.priceRange || "#5 - #10k"}</p>
+            <p>{userData?.budgetClass?.label || "#5 - #10k"}</p>
           </div>
         </div>
       </Dashboard>
