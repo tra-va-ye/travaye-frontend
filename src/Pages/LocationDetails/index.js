@@ -1,8 +1,7 @@
-import { Box, Rating, Typography } from '@mui/material';
+import { Box, LinearProgress, Rating, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import Avatar from '../../assets/user-avatar.png';
 import { AltButton, Button } from '../../components/UI/Buttons';
 import Loader from '../../components/UI/Loader';
 import { ArrowCloud } from '../../components/UI/svgs/svgs';
@@ -18,7 +17,6 @@ import classes from './LocationDetails.module.css';
 import { Image, Input, notification } from 'antd';
 import Dropzone from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
-// import { useUserLoginMutation } from '../../redux/Api/authApi';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css/bundle";
 import { Navigation } from 'swiper';
@@ -30,7 +28,7 @@ export function calculateAverageRating (reviewArray) {
 	if (reviewArray?.length === 0) return 0; // Handle empty reviewArrayay
 	const sum = reviewArray?.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 	return sum / reviewArray?.length;
-  }
+}
 
 const LocationDetails = () => {
 	const { id } = useParams();
@@ -44,7 +42,6 @@ const LocationDetails = () => {
 	};
 
 	const [values, setValues] = useState(initialValues);
-	const [rating, setRating] = useState(2);
 	const [location, setLocation] = useState({});
 
 	const [
@@ -57,11 +54,7 @@ const LocationDetails = () => {
 		},
 	] = useReviewLocationMutation();
 
-	const [deleteLocationReview, {
-		isLoading: deleteLoading,
-		// isError: deleteError,
-		error: deleteReviewError,
-	},] = useDeleteLocationReviewMutation();
+	const [deleteLocationReview, { isLoading: deleteLoading }] = useDeleteLocationReviewMutation();
 	
 	const [addLocationToLikedLocations, { isLoading: likeLocationLoading }] = useAddLocationToLikedLocationsMutation();
 	const [unlike, { isLoading: unliking }] = useUnlikeLocationMutation();
@@ -95,6 +88,7 @@ const LocationDetails = () => {
 			});
 			setValues(initialValues);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		data,
 		error?.error,
@@ -102,7 +96,7 @@ const LocationDetails = () => {
 		reviewError?.error,
 		reviewIsError,
 		isSuccess,
-		setValues,
+		setValues
 	]);
 
 	const handleFormSubmit = async (e) => {
@@ -125,7 +119,7 @@ const LocationDetails = () => {
 	};
 
 	const handleAddClick = () => {
-		addLocationToLikedLocations({ locationName: location._id })
+		addLocationToLikedLocations({ locationName: location?.business?._id })
 			.unwrap()
 			.then((res) => {
 				notification.success({
@@ -136,14 +130,14 @@ const LocationDetails = () => {
 			})
 			.catch((err) => {
 				notification.error({
-					message: 'An error occurred',
+					message: err?.data?.message,
 					duration: 3,
 				});
 			});
 	};
 
 	const handleUnlike = () => {
-		unlike({ locationName: location._id })
+		unlike({ locationName: location?.business?._id })
 			.unwrap()
 			.then((r) => {
 				notification.success({
@@ -154,7 +148,7 @@ const LocationDetails = () => {
 			})
 			.catch((err) => {
 				notification.error({
-					message: 'An error occurred',
+					message: err?.data?.message,
 					duration: 3,
 				});
 			});
@@ -163,14 +157,17 @@ const LocationDetails = () => {
 	const handleDeleteReview = async (reviewID) => {
 		deleteLocationReview({ reviewID })
 		.then((res) => {
-			console.log(res);
+			notification.success({
+				message: res?.data?.message,
+				duration: 2,
+			});
 		}).catch((err) => {
-			console.log(err);
+			notification.error({
+				message: err?.data?.message,
+				duration: 2,
+			});
 		})
 	}
-
-	const reviewRatings = location?.reviews?.map(rev => rev?.reviewRating);
-	const avg = calculateAverageRating(reviewRatings);
 
 	return (
 		<div className={classes.location}>
@@ -189,7 +186,7 @@ const LocationDetails = () => {
 								navigation
 							>
 								{
-									location?.businessLocationImages?.map((imag, i) => (
+									location?.business?.businessLocationImages?.map((imag, i) => (
 										<SwiperSlide key={i}>
 											<img src={imag} className='h-[25rem] rounded-lg border border-red-500 w-5/6' alt={`Poster ${i+1}`} />
 										</SwiperSlide>
@@ -199,25 +196,35 @@ const LocationDetails = () => {
 							<p className='text-center text-[#9D9D9D] font-semibold text-lg italic'>Please scroll/swipe to see additional images</p>
 						</div>
 						<div className='w-5/12'>
-							<h4>{location?.businessName}</h4>
-							<h6>{location?.businessAddress}</h6>
-							<p className='my-7 text-black text-justify'>{location.businessAbout || "Maryland Mall Cinemas is one of Nigeria's leading cinema developers and operators of multiplex cinemas in Nigeria. The Only ScreenX Cinema with a state of the art spund system and 3D viewing pleasure just for you."}</p>
-							<h5 className='text-xl text-[#009f57] font-semibold mb-7'>
+							<h4>{location?.business?.businessName}</h4>
+							<h6>{location?.business?.businessAddress}</h6>
+							<p className='my-7 text-black text-justify'>{location?.business?.description || "No description yet"}</p>
+							<h5 className='text-xl text-[#009f57] font-semibold mb-2'>
 								Price Range:{"  "}
-								<span className='text-black font-normal'>{location.businessBudget || "Free - 5k"}</span>
+								<span className='text-black font-normal'>{location?.business?.budgetClass?.label || "Nothing yet"}</span>
+							</h5>
+							<h5 className='text-xl text-[#009f57] font-semibold mb-2'>
+								Email:{"  "}
+								<span className='text-black font-normal'>{location?.business?.businessEmail}</span>
+							</h5>
+							<h5 className='text-xl text-[#009f57] font-semibold mb-5'>
+								Phone:{"  "}
+								<span className='text-black font-normal'>+234{location?.business?.businessTelephone}</span>
 							</h5>
 						
 							<div className="d-flex mb-3">
 								{
 									userType === 'user' && <>
 										{userData?.user?.likedLocations?.find(
-											(l) => l._id === location?._id
+											(l) => l?.business?._id === location?.business?._id
 										) ? (
 											<Button
 												color={unliking ? "#f14f4f" : "red"}
 												location={true}
 												onClick={handleUnlike}
+												className='!border-none'
 												disabled={unliking}
+												border="none"
 											>
 												{unliking ? "Loading..." : "Unlike"}
 											</Button>
@@ -225,6 +232,7 @@ const LocationDetails = () => {
 											<Button
 												color={likeLocationLoading ? "rgba(0,159,87,0.5)" : "green"}
 												location={true}
+												className='!border-none'
 												onClick={handleAddClick}
 												disabled={likeLocationLoading}
 											>
@@ -234,7 +242,7 @@ const LocationDetails = () => {
 									</>
 								}
 								<Button
-									onClick={() => navigate(`/location/map?address=${location?.businessAddress}&name=${location?.businessName}`)}
+									onClick={() => navigate(`/location/map?address=${location?.business?.businessAddress}&name=${location?.business?.businessName}`)}
 									location={true}
 								>
 									View on Google Maps
@@ -291,7 +299,6 @@ const LocationDetails = () => {
 											precision={0.5}
 											value={values.locationRating}
 											onChange={(event, newValue) => {
-												setRating(newValue);
 												setValues((prev) => ({ ...prev, reviewRating: newValue }));
 											}}
 										/>
@@ -318,18 +325,18 @@ const LocationDetails = () => {
 						<section
 							className={`${
 								userType !== 'user' ? 'col-span-10' : 'col-span-7 md:col-span-6'
-							} overflow-y-hidden h-[27.5rem] md:h-[26rem] flex flex-col py-1`}
+							} overflow-y-hidden h-[27.5rem] md:h-[26.5rem] flex flex-col py-1`}
 						>
 							<div className="flex justify-content-between mb-2 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
-									<p className="text-black font-medium">Average Rating</p>{' '}
-									<Rating value={avg} readOnly precision={0.5} />
+									<p className="text-black font-medium">Average Rating</p>
+									{location?.business?.rating && <Rating defaultValue={location?.business?.rating} readOnly precision={0.5} />}
 								</div>
 							</div>
 							<Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
-								{location && location?.reviews?.length > 0 ? (
-									location?.reviews?.map((review, i) => {
+								{location && location?.business?.reviews?.length > 0 ? (
+									location?.business?.reviews?.slice(0, 10).map((review, i) => {
 										return (
 											<ReviewCard key={i}>
 												<div className="flex items-center justify-between">
@@ -351,32 +358,31 @@ const LocationDetails = () => {
 														}
 													</div>
 												</div>
-
-												<p className='py-2'>{review?.reviewDescription}</p>
-												<div>
-													<div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
-														<Image.PreviewGroup
-															preview={{
-																onChange: (current, prev) =>
-																	console.log(
-																		`current index: ${current}, prev index: ${prev}`
-																	),
-															}}
-															
-														>
-															{review?.reviewImagePaths?.map((image, key) => {
-																return (
-																	<Image
-																		key={key}
-																		src={image}
-																		height={100}
-																		className=" object-cover rounded-lg"
-																	/>
-																);
-															})}
-														</Image.PreviewGroup>
+													<p className='py-2'>{review?.reviewDescription}</p>
+													<div>
+														<div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
+															<Image.PreviewGroup
+																preview={{
+																	onChange: (current, prev) => {}
+																}}
+																
+															>
+																{review?.reviewImagePaths?.map((image, key) => {
+																	return (
+																		<Image
+																			key={key}
+																			src={image}
+																			height={100}
+																			className=" object-cover rounded-lg"
+																		/>
+																	);
+																})}
+															</Image.PreviewGroup>
+														</div>
 													</div>
-												</div>
+													{
+														(deleteLoading && userData.user._id === review?.reviewerID._id) && <LinearProgress color='primary' className='mt-2' />	
+													}
 											</ReviewCard>
 										);
 									})

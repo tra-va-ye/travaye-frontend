@@ -70,11 +70,11 @@ const BusinessSettings = () => {
           duration: 3,
           placement: "bottomRight",
         });
-        if (businessData?.user?.addedCard === true) {
-          navigate(`/${userType}`);
-        } else {
-          navigate(`/subscribe`);
-        }
+        // if (businessData?.user?.addedCard === true) {
+        //   navigate(`/${userType}`);
+        // } else {
+        //   navigate(`/subscribe`);
+        // }
         refetch();
       } else if (businessData?.user?.businessVerified === "false") {
         notification.error({
@@ -96,9 +96,6 @@ const BusinessSettings = () => {
       [field]: value,
     }));
   };
-
-  // console.log(businessInfo);
-  console.log(businessInfo?.budgetClass);
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -126,7 +123,6 @@ const BusinessSettings = () => {
   };
 
   const sendUpdateData = async () => {
-    console.log(businessInfo?.budgetClass);
     const response = await updateProfile(businessInfo);
     if (response?.data?.message) {
       notification.success({

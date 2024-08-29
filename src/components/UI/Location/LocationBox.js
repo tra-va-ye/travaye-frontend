@@ -19,7 +19,7 @@ const LocationBox = (props) => {
       <div className="flex content-between justify-between items-end">
         <p>{props.location?.locationAddress || props.location?.businessAddress}</p>
         <div className="flex items-center">
-          <p className="!text-[#009f57] font-bold !text-xl">{props.location?.locationRating}</p>
+          <p className="!text-[#009f57] font-bold !text-xl">{props.location?.business?.rating || props.location?.rating}</p>
           <IoIosStar fill="#E9A309" size={24} />
         </div>
       </div>
