@@ -13,6 +13,8 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 			
 	const businessData = useSelector((store) => store.auth.user).payload;
 
+	console.log(businessData);
+
 	useEffect(() => {
 		if (businessData?.user) {
 			setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
@@ -86,15 +88,15 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				<div>
 					<h6 className="text-xl font-bold text-[#009F57] mt-7 flex gap-1 justify-center">
 						Address
-						<EditIcon className="!block text-[#D9D9D9]" width={16} />
+						{/* <EditIcon className="!block text-[#D9D9D9]" width={16} /> */}
 					</h6>
 					<p className="mt-1.5 px-2 text-[#9d9d9d] text-lg">{businessData?.businessAddress}</p>
 					<h6 className="text-xl font-bold text-[#009F57] mt-6 flex gap-1 justify-center">
 						About
-						<EditIcon className="!block text-[#D9D9D9]" width={16} />
+						{/* <EditIcon className="!block text-[#D9D9D9]" width={16} /> */}
 					</h6>
 					<p className="mt-1.5 px-4">
-						{businessData?.description || "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Omnis accusantium praesentium nam incidunt"}
+						{businessData?.description || "No description yet"}
 					</p>
 				</div>
 				<div className="mt-6">
@@ -107,7 +109,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				</div>
 				<div className="mt-6">
 					<h5>Price Range</h5>
-					<p>{businessData?.budgetClass.label}</p>
+					<p>{businessData?.budgetClass?.label}</p>
 				</div>
 			</div>
 		</DashboardContainer>
