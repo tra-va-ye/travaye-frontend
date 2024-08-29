@@ -46,22 +46,15 @@ const UserProfile = () => {
     isError,
     error,
     isSuccess,
-    refetch: refetchLocations,
-    isLoading,
+    refetch: refetchLocations
   } = useGetLocationsQuery({
     page: 1,
-    count: 10,
-    // categories: selectedCategories
-    //   .map((category) => category.toLowerCase().replace(/\s+/g, "-"))
-    //   .join(","),
-    // locationCity: selectedFilters.join(","),
+    count: 10
   });
   const location = useLocation();
   const {
     data: userData,
     isSuccess: userSuccess,
-    refetch,
-    isLoading: isFetching,
   } = useGetMeQuery({
     userType: userType,
   });
@@ -84,7 +77,7 @@ const UserProfile = () => {
     if (userSuccess) {
       setUserInfo(userData?.user);
     }
-  }, [userData?.user]);
+  }, [userData?.user, userSuccess]);
 
   useEffect(() => {
     // Check if it's the first visit
@@ -97,7 +90,8 @@ const UserProfile = () => {
     }
   }, [location.pathname, firstVisit, refetchLocations]);
   const userLikedLocations = userInfo?.likedLocations;
-
+  console.log(userData?.user);  
+  
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
   // console.log(filteredUserLikedLocations);

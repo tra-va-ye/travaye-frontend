@@ -32,16 +32,10 @@ const BusinessProfile = () => {
     setShowLocationModal((prevState) => !prevState);
   };
 
-  const [selectedCategories, updateSelectedCategories] = useState([]);
-  const [selectedFilters, updateSelectedFilters] = useState([]);
   const [locations, setLocations] = useState([]);
   const { data, isError, error, isSuccess } = useGetLocationsQuery({
     page: 1,
-    count: 10,
-    categories: selectedCategories
-      .map((category) => category.toLowerCase().replace(/\s+/g, "-"))
-      .join(","),
-    locationCity: selectedFilters.join(","),
+    count: 10
   });
   const [userData, setuserData] = useState({});
   const {
@@ -90,9 +84,7 @@ const BusinessProfile = () => {
         // navigate("/register");
       }
     }
-  }, [userData, navigate, userType]);
-
-  console.log(userData);
+  }, [userData, navigate, userType, businessData?.user]);
 
   const reviewRatings = userData?.reviews?.map(rev => rev?.reviewRating);
 	const avg = calculateAverageRating(reviewRatings);
@@ -146,13 +138,9 @@ const BusinessProfile = () => {
             <h3>User Visits</h3>
             <p>{userData.visits || "200"}</p>
           </div>
-          <div className="mt-4">
-            <h3>Average Review</h3>
-            <p>{userData.reviewAverage || "4.5 "} stars</p>
-          </div>
           <div className="my-4">
             <h3>Price Range</h3>
-            <p>{userData?.budgetClass?.label || "#5 - #10k"}</p>
+            <p>{userData?.budgetClass?.label}</p>
           </div>
         </div>
       </Dashboard>
@@ -410,7 +398,7 @@ export const Main = styled.div`
   }
 `;
 
-const ReviewH4 = styled.h4`
+export const ReviewH4 = styled.h4`
 	color: #009f57;
 `;
 const Review = styled.div`
