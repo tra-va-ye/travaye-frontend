@@ -50,6 +50,15 @@ const BusinessSettings = () => {
   const [subData, setSubData] = useState([]);
   
   const userData = useSelector((store) => store.auth.user).payload;
+
+  useEffect(() => {
+    getLga({ state: businessData?.user?.businessState?.toUpperCase() });
+    getCity({ state: businessData?.user?.businessState?.toUpperCase() });
+  }, [businessInfo?.businessState, businessData?.user.businessState]);
+
+  useEffect(() => {
+    setSubData(categories?.find((cat) => cat.value === businessData?.user.businessCategory)?.sub);
+  }, [businessInfo?.businessCategory, businessData?.user?.businessCategory]);
   
   useEffect(() => {
     if (isSuccess && businessData?.user) {
@@ -148,7 +157,7 @@ const BusinessSettings = () => {
       </TogleButton>
       <Dashboard showDashboard={showDashboard} setBusinessInfo={setBusinessInfo} />
       <Main>
-        <div className="w-full flex justify-between items-center mb-4">
+        <div className="w-full flex justify-between items-center mb-4 mt-5 md:mt-0">
           <h3 className="text-2xl text-[#009F57] font-bold">Settings</h3>
           <button className="text-[#E9A309] font-semibold underline" onClick={() => window.history.back()}>Go back{">"}</button>
         </div>
@@ -176,6 +185,7 @@ const BusinessSettings = () => {
                 id="category"
                 onChange={(e) => {
                   handleChange("businessCategory", e.target.value);
+                  setSubData(categories?.find((cat) => cat.value === e.target.value)?.sub);
                 }}
               >
                 <option value="default" disabled>

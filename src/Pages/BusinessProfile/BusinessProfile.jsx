@@ -148,7 +148,7 @@ const BusinessProfile = () => {
         <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
         </button>
-        <div className="">
+        <div className="mt-5 lg:mt-0">
           <div className="flex items-center justify-between">
             <H3 color="#009f57" fontWeight="700" className="mb-1 text-xl md:text-3xl">
               Your Profile
@@ -161,7 +161,7 @@ const BusinessProfile = () => {
             </button>
           </div>
           <Swiper
-            className='!scale-100 w-4/5 mx-auto'
+            className='!scale-100 w-full md:w-4/5 mx-auto'
             slidesPerView={1}
             modules={[ Navigation ]}
             spaceBetween={20}
@@ -179,68 +179,72 @@ const BusinessProfile = () => {
                 
           <section className="grid grid-cols-7 gap-4 mt-6">
             {" "}
-            <section className="col-span-4">
-              <div className="flex justify-content-between mb-2 items-center">
+            <div className="col-span-7 md:col-span-3 md:hidden block">
+              <ReviewH4 className="text-3xl font-bold pt-2">Contact Info</ReviewH4>
+              <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
+              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
+            </div>
+            <section className="col-span-7 md:col-span-4">
+              <div className="flex justify-content-between mb-3 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
 									<p className="text-black font-medium">Average Rating</p>{' '}
 									<Rating value={avg} readOnly precision={0.5} />
 								</div>
 							</div>
-                <Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
-                  {userData && userData?.reviews?.length > 0 ? (
-                    userData?.reviews?.map((review, i) => {
-                      return (
-                        <ReviewCard key={i}>
-                          <div className="flex items-center justify-between">
-                            <ReviewUser>
-                              <img
-                                src={Avatar}
-                                className="img-fluid "
-                                alt="pfp"
-                              />
-                              <p className="" style={{ color: '#009f57', fontSize: 20 }}>
-                                {review?.reviewerFullname}
-                              </p>
-                              
-                            </ReviewUser>
-                            <Rating value={review.reviewRating} readOnly />
-                          </div>
+              <Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
+                {userData && userData?.reviews?.length > 0 ? (
+                  userData?.reviews?.map((review, i) => {
+                    return (
+                      <ReviewCard key={i}>
+                        <div className="flex items-center justify-between">
+                          <ReviewUser>
+                            <img
+                              src={Avatar}
+                              className="img-fluid "
+                              alt="pfp"
+                            />
+                            <p className="" style={{ color: '#009f57', fontSize: 20 }}>
+                              {review?.reviewerFullname}
+                            </p>
+                            
+                          </ReviewUser>
+                          <Rating value={review.reviewRating} readOnly />
+                        </div>
 
-                          <p className='py-2'>{review?.reviewDescription}</p>
-                          <div>
-                            <div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
-                              <Image.PreviewGroup
-                                preview={{
-                                  onChange: (current, prev) =>
-                                    console.log(
-                                      `current index: ${current}, prev index: ${prev}`
-                                    ),
-                                }}
-                              >
-                                {review?.reviewImagePaths?.map((image, key) => {
-                                  return (
-                                    <Image
-                                      key={key}
-                                      src={image}
-                                      height={100}
-                                      className=" object-cover  rounded-lg"
-                                    />
-                                  );
-                                })}
-                              </Image.PreviewGroup>
-                            </div>
+                        <p className='py-2'>{review?.reviewDescription}</p>
+                        <div>
+                          <div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
+                            <Image.PreviewGroup
+                              preview={{
+                                onChange: (current, prev) =>
+                                  console.log(
+                                    `current index: ${current}, prev index: ${prev}`
+                                  ),
+                              }}
+                            >
+                              {review?.reviewImagePaths?.map((image, key) => {
+                                return (
+                                  <Image
+                                    key={key}
+                                    src={image}
+                                    height={100}
+                                    className=" object-cover  rounded-lg"
+                                  />
+                                );
+                              })}
+                            </Image.PreviewGroup>
                           </div>
-                        </ReviewCard>
-                      );
-                    })
-                  ) : (
-                    <p>No reviews yet</p>
-                  )}
-                </Review>
-
+                        </div>
+                      </ReviewCard>
+                    );
+                  })
+                ) : (
+                  <p>No reviews yet</p>
+                )}
+              </Review>
             </section>
-            <div className="col-span-3">
+            <div className="col-span-7 md:col-span-3 hidden md:block">
               <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
               <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
               <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>

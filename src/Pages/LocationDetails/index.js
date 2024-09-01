@@ -175,8 +175,8 @@ const LocationDetails = () => {
 				<Loader />
 			) : (
 				<>
-					<div className="flex justify-center gap-8">
-						<div className="w-6/12">
+					<div className="flex lg:flex-row flex-col justify-center gap-4">
+						<div className="w-full lg:w-7/12">
 							<Swiper
 								className='!scale-100'
 								slidesPerView={1}
@@ -195,7 +195,7 @@ const LocationDetails = () => {
 							</Swiper>
 							<p className='text-center text-[#9D9D9D] font-semibold text-lg italic'>Please scroll/swipe to see additional images</p>
 						</div>
-						<div className='w-5/12'>
+						<div className='w-full lg:w-5/12'>
 							<h4>{location?.business?.businessName}</h4>
 							<h6>{location?.business?.businessAddress}</h6>
 							<p className='my-7 text-black text-justify'>{location?.business?.description || "No description yet"}</p>
@@ -207,9 +207,13 @@ const LocationDetails = () => {
 								Email:{"  "}
 								<span className='text-black font-normal'>{location?.business?.businessEmail}</span>
 							</h5>
-							<h5 className='text-xl text-[#009f57] font-semibold mb-5'>
+							<h5 className='text-xl text-[#009f57] font-semibold mb-2'>
 								Phone:{"  "}
 								<span className='text-black font-normal'>+234{location?.business?.businessTelephone}</span>
+							</h5>
+							<h5 className='text-xl text-[#009f57] font-semibold mb-5'>
+								Category:{"  "}
+								<span className='text-black font-normal'>{location?.business?.businessCategory.replace('%26', '&')?.split("-")?.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}</span>
 							</h5>
 						
 							<div className="d-flex mb-3">
@@ -249,13 +253,12 @@ const LocationDetails = () => {
 								</Button>
 							</div>
 						</div>
-
 					</div>
 					<div
-						className={`${classes.reviewContainer} grid grid-cols-12 gap-3 py-4`}
+						className={`${classes.reviewContainer} grid grid-cols-12 gap-4 py-4`}
 					>
 						{userType === 'user' && (
-							<form className="col-span-5 md:col-span-6" onSubmit={handleFormSubmit}>
+							<form className="col-span-12 lg:col-span-6" onSubmit={handleFormSubmit}>
 								<div className="flex flex-col gap-3 bg-white py-2 px-4 rounded-xl border-brandGreen border-[1px]">
 									<Dropzone
 										acceptedFiles=".jpg,.jpeg,.png"
@@ -324,12 +327,12 @@ const LocationDetails = () => {
 						)}
 						<section
 							className={`${
-								userType !== 'user' ? 'col-span-10' : 'col-span-7 md:col-span-6'
-							} overflow-y-hidden h-[27.5rem] md:h-[26.5rem] flex flex-col py-1`}
+								userType !== 'user' ? 'col-span-12' : 'col-span-12 lg:col-span-6'
+							} overflow-y-hidden h-[27.5rem] lg:h-[26.5rem] flex flex-col py-1`}
 						>
 							<div className="flex justify-content-between mb-2 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
-								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
+								<div className="flex gap-2 lg:gap-4 flex-col lg:flex-row">
 									<p className="text-black font-medium">Average Rating</p>
 									{location?.business?.rating && <Rating defaultValue={location?.business?.rating} readOnly precision={0.5} />}
 								</div>

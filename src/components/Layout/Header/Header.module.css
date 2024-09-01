@@ -1,6 +1,6 @@
 .header {
   position: relative;
-  z-index: 5000;
+  z-index: 200;
   background-color: rgb(255, 254, 252);
   border-bottom: 1px solid transparent;
   box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16);

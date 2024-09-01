@@ -94,10 +94,12 @@ function App() {
       <section className="iconBg">
         <Suspense fallback={<Loader />}>
           <Routes>
-            {/* {userType === "admin" && ( */}
+            {userType === "admin" && (
+              <>
                 <Route path="/admin/businesses" element={<AdminPage />} />
                 <Route path="/admin/businesses/:id" element={<BusinessDetails />} />
-            {/* )} */}
+              </>
+            )}
             <Route path="/" element={<Home />} />
             {<Route path="/login" element={<Login />} />}
             {<Route path="/signup" element={<SignUp />} />}

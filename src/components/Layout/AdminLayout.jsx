@@ -46,9 +46,9 @@ const AdminLayout = ({ children }) => {
                     </label>
                     <input
                         onChange={(e) => {
-                        const profileData = new FormData();
-                        profileData.append("picture", e.target.files[0]);
-                        updateProfile(profileData);
+                            const profileData = new FormData();
+                            profileData.append("picture", e.target.files[0]);
+                            updateProfile(profileData);
                         }}
                         id="photo"
                         accept="image/*"

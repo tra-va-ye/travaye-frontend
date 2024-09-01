@@ -89,7 +89,7 @@ const Register = () => {
 					navigate(`/subscribe`);
 				}
 				refetch();
-			} else if (businessData?.user?.businessVerified === 'false') {
+			} else if (businessData?.user?.businessVerified === 'denied') {
 				notification.error({
 					message: ' Business not Verified ',
 					duration: 3,

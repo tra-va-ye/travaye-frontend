@@ -40,7 +40,7 @@ const Login = () => {
     userLogin,
     {
       isLoading: loginLoading,
-      error: loginError,
+      // error: loginError,
       isSuccess: loginSuccess,
       data,
     },
@@ -50,7 +50,7 @@ const Login = () => {
     businessLogin,
     {
       isLoading: businessLoading,
-      error: businessError,
+      // error: businessError,
       isSuccess: businessSuccess,
       data: businessData,
     },
@@ -60,12 +60,25 @@ const Login = () => {
     if (loginSuccess) {
       const user = data?.user;
 
+      
       if (user?.emailVerified) {
         notification.success({
           message: "Login Successfully",
           duration: 3,
           placement: "bottomRight",
         });
+        
+        if (user?.role === "admin") {
+          const authToken = data?.token;
+          sessionStorage.setItem("userType", "admin");
+          sessionStorage.setItem("authToken", authToken);
+          sessionStorage.setItem("user_id", data?.user?._id);
+          
+          setTimeout(() => {
+            navigate('/admin/businesses');
+          }, 1000);
+          return;
+        }
 
         const authToken = data?.token;
         sessionStorage.setItem("userType", userType);
