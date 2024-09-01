@@ -1,38 +1,41 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import maryland from "../../assets/maryland-mall.png";
-import lagos from "../../assets/lagos.png";
-import ibadan from "../../assets/ibadan.png";
-import abuja from "../../assets/abuja.png";
 import { Button } from "../../components/UI/Buttons";
 import AdminLayout from "../../components/Layout/AdminLayout";
+import { useGetAllBusinessesQuery } from "../../redux/Api/adminApi";
+import Loader from "../../components/UI/Loader";
+import { useDispatch } from "react-redux/es";
+import { logout } from "../../redux/Slices/authSlice";
+import { notification } from "antd";
 
-const businessArray = [
-    {
-        name: "Papi’s Meatro",
-        logo: maryland
-    },
-    {
-        name: "Jelp Factory",
-        logo: lagos
-    },
-    {
-        name: "Genesis Cinemas",
-        logo: abuja
-    },
-    {
-        name: "Biker’s House",
-        logo: ibadan
-    },
-    {
-        name: "Jurasic Arcade",
-        logo: maryland
-    },
-    {
-        name: "The Underground Bakery",
-        logo: lagos
-    }
-]
+
+// const businessArray = [
+//     {
+//         name: "Papi’s Meatro",
+//         logo: maryland
+//     },
+//     {
+//         name: "Jelp Factory",
+//         logo: lagos
+//     },
+//     {
+//         name: "Genesis Cinemas",
+//         logo: abuja
+//     },
+//     {
+//         name: "Biker’s House",
+//         logo: ibadan
+//     },
+//     {
+//         name: "Jurasic Arcade",
+//         logo: maryland
+//     },
+//     {
+//         name: "The Underground Bakery",
+//         logo: lagos
+//     }
+// ]
 
 const BusinessBox = ({ businessName, image, handleClick }) => {
     return (
@@ -49,23 +52,31 @@ const BusinessBox = ({ businessName, image, handleClick }) => {
 };
 
 const AdminPage = () => {
-    // const [showDashboard, setShowDashboard] = useState(false);
-    const [userData, setuserData] = useState({});
-    // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
-    // const userType = useSelector((state) => state.auth.userType);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    // const {
-        // data: adminData
-        // isSuccess:,
-        // isLoading,
-        // refetch,
-    // } = useGetMeQuery({ userType });
+    const {
+        data: allBusinesses,
+        isError,
+        isFetching,
+        error
+    } = useGetAllBusinessesQuery();
 
-    // useEffect(() => {
-        // console.log(adminData.user);
-        // setuserData(adminData.user);
-    // }, [userData, navigate, userType]);
+    useEffect(() => {
+        if (isFetching) return;
+        if (isError) {
+            notification.error({
+                message: error?.data?.message,
+                duration: 3,
+                placement: "bottomRight",
+            });
+        }
+    }, [isError, error, isFetching]);
+
+    const handleLogout = () => {
+        dispatch(logout());
+        sessionStorage.removeItem("authToken");
+    };
 
     return (
         <AdminLayout>
@@ -73,23 +84,25 @@ const AdminPage = () => {
             <h5 className="text-xl font-semibold text-[#e9a309]">New Business</h5>
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-y-4 gap-x-7 mt-2.5">
                 {
-                    businessArray.map(({name, logo}) => (
-                        <BusinessBox businessName={name} image={logo} handleClick={() => navigate(`/admin/businesses/${name}`)} />
-                    ))
+                    isFetching ? <Loader />
+                    : allBusinesses?.length ? allBusinesses?.map(({ businessName, businessLocationImages, _id, profilePhoto }) => (
+                        <BusinessBox key={_id} businessName={businessName} image={profilePhoto || businessLocationImages[0]} handleClick={() => navigate(`/admin/businesses/${_id}`)} />
+                    )) : <p>No Businesses Found</p>
                 }
             </section>
 
             <h5 className="text-xl font-semibold text-[#e9a309] mt-14">New Adverts</h5>
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-y-4 gap-x-7 mt-2.5 mb-5">
-                {
+                {/* {
                     businessArray.slice(2).map(({name, logo}) => (
-                        <BusinessBox businessName={name} image={logo} handleClick={() => navigate(`/admin/businesses/${name}`)} />
+                        <BusinessBox key={name} businessName={name} image={logo} handleClick={() => navigate(`/admin/businesses/${name}`)} />
                     ))
-                }
+                } */}
+                <p>No Adverts Found</p>
             </section>
             <div className="flex w-full">
-                <Button color="#FF3D00" className="!border-none ml-auto">
-                    Cancel Subscription
+                <Button color="#FF3D00" className="!border-none ml-auto" onClick={handleLogout}>
+                    Logout
                 </Button>
             </div>
         </AdminLayout>

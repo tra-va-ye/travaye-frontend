@@ -1,6 +1,6 @@
 .sideNav {
   position: absolute;
-  z-index: 1000000;
+  z-index: 1000;
   background-color: white;
   display: flex;
   flex-direction: column;
