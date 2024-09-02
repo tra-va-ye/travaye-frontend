@@ -35,10 +35,6 @@ const SignUp = () => {
     dispatch(setUserType({ userType: userSignUp ? "user" : "business" }));
   };
 
-  // useEffect(() => {
-  //   sessionStorage.clear();
-  // }, []);
-
   const [
     userRegister,
     {
@@ -78,6 +74,8 @@ const SignUp = () => {
 
     if (userSuccess) {
       const userEmailVerified = data?.user?.emailVerified;
+      sessionStorage.setItem("user_id", data?.user?._id);
+      sessionStorage.setItem("authToken", data?.token);
 
       if (userEmailVerified) {
         notification.success({
@@ -86,16 +84,8 @@ const SignUp = () => {
           placement: "bottomRight",
         });
 
-        sessionStorage.setItem("user_id", data?.user?._id);
-        sessionStorage.setItem("authToken", data?.token);
-        sessionStorage.setItem("userType", userType);
-
         navigate(`/${userType}`);
       } else {
-        sessionStorage.setItem("user_id", data?.user?._id);
-        sessionStorage.setItem("authToken", data?.token);
-        sessionStorage.setItem("userType", userType);
-
         navigate("/verify-email"); // Redirect to the email verification page
       }
     } else if (businessSuccess) {
@@ -108,9 +98,6 @@ const SignUp = () => {
           placement: "bottomRight",
         });
 
-        sessionStorage.setItem("user_id", businessData?.user?._id);
-        sessionStorage.setItem("authToken", businessData?.token);
-        sessionStorage.setItem("userType", userType);
         if (businessData?.user?.businessVerified === "verified") {
           navigate(`/${userType}`);
         } else if (businessData?.user?.businessVerified === "pending") {
@@ -124,10 +111,6 @@ const SignUp = () => {
           navigate(`/register`);
         }
       } else {
-        sessionStorage.setItem("user_id", businessData?.user?._id);
-        sessionStorage.setItem("authToken", businessData?.token);
-        sessionStorage.setItem("userType", userType);
-
         navigate("/verify-email"); // Redirect to the email verification page
       }
     }
@@ -139,23 +122,20 @@ const SignUp = () => {
     userIsError,
     userSuccess,
   ]);
-
-  const handleClick = async () => {
+  
+  const onSubmit = async () => {
     if (userSignUp) {
       dispatch(setUserType({ userType: "user" }));
-      sessionStorage.setItem("userType", "user");
-
+  
       await userRegister({
         fullName: values?.fullName,
         username: values?.userName,
         email: values?.email,
         password: values?.passWord,
       });
-    }
-    if (!userSignUp) {
+    } else if (!userSignUp) {
       dispatch(setUserType({ userType: "business" }));
-      sessionStorage.setItem("userType", "business");
-
+  
       await businessRegister({
         businessName: values.businessName,
         businessEmail: values.email,
@@ -163,11 +143,6 @@ const SignUp = () => {
         password: values.passWord,
       });
     }
-  };
-
-  const onSubmit = () => {
-    console.log(values);
-    handleClick();
   };
 
   const { values, errors, handleChange, handleSubmit } = useFormik({

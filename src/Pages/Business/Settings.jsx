@@ -17,7 +17,7 @@ import { passwordRegex } from "../UserSettings/UserSettings";
 const BusinessSettings = () => {
   const [seePass, setSeePass] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-  const [updateProfile, { isLoading: updateProfileLoading }] = useUpdateBusinessProfileMutation();
+  const [updateProfile] = useUpdateBusinessProfileMutation();
 
   const { data: states } = useGetStatesQuery();
   const [getCity, { data: city }] = useLazyGetCityQuery();
@@ -43,7 +43,7 @@ const BusinessSettings = () => {
   const {
     data: businessData,
     isSuccess,
-    isLoading,
+    // isLoading,
     refetch,
   } = useGetMeQuery({ userType });
   const { data: categories } = useGetCategoriesQuery();
@@ -85,7 +85,7 @@ const BusinessSettings = () => {
         //   navigate(`/subscribe`);
         // }
         refetch();
-      } else if (businessData?.user?.businessVerified === "false") {
+      } else if (businessData?.user?.businessVerified === "denied") {
         notification.error({
           message: " Business not Verified ",
           duration: 3,
