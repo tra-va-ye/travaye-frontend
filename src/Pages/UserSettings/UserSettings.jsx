@@ -162,10 +162,6 @@ const UserSettings = () => {
             <p>{userData?.outings?.length || "27"} outings</p>
           </div>
           <div className="mt-6">
-            <h5>Total Posts</h5>
-            <p>{userData?.posts?.length || "6"} posts</p>
-          </div>
-          <div className="mt-6">
             <h5>Average Review</h5>
             <p>4.5 stars</p>
           </div>
@@ -262,14 +258,14 @@ const UserSettings = () => {
         <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
           <InsightBox>
             <h6>Number of Businesses Liked</h6>
-            <p>{userData?.likes?.length || 68}</p>
+            <p>{userData?.likedLocations?.length || 5}</p>
           </InsightBox>
           <InsightBox>
             <h6>Number of Businesses Reviewed</h6>
             <p>{userData?.reviews?.length || 76}</p>
           </InsightBox>
           <InsightBox>
-            <h6>Number of Profiles Viewed</h6>
+            <h6>Number of Profiles Previewed</h6>
             <p>168</p>
           </InsightBox>
           <InsightBox>

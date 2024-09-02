@@ -4,7 +4,6 @@ import { useUpdateProfilePhotoMutation } from '../../redux/Api/authApi';
 import Avatar from '../../assets/user-avatar.png';
 import { IoIosCamera } from 'react-icons/io';
 import { Spin, notification } from 'antd';
-import EditIcon from "@mui/icons-material/Edit";
 import { useSelector } from 'react-redux';
 
 const Dashboard = ({ showDashboard, setBusinessInfo }) => {
@@ -13,7 +12,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 			
 	const businessData = useSelector((store) => store.auth.user).payload;
 
-	console.log(businessData);
+	// console.log(businessData);
 
 	useEffect(() => {
 		if (businessData?.user) {
@@ -32,7 +31,7 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 				//   navigate(`/subscribe`);
 				// }
 				// refetch();
-			} else if (businessData?.user?.businessVerified === "false") {
+			} else if (businessData?.user?.businessVerified === "denied") {
 				notification.error({
 					message: " Business not Verified ",
 					duration: 3,
