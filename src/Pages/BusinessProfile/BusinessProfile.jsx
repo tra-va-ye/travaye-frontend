@@ -160,22 +160,29 @@ const BusinessProfile = () => {
               Settings{">"}
             </button>
           </div>
-          <Swiper
-            className='!scale-100 w-full md:w-4/5 mx-auto'
-            slidesPerView={1}
-            modules={[ Navigation ]}
-            spaceBetween={20}
-            loop={true}
-            navigation
-          >
-            {
-              userData?.businessLocationImages?.map((imag, i) => (
-                <SwiperSlide key={i}>
-                  <img src={imag} className='h-[20rem] w-full rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
-                </SwiperSlide>
-              ))
-            }
-          </Swiper>
+          <div className="flex gap-3 md:flex-row flex-col">
+            <Swiper
+              className='!scale-100 w-full mx-auto'
+              slidesPerView={1}
+              modules={[ Navigation ]}
+              spaceBetween={20}
+              loop={true}
+              navigation
+            >
+              {
+                userData?.businessLocationImages?.map((imag, i) => (
+                  <SwiperSlide key={i}>
+                    <img src={imag} className='h-[20rem] w-full rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
+                  </SwiperSlide>
+                ))
+              }
+            </Swiper>
+            <div className="flex-1">
+              <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
+              <h4 className="font-semibold mt-2 text-nowrap">Email: {userData?.businessEmail}</h4>
+              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
+            </div>
+          </div>
                 
           <section className="grid grid-cols-7 gap-4 mt-6">
             {" "}
@@ -184,7 +191,7 @@ const BusinessProfile = () => {
               <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
               <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
             </div>
-            <section className="col-span-7 md:col-span-4">
+            <section className="col-span-7 md:col-span-5 flex flex-col overflow-y-hidden h-[27rem] lg:h-[26rem]">
               <div className="flex justify-content-between mb-3 items-center">
 								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
 								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
@@ -192,7 +199,7 @@ const BusinessProfile = () => {
 									<Rating value={avg} readOnly precision={0.5} />
 								</div>
 							</div>
-              <Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
+              <Review className={`flex gap-3 flex-col my-1 !overflow-y-scroll`}>
                 {userData && userData?.reviews?.length > 0 ? (
                   userData?.reviews?.map((review, i) => {
                     return (
@@ -207,7 +214,6 @@ const BusinessProfile = () => {
                             <p className="" style={{ color: '#009f57', fontSize: 20 }}>
                               {review?.reviewerFullname}
                             </p>
-                            
                           </ReviewUser>
                           <Rating value={review.reviewRating} readOnly />
                         </div>
@@ -244,11 +250,7 @@ const BusinessProfile = () => {
                 )}
               </Review>
             </section>
-            <div className="col-span-7 md:col-span-3 hidden md:block">
-              <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
-              <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
-              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
-            </div>
+            
           </section>
         </div>
         <BoxContainer>
