@@ -17,10 +17,14 @@ export const LocationApi = createApi({
       invalidatesTags: ["Locations"],
     }),
     getLocations: builder.query({
-      query: ({ page, count, categories, locationCity }) => ({
+      query: ({ page, count }) => ({
         url: `locations`,
         params: { page, count },
       }),
+      transformResponse: (apiResponse) => {
+        const newRes = apiResponse.data.filter(loc => loc.business.businessVerified === "verified");
+        return {...apiResponse, data: newRes };
+      },
       providesTags: ["Locations"],
       refetchOnUpdate: true,
       refetchOnReconnect: true,
@@ -80,7 +84,7 @@ export const LocationApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Location"],
+      invalidatesTags: ["Location", "User"],
     }),
     deleteLocationReview: builder.mutation({
       query: (body) => ({
@@ -88,7 +92,7 @@ export const LocationApi = createApi({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: ["Location"],
+      invalidatesTags: ["Location", "User"],
     }),
     getStates: builder.query({
       query: () => ({

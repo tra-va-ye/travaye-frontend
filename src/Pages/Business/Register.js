@@ -72,31 +72,32 @@ const Register = () => {
 		if (isSuccess && businessData?.user) {
 			setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
 			if (businessData?.user?.businessVerified === 'verified') {
-				if (businessData?.user?.addedCard === true) {
-					navigate(`/${userType}`);
-				} else {
-					navigate(`/subscribe`);
-				}
+        navigate(`/${userType}`);
+				// if (businessData?.user?.addedCard === true) {
+				// 	navigate(`/${userType}`);
+				// } else {
+				// 	navigate(`/subscribe`);
+				// }
 			} else if (businessData?.user?.businessVerified === 'pending') {
 				notification.warning({
 					message: ' Business Verification Pending',
 					duration: 3,
 					placement: 'bottomRight',
 				});
-				if (businessData?.user?.addedCard === true) {
-					navigate(`/${userType}`);
-				} else {
-					navigate(`/subscribe`);
-				}
-				refetch();
+				// if (businessData?.user?.addedCard === true) {
+				// 	navigate(`/${userType}`);
+				// } else {
+				// 	navigate(`/subscribe`);
+				// }
+				// refetch();
+        navigate('/register');
 			} else if (businessData?.user?.businessVerified === 'denied') {
 				notification.error({
-					message: ' Business not Verified ',
+					message: ' Business not Verified',
 					duration: 3,
 					placement: 'bottomRight',
 				});
-				refetch();
-
+				// refetch(); 
 				// Navigate to the verification page
 				navigate('/register');
 			}
@@ -183,6 +184,9 @@ const Register = () => {
 			<h6>
 				Please Complete Your Registration to gain full access to your Travaye
 				Business Page
+			</h6>
+			<h6>
+				Users can't see your business until you Complete Your Registration
 			</h6>
 			<form onSubmit={handleSubmit}>
 				<div className="row mt-3">

@@ -99,29 +99,33 @@ const Login = () => {
         });
 
         if (businessData?.user?.businessVerified === "verified") {
-          if (businessData?.user?.addedCard === true) {
-            setTimeout(() => {
-              navigate(`/${userType}`);
-            }, 1000);
-          } else {
-            navigate(`/subscribe`);
-          }
+          setTimeout(() => {
+            navigate(`/${userType}`);
+          }, 1000);
+          // if (businessData?.user?.addedCard === true) {
+          //   setTimeout(() => {
+          //     navigate(`/${userType}`);
+          //   }, 1000);
+          // } else {
+          //   navigate(`/subscribe`);
+          // }
         } else if (businessData?.user?.businessVerified === "pending") {
           notification.warning({
             message: " Business Verification Pending",
             duration: 3,
             placement: "bottomRight",
           });
-          if (businessData?.user?.addedCard === true) {
-            setTimeout(() => {
-              navigate(`/${userType}`);
-            }, 1000);
-          } else {
-            navigate(`/subscribe`);
-          }
-        } else {
-          navigate(`/register`);
+          setTimeout(() => {
+            navigate("/register");
+          }, 1000);
         }
+          // if (businessData?.user?.addedCard === true) {
+          // } else {
+          //   navigate(`/subscribe`);
+          // }
+        // } else {
+        //   navigate(`/register`);
+        // }
       } else {
         // Navigate to the verification page
         navigate("/verify-email");

@@ -22,6 +22,13 @@ export const AdminApi = createApi({
             }),
             providesTags: ["Businesses"],
         }),
+        getUnverifiedBusinesses: builder.query({
+            query: () => ({
+                url: 'admin/business?status=pending',
+                method: "GET"
+            }),
+            providesTags: ["Businesses"],
+        }),
         getBusinessById: builder.query({
             query: ({ id }) => ({
                 url: `admin/business/${id}`,
@@ -35,5 +42,6 @@ export const AdminApi = createApi({
 export const {
     useVerifyBusinessMutation,
     useGetAllBusinessesQuery,
+    useGetUnverifiedBusinessesQuery,
     useGetBusinessByIdQuery
 } = AdminApi;

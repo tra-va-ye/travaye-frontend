@@ -96,8 +96,6 @@ function App() {
     if (saved && !userType) dispatch(setUserType({userType: saved }));
   }, [dispatch, userType]);
 
-  console.log(userType);
-
   return (
     <>
       <Header onToggleSideNav={toggleSideNav} showSideNav={showSideNav} />
@@ -139,7 +137,6 @@ function App() {
               {userType === "business" && (
                 <Route path="/user" element={<Navigate to='/business' />} />
               )}
-
               {userType && userType === "business" && (
                 <Route path="/subscribe" element={<Subscribe />} />
               )}
