@@ -30,15 +30,18 @@ body {
   background-repeat: no-repeat;
   background-size: 100% auto;
   background-position: center;
-  transform: scale(1.8);
+  /* transform: scale(1.8); */
 }
 
 .swiper-button-next {
   background-image: url("./assets/swipe-right.png");
+  right: 0 !important;
 }
 
 .swiper-button-prev {
   background-image: url("./assets/swipe-left.png");
+  left: 0 !important;
+  z-index: 100;
 }
 
 .swiper-button-next::after,

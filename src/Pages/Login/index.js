@@ -11,8 +11,6 @@ import { FaEyeSlash } from "react-icons/fa6";
 
 import classes from "./Login.module.css";
 
-// import { businessLoginSchema, userLoginSchema } from "../../schemas";
-
 import { notification } from "antd";
 import {
   useBusinessLoginMutation,
@@ -25,14 +23,10 @@ const Login = () => {
   const userType = useSelector((state) => state.auth.userType);
   const [seePass, setSeePass] = useState(false);
   const [userSignUp, setUserSignUp] = useState(true);
-  useEffect(() => {
-    dispatch(setUserType({ userType: "user" }));
-  }, []);
   const navigate = useNavigate();
 
   const toggleSignUp = (type) => {
     setUserSignUp((prevState) => !prevState);
-
     dispatch(setUserType({ userType: type }));
   };
 
@@ -40,7 +34,6 @@ const Login = () => {
     userLogin,
     {
       isLoading: loginLoading,
-      // error: loginError,
       isSuccess: loginSuccess,
       data,
     },
@@ -50,16 +43,22 @@ const Login = () => {
     businessLogin,
     {
       isLoading: businessLoading,
-      // error: businessError,
       isSuccess: businessSuccess,
       data: businessData,
     },
   ] = useBusinessLoginMutation();
 
   useEffect(() => {
+    if(userType) {
+      sessionStorage.setItem("userType", userType);
+    }
     if (loginSuccess) {
       const user = data?.user;
 
+      const authToken = data?.token;
+      dispatch(setUserType({ userType }));
+      sessionStorage.setItem("authToken", authToken);
+      sessionStorage.setItem("user_id", data?.user?._id);
       
       if (user?.emailVerified) {
         notification.success({
@@ -69,36 +68,28 @@ const Login = () => {
         });
         
         if (user?.role === "admin") {
-          const authToken = data?.token;
-          sessionStorage.setItem("userType", "admin");
-          sessionStorage.setItem("authToken", authToken);
-          sessionStorage.setItem("user_id", data?.user?._id);
+          dispatch(setUserType({ userType: "admin" }));
           
           setTimeout(() => {
             navigate('/admin/businesses');
           }, 1000);
           return;
         }
-
-        const authToken = data?.token;
-        sessionStorage.setItem("userType", userType);
-        sessionStorage.setItem("authToken", authToken);
-        sessionStorage.setItem("user_id", data?.user?._id);
         
         setTimeout(() => {
           navigate(`/${userType}`);
         }, 1000);
       } else {
-        const authToken = data?.token;
-        sessionStorage.setItem("authToken", authToken);
-        sessionStorage.setItem("userType", userType);
-        sessionStorage.setItem("user_id", data?.user?._id);
-
         // Navigate to the verification page
         navigate("/verify-email");
       }
     } else if (businessSuccess) {
       const business = businessData?.user;
+
+      const authToken = businessData?.token;
+      sessionStorage.setItem("authToken", authToken);
+      dispatch(setUserType({ userType }));
+      sessionStorage.setItem("user_id", businessData?.user?._id);
 
       if (business?.emailVerified) {
         notification.success({
@@ -107,49 +98,44 @@ const Login = () => {
           placement: "bottomRight",
         });
 
-        const authToken = businessData?.token;
-        sessionStorage.setItem("authToken", authToken);
-        sessionStorage.setItem("userType", userType);
-        sessionStorage.setItem("user_id", businessData?.user?._id);
         if (businessData?.user?.businessVerified === "verified") {
-          if (businessData?.user?.addedCard === true) {
-            setTimeout(() => {
-              navigate(`/${userType}`);
-            }, 1000);
-          } else {
-            navigate(`/subscribe`);
-          }
+          setTimeout(() => {
+            navigate(`/${userType}`);
+          }, 1000);
+          // if (businessData?.user?.addedCard === true) {
+          //   setTimeout(() => {
+          //     navigate(`/${userType}`);
+          //   }, 1000);
+          // } else {
+          //   navigate(`/subscribe`);
+          // }
         } else if (businessData?.user?.businessVerified === "pending") {
           notification.warning({
             message: " Business Verification Pending",
             duration: 3,
             placement: "bottomRight",
           });
-          if (businessData?.user?.addedCard === true) {
-            setTimeout(() => {
-              navigate(`/${userType}`);
-            }, 1000);
-          } else {
-            navigate(`/subscribe`);
-          }
-        } else {
-          navigate(`/register`);
+          setTimeout(() => {
+            navigate("/register");
+          }, 1000);
         }
+          // if (businessData?.user?.addedCard === true) {
+          // } else {
+          //   navigate(`/subscribe`);
+          // }
+        // } else {
+        //   navigate(`/register`);
+        // }
       } else {
-        const authToken = businessData?.token;
-        sessionStorage.setItem("authToken", authToken);
-        sessionStorage.setItem("userType", userType);
-        sessionStorage.setItem("user_id", businessData?.user?._id);
-
         // Navigate to the verification page
         navigate("/verify-email");
       }
     }
   }, [dispatch, businessSuccess, loginSuccess, data, businessData, userType]);
 
-  const handleClick = async () => {
+  
+  const onSubmit = async () => {
     if (userSignUp) {
-      sessionStorage.setItem("userType", "user");
       dispatch(setUserType({ userType: "user" }));
 
       await userLogin({ username: values.userName, password: values.passWord })
@@ -163,21 +149,15 @@ const Login = () => {
     }
     if (!userSignUp) {
       dispatch(setUserType({ userType: "business" }));
-      sessionStorage.setItem("userType", "business");
 
       await businessLogin({
         businessEmail: values.email,
         password: values.passWord,
-      })
-        .unwrap()
+      }).unwrap()
         .catch((err) => {
           notification.error(err?.data?.error || "an error occured");
         });
     }
-  };
-
-  const onSubmit = () => {
-    handleClick();
   };
 
   const { values, errors, handleChange, handleSubmit } = useFormik({

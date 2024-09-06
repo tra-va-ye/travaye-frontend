@@ -157,18 +157,22 @@ const UserSettings = () => {
             </h5>
             <p className="mt-1 px-3">{userData?.aboutUser || "No User bio"}</p>
           </div>
-          <div className="mt-6">
+          <div className="mt-7">
             <h5>Total Outings</h5>
-            <p>{userData?.outings?.length || "27"} outings</p>
+            <p>{userData?.outings?.length || "7"} outings</p>
           </div>
-          <div className="mt-6">
-            <h5>Total Posts</h5>
-            <p>{userData?.posts?.length || "6"} posts</p>
+          <div className="mt-5">
+            <h5 className="text-xl">Total Reviews</h5>
+            <p>{userData?.reviews?.length || "None"}</p>
           </div>
-          <div className="mt-6">
+          <div className="mt-5">
+            <h5 className="text-xl">Profiles Previewed</h5>
+            <p>{userData?.profilesPreviewed || "None"}</p>
+          </div>
+          {/* <div className="mt-6">
             <h5>Average Review</h5>
             <p>4.5 stars</p>
-          </div>
+          </div> */}
         </div>
       </DashboardContainer>
       <Main>
@@ -262,15 +266,15 @@ const UserSettings = () => {
         <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
           <InsightBox>
             <h6>Number of Businesses Liked</h6>
-            <p>{userData?.likes?.length || 68}</p>
+            <p>{userData?.likedLocations?.length || "None"}</p>
           </InsightBox>
           <InsightBox>
             <h6>Number of Businesses Reviewed</h6>
-            <p>{userData?.reviews?.length || 76}</p>
+            <p>{userData?.reviews?.length || "None"}</p>
           </InsightBox>
           <InsightBox>
-            <h6>Number of Profiles Viewed</h6>
-            <p>168</p>
+            <h6>Number of Profiles Previewed</h6>
+            <p>{userData?.profilesPreviewed}</p>
           </InsightBox>
           <InsightBox>
             <h6>Number of Visits</h6>

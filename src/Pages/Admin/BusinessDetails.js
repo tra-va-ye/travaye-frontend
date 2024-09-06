@@ -15,8 +15,7 @@ const BusinessDetails = () => {
   const [addressVisible, setAddressVisible] = useState(false);
   const [imageVisible, setImageVisible] = useState(false);
   const [verifyBusiness, { isLoading, isError: isVerifyError, data: verifiedData, error: verifyError }] = useVerifyBusinessMutation();
-  // console.log(verifiedData);
-
+  
   useEffect(() => {
     if (isFetching) return;
     if (isError) {
@@ -29,24 +28,21 @@ const BusinessDetails = () => {
   }, [isError, error, isFetching]);
 
   const handleVerify = async (isAccept) => {
-    console.log(isAccept);
-    
     await verifyBusiness({ isVerified: isAccept, id });
   }
-  
   
   useEffect(() => {
     if (isLoading || isFetching) return;
     if (!verifiedData && !verifyError) return;
     if (isVerifyError) {
-      console.log(verifyError);
+      // console.log(verifyError);
       notification.error({
         message: verifyError?.data?.message,
         duration: 3,
         placement: "bottomRight",
       });
     } else {
-      console.log(verifiedData);
+      // console.log(verifiedData);
       notification.success({
         message: verifiedData?.message,
         duration: 3,
@@ -74,7 +70,7 @@ const BusinessDetails = () => {
                     Back{" >"}
                   </button>
               </div>
-              <section className="grid grid-cols-1 lg:grid-cols-2 gap-[10%]">
+              <section className="grid grid-cols-1 lg:grid-cols-2 gap-16">
                 <div className="flex flex-col gap-4">
                   <h4 className="text-[#0C0C0C] font-semibold text-xl mb-3">Business Details</h4>
 
@@ -106,6 +102,16 @@ const BusinessDetails = () => {
                   <div>
                     <h5 className="text-lg mb-1 font-semibold">Business Address</h5>
                     <p className="text-[#9D9D9D] font-medium">{data?.businessAddress}</p>
+                  </div>
+
+                  <div>
+                    <h5 className="text-lg mb-1 font-semibold">Business Email</h5>
+                    <p className="text-[#9D9D9D] font-medium">{data?.businessEmail}</p>
+                  </div>
+
+                  <div>
+                    <h5 className="text-lg mb-1 font-semibold">Business Telephone</h5>
+                    <p className="text-[#9D9D9D] font-medium">+234{data?.businessTelephone}</p>
                   </div>
                 </div>
                 <section className="flex flex-col gap-4">
@@ -177,11 +183,25 @@ const BusinessDetails = () => {
                   </div>
 
                 </section>
+                <div className="flex mt-6 gap-4 justify-end md:hidden">
+                  {
+                    data?.businessVerified === "pending" && 
+                      <Button color="#009F57" className="!border-none px-4" onClick={() => handleVerify(true)}>
+                        Approve
+                      </Button>
+                  }
+                  <Button color="#FF3D00" className="!border-none px-4" onClick={() => handleVerify(false)}>
+                    Deny
+                  </Button>
+                </div>
               </section>
-              <div className="flex mt-16 gap-5 justify-end">
-                <Button color="#009F57" className="!border-none px-4" onClick={() => handleVerify(true)}>
-                  Approve
-                </Button>
+              <div className="md:flex hidden mt-10 gap-4 justify-end">
+                {
+                  data?.businessVerified === "pending" && 
+                    <Button color="#009F57" className="!border-none px-4" onClick={() => handleVerify(true)}>
+                      Approve
+                    </Button>
+                }
                 <Button color="#FF3D00" className="!border-none px-4" onClick={() => handleVerify(false)}>
                   Deny
                 </Button>

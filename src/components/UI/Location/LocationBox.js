@@ -16,10 +16,10 @@ const LocationBox = (props) => {
       <h6 className="font-extrabold text-lg ">
         {props.location?.locationName || props.location?.businessName}
       </h6>
-      <div className="flex content-between justify-between items-end">
+      <div className="flex flex-col gap-2">
         <p>{props.location?.locationAddress || props.location?.businessAddress}</p>
-        <div className="flex items-center">
-          <p className="!text-[#009f57] font-bold !text-xl">{props.location?.business?.rating || props.location?.rating}</p>
+        <div className="flex items-center ms-auto">
+          <p className="!text-[#009f57] font-bold !text-xl pe-2">{props.location?.business?.rating || props.location?.rating}</p>
           <IoIosStar fill="#E9A309" size={24} />
         </div>
       </div>

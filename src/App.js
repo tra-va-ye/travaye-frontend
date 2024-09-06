@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import Home from "./Pages/Home/Home";
@@ -9,7 +9,9 @@ import Loader from "./components/UI/Loader";
 import RequireAuth from "./Layout/RequireAuth";
 import CreateEvent from "./Pages/CreateEvent";
 import "./index.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import RequireAdmin from "./Pages/Admin/RequireAdmin";
+import { setUserType } from "./redux/Slices/authSlice";
 
 
 const AdminPage = lazy(() => {
@@ -80,12 +82,19 @@ const Subscribe = lazy(() => {
 });
 
 function App() {
+  const dispatch = useDispatch();
   const userType = useSelector((state) => state.auth.userType);
   const [showSideNav, setShowSideNav] = useState(false);
 
   const toggleSideNav = () => {
     setShowSideNav((prevState) => !prevState);
   };
+
+  useEffect(() => {
+    const saved = sessionStorage.getItem("userType");
+    // console.log(saved);
+    if (saved && !userType) dispatch(setUserType({userType: saved }));
+  }, [dispatch, userType]);
 
   return (
     <>
@@ -94,18 +103,19 @@ function App() {
       <section className="iconBg">
         <Suspense fallback={<Loader />}>
           <Routes>
-            {userType === "admin" && (
-              <>
+            {userType === "admin" && 
+              <Route element={<RequireAdmin />}>
                 <Route path="/admin/businesses" element={<AdminPage />} />
+                <Route path="/user" element={<Navigate to='/admin/businesses' />} />
                 <Route path="/admin/businesses/:id" element={<BusinessDetails />} />
-              </>
-            )}
+              </Route>
+            }
             <Route path="/" element={<Home />} />
             {<Route path="/login" element={<Login />} />}
             {<Route path="/signup" element={<SignUp />} />}
             {<Route path="/forgot-password" element={<ForgotPassword />} />}
             {<Route path="/reset-password" element={<ResetPassword />} />}
-            <Route path="" element={<RequireAuth />}>
+            <Route element={<RequireAuth />}>
               <Route path="/register" element={<Register />} />
               {/* Redirect for both the /business page */}
               {userType === "business" && (
@@ -127,8 +137,7 @@ function App() {
               {userType === "business" && (
                 <Route path="/user" element={<Navigate to='/business' />} />
               )}
-
-              {userType === "business" && (
+              {userType && userType === "business" && (
                 <Route path="/subscribe" element={<Subscribe />} />
               )}
               <Route path="/plan-a-trip" element={<PlanTrip />} />
@@ -137,31 +146,6 @@ function App() {
               <Route path="/location/map" element={<Maps />} />
               <Route path="/added-locations" element={<AddedLocations />} />
             </Route>
-            <>
-            
-              {/* <Route
-                path="/user"
-                element={
-                  token ? <UserProfile /> : <Navigate to="/login" />
-                }
-              />
-              <Route
-                path="/plan-a-trip"
-                element={token ? <PlanTrip /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/location/:id"
-                element={
-                  token ? <LocationDetails /> : <Navigate to="/login" />
-                }
-              />
-              <Route
-                path="/added"
-                element={
-                  token ? <AddedLocations /> : <Navigate to="/login" />
-                }
-              /> */}
-            </>
             <Route path="/business-locations" element={<BusinessLocations />} />
             <Route path="/locations" element={<Locations />} />
             <Route path="/verify-email" element={<Verification />} />

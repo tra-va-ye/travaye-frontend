@@ -92,7 +92,7 @@ const Subscribe = () => {
         } else {
           navigate(`/subscribe`);
         }
-      } else if (businessData?.businessVerified === "false") {
+      } else if (businessData?.businessVerified === "denied") {
         notification.error({
           message: "Business not Verified",
           duration: 3,

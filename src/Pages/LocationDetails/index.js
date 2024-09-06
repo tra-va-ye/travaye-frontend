@@ -339,7 +339,7 @@ const LocationDetails = () => {
 							</div>
 							<Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
 								{location && location?.business?.reviews?.length > 0 ? (
-									location?.business?.reviews?.slice(0, 10).map((review, i) => {
+									location?.business?.reviews?.slice(0, 8).map((review, i) => {
 										return (
 											<ReviewCard key={i}>
 												<div className="flex items-center justify-between">

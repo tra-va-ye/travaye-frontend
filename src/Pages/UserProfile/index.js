@@ -62,6 +62,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      const filtered = data?.data?.filter(locs => locs.business.businessVerified === "verified");
+      console.log(filtered);
       setLocations(data?.data);
     }
     if (isError) {
@@ -90,11 +92,9 @@ const UserProfile = () => {
     }
   }, [location.pathname, firstVisit, refetchLocations]);
   const userLikedLocations = userInfo?.likedLocations;
-  console.log(userData?.user);  
   
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
-  // console.log(filteredUserLikedLocations);
 
   return (
     <Container>
@@ -141,12 +141,12 @@ const UserProfile = () => {
             <h6>27 Outings</h6>
           </div>
           <div className="mt-4">
-            <h5 className="text-xl">{userInfo?.fullName ? "Total Posts" : "User Visits"}</h5>
-            <h6>{userInfo?.fullName ? "6 Posts" : "null"}</h6>
+            <h5 className="text-xl">Total Reviews</h5>
+            <h6>{userInfo?.reviews?.length || "None"}</h6>
           </div>
           <div className="mt-4">
-            <h5 className="text-xl">Average Review</h5>
-            <h6>4.5 stars</h6>
+            <h5 className="text-xl">Profiles Previewed</h5>
+            <h6>{userInfo?.profilesPreviewed || "None"}</h6>
           </div>
         </div>
       </Dashboard>
@@ -186,7 +186,6 @@ const UserProfile = () => {
             <SupportModal username={userInfo?.username} onClick={() => setShowSupportModal((prev) => !prev)} />
           )}
           {newLocationModal && <NewLocation onClick={toggleNewLocationModal} />}
-          {/* {showPointsModal && <PointsModal onClick={togglePointsModal} />} */}
           {
             filteredUserLikedLocations.length < 1 ?
               <p>

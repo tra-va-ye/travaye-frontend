@@ -1,12 +1,9 @@
 import styled from 'styled-components';
 import { Button } from '../../components/UI/Buttons';
 import { Card, StarContainer } from '../AddedLocations';
-import MaryLandImg from '../../assets/maryland-mall.png';
-import { FourStars } from '../../components/UI/svgs/svgs';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	useLazyPlanATripQuery,
-	useGetLocationsQuery,
 	useGetCategoriesQuery,
 } from '../../redux/Api/locationApi';
 import { useEffect, useState } from 'react';
@@ -20,14 +17,6 @@ const Locations = () => {
 	);
 	const { state } = useLocation();
 	const navigate = useNavigate();
-	// console.log(state);
-	// const { data: locations } = useGetLocationsQuery({
-	// 	page: 1,
-    // 	count: 10,
-	// 	categories: state.category
-	// 		.map((category) => category.toLowerCase().replace(/\s+/g, "-"))
-	// 		.join(","),
-	// });
 	const { data: categories } = useGetCategoriesQuery();
 	const [planATrip, { isLoading, data }] = useLazyPlanATripQuery();
 
@@ -39,8 +28,6 @@ const Locations = () => {
 			})
 			.catch((err) => {});
 	}, [state]);
-
-	console.log();
 
 	return (
 		<>
@@ -72,7 +59,7 @@ const Locations = () => {
 
 
 								<div className="flex align-items-center justify-end w-full col-span-3">
-									<p className="me-3 mb-0">{e?.budgetClass.label}</p>
+									<p className="me-3 mb-0">{e?.business?.budgetClass?.label}</p>
 									{!addedLocations.find(
 										(location) => location._id == e._id
 									) && (
