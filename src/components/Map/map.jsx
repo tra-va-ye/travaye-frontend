@@ -34,6 +34,7 @@ const Map = () => {
         </Marker>
       </MapContainer> */}
 			<iframe
+        title="map"
 				width="100%"
 				height="500"
 				style={{ border: '0' }}

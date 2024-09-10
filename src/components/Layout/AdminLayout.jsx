@@ -3,30 +3,13 @@ import Avatar from "../../assets/user-avatar.png";
 import { IoIosCamera } from "react-icons/io";
 import { useState } from "react";
 import { useGetMeQuery, useUpdateProfilePhotoMutation } from "../../redux/Api/authApi";
-// import { useSelector } from "react-redux";
-// import { useEffect } from "react";
-import { Spin } from "antd";
-import { useNavigate } from "react-router-dom";
 import { TogleButton } from "./BusinessSidebar";
 import { BsBoxArrowInLeft } from "react-icons/bs";
+import { Spin } from "antd";
 
 const AdminLayout = ({ children }) => {
     const [showDashboard, setShowDashboard] = useState(false);
-    const [userData, setuserData] = useState({});
     const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
-    // const userType = useSelector((state) => state.auth.userType);
-
-    // const {
-        // data: adminData
-        // isSuccess:,
-        // isLoading,
-        // refetch,
-    // } = useGetMeQuery({ userType });
-
-    // useEffect(() => {
-        // console.log(adminData.user);
-        // setuserData(adminData.user);
-    // }, [userData, navigate, userType]);
 
     return (
         <Container>
@@ -38,7 +21,7 @@ const AdminLayout = ({ children }) => {
                     {isLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
                     <img
                         className="rounded-full w-[150px] h-[150px]"
-                        src={userData?.profilePhoto || Avatar}
+                        src={Avatar}
                         alt="avatar"
                     />
                     <label htmlFor="photo">

@@ -2,7 +2,6 @@ import classes from "./Footer.module.css";
 import WhiteLogo from "../../../assets/white-logo.png";
 import { FacebookIcon, TwitterIcon, InstaIcon } from "../../UI/svgs/svgs";
 import { Link } from "react-router-dom";
-import bgpic from '../../../assets/landing.png';
 
 const Links = [
   { name: "My Account", href: "/user" },
