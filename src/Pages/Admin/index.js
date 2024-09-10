@@ -12,33 +12,6 @@ import { useDispatch } from "react-redux/es";
 import { logout } from "../../redux/Slices/authSlice";
 import { notification } from "antd";
 
-// const businessArray = [
-//     {
-//         name: "Papi’s Meatro",
-//         logo: maryland
-//     },
-//     {
-//         name: "Jelp Factory",
-//         logo: lagos
-//     },
-//     {
-//         name: "Genesis Cinemas",
-//         logo: abuja
-//     },
-//     {
-//         name: "Biker’s House",
-//         logo: ibadan
-//     },
-//     {
-//         name: "Jurasic Arcade",
-//         logo: maryland
-//     },
-//     {
-//         name: "The Underground Bakery",
-//         logo: lagos
-//     }
-// ]
-
 const BusinessBox = ({ businessName, image, handleClick }) => {
   return (
     <article

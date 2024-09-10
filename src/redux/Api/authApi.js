@@ -55,7 +55,6 @@ export const AuthApi = createApi({
       onQueryStarted(id, { dispatch, queryFulfilled }) {
         queryFulfilled
           .then((apiResponse) => {
-            // console.log(apiResponse);
             dispatch(updateUser(apiResponse?.data?.user));
           })
           .catch(() => {
@@ -70,6 +69,13 @@ export const AuthApi = createApi({
         body,
       }),
       invalidatesTags: ["Profile"],
+    }),
+    deleteMyProfile: builder.mutation({
+      query: ({ userType, id }) => ({
+        url: `${userType}/${id}`,
+        method: "DELETE"
+      }),
+      invalidatesTags: ["Profile", "User"],
     }),
     updateProfilePhoto: builder.mutation({
       query: (body) => ({
@@ -133,4 +139,5 @@ export const {
   useResendVerificationMailMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
+  useDeleteMyProfileMutation
 } = AuthApi;

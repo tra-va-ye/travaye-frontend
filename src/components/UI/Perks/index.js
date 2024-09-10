@@ -1,7 +1,4 @@
 import CardList from "../CardLIst";
-import Star from "../../../assets/Perks/star.png";
-import Vector from "../../../assets/Perks/vector.png";
-import Vector1 from "../../../assets/Perks/vector1.png";
 import classes from "../../../Pages/Home/Home.module.css";
 
 const PerkData = [

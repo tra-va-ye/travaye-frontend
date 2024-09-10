@@ -13,7 +13,7 @@ export const AdminApi = createApi({
                 url: `admin/business/${id}?isVerified=${isVerified}`,
                 method: "PUT"
             }),
-            invalidatesTags: ["Businesses"]
+            invalidatesTags: ["Businesses", "Admin"]
         }),
         getAllBusinesses: builder.query({
             query: () => ({
@@ -36,6 +36,13 @@ export const AdminApi = createApi({
             }),
             providesTags: ["Admin"],
         }),
+        deleteBusinessProfile: builder.mutation({
+            query: ({ id }) => ({
+              url: `admin/business/${id}`,
+              method: "DELETE"
+            }),
+            invalidatesTags: ["Admin", "Businesses"],
+        }),
     }),
 });
 
@@ -43,5 +50,6 @@ export const {
     useVerifyBusinessMutation,
     useGetAllBusinessesQuery,
     useGetUnverifiedBusinessesQuery,
-    useGetBusinessByIdQuery
+    useGetBusinessByIdQuery,
+    useDeleteBusinessProfileMutation
 } = AdminApi;

@@ -144,9 +144,9 @@ const UserProfile = () => {
             <h5 className="text-xl">Total Reviews</h5>
             <h6>{userInfo?.reviews?.length || "None"}</h6>
           </div>
-          <div className="mt-4">
-            <h5 className="text-xl">Profiles Previewed</h5>
-            <h6>{userInfo?.profilesPreviewed || "None"}</h6>
+          <div className="mt-5">
+            <h5 className="text-xl">Travaye Points</h5>
+            <p>Coming Soon</p>
           </div>
         </div>
       </Dashboard>
