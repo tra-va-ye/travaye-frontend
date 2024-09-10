@@ -1,13 +1,13 @@
 import styled from "styled-components";
 import { Select } from "antd";
 import Dropzone from "react-dropzone";
-import { Button } from "../../components/UI/Buttons";
 import { useState } from "react";
 import { useGetStatesQuery, useLazyGetLgaQuery } from "../../redux/Api/geoApi";
 import { useGetBudgetsQuery, useGetCategoriesQuery } from "../../redux/Api/locationApi";
 import { FileUpload } from "../Business/Register";
 import { Box, Typography } from "@mui/material";
 import { CloudUpload } from "../../components/UI/svgs/svgs";
+import logo from "../../assets/logo.png";
 // import { ArrowCloud } from "../../components/UI/svgs/svgs";
 
 const Flex = styled(Box)({
@@ -57,6 +57,12 @@ const CreateEvent = () => {
 
   return (
     <Style>
+      <WaterFill>
+        <h3>
+          <img src={logo} alt="logo for coming soon" className="inline-block pe-4" />
+          Coming soon
+        </h3>
+      </WaterFill>
       <h2>Create an event (Advert)</h2>
       <p className="">
         Follow the Steps below to create an event in next to no time.
@@ -177,6 +183,29 @@ const CreateEvent = () => {
 };
 
 export default CreateEvent;
+
+const WaterFill = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8); /* Adjust opacity for visibility */
+  z-index: 5;
+  pointer-events: all; /* Capture all interactions */
+
+  h3 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(335deg);
+    font-size: 2.5rem !important;
+    color: #E9A309 !important;
+    z-index: 2;
+    pointer-events: none; /* Make the watermark non-interactive */
+    user-select: none;
+  }
+`
 
 const Style = styled.div`
   margin-top: 20px;

@@ -3,9 +3,10 @@ import AdminLayout from "../../components/Layout/AdminLayout";
 import { FileUpload } from "../Business/Register";
 import { Button } from "../../components/UI/Buttons";
 import { useEffect, useState } from "react";
-import { useGetBusinessByIdQuery, useVerifyBusinessMutation } from "../../redux/Api/adminApi";
+import { useDeleteBusinessProfileMutation, useGetBusinessByIdQuery, useVerifyBusinessMutation } from "../../redux/Api/adminApi";
 import { Image, notification } from "antd";
 import Loader from "../../components/UI/Loader";
+import { useDeleteMyProfileMutation } from "../../redux/Api/authApi";
 
 const BusinessDetails = () => {
 	const { id } = useParams();
@@ -15,6 +16,7 @@ const BusinessDetails = () => {
   const [addressVisible, setAddressVisible] = useState(false);
   const [imageVisible, setImageVisible] = useState(false);
   const [verifyBusiness, { isLoading, isError: isVerifyError, data: verifiedData, error: verifyError }] = useVerifyBusinessMutation();
+  const [deleteProfile] = useDeleteBusinessProfileMutation();
   
   useEffect(() => {
     if (isFetching) return;
@@ -42,7 +44,6 @@ const BusinessDetails = () => {
         placement: "bottomRight",
       });
     } else {
-      // console.log(verifiedData);
       notification.success({
         message: verifiedData?.message,
         duration: 3,
@@ -54,6 +55,40 @@ const BusinessDetails = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleVerify]);
+
+  
+  const handleDeleteUserProfile = () => {
+    notification.warning({
+      message: "Are you sure you want to Delete This Business?",
+      duration: 5,
+      type: "warning",
+      placement: "bottomRight",
+      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
+      onClose: async () => {
+        const response = await deleteProfile({ id: data._id });
+        console.log(response);
+
+        if (response?.data?.message) {
+          notification.success({
+            message: response?.data?.message,
+            duration: 3,
+            type: "success",
+            placement: "bottomRight"
+          });
+          setTimeout(() => {
+            navigate("/admin/businesses");
+          }, 500);
+        } else {
+          notification.error({
+            message: response?.error?.data?.error,
+            duration: 3,
+            type: "error",
+            placement: "bottomRight"
+          })
+        }
+      }
+    });
+  }
   
   return (
     <AdminLayout>
@@ -204,6 +239,9 @@ const BusinessDetails = () => {
                 }
                 <Button color="#FF3D00" className="!border-none px-4" onClick={() => handleVerify(false)}>
                   Deny
+                </Button>
+                <Button color="#FF3D00" className="!border-none px-4" onClick={handleDeleteUserProfile}>
+                  Delete Business
                 </Button>
               </div>
             </>
