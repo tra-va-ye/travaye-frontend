@@ -1,10 +1,11 @@
 import { notification, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import Avatar from "../../assets/user-avatar.png";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
 import {
+  useDeleteMyProfileMutation,
   useUpdateProfilePhotoMutation,
   useUpdateUserProfileMutation,
 } from "../../redux/Api/authApi";
@@ -19,6 +20,7 @@ import { Button } from "../../components/UI/Buttons";
 import { FaEyeSlash } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import Loader from "../../components/UI/Loader";
+import { logout } from "../../redux/Slices/authSlice";
 
 export const passwordRegex = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
 
@@ -27,6 +29,9 @@ const UserSettings = () => {
   const [updateProfilePhoto, { isLoading }] = useUpdateProfilePhotoMutation();
   const [updateProfile, { isLoading: updateProfileLoading }] = useUpdateUserProfileMutation();
   const [showDashboard, setShowDashboard] = useState(false);
+  const dispatch = useDispatch();
+
+  const [deleteProfile] = useDeleteMyProfileMutation();
 
   const [locations, setLocations] = useState([]);
   const { data, isError, error, isSuccess } = useGetLocationsQuery({
@@ -106,6 +111,36 @@ const UserSettings = () => {
       })
     }
   }
+  
+  const handleDeleteUserProfile = () => {
+    notification.warning({
+      message: "Are you sure you want to Delete Your Profile?",
+      duration: 5,
+      type: "warning",
+      placement: "bottomRight",
+      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
+      onClose: async () => {
+        const response = await deleteProfile({userType: "user", id: userData._id });
+        
+        if (response?.data?.message) {
+          notification.success({
+            message: response?.data?.message,
+            duration: 3,
+            type: "success",
+            placement: "bottomRight"
+          });
+        } else {
+          notification.error({
+            message: response?.error?.data?.error,
+            duration: 3,
+            type: "error",
+            placement: "bottomRight"
+          })
+        }
+        dispatch(logout());
+      }
+    });
+  }
 
   return (
     <Container>
@@ -166,8 +201,8 @@ const UserSettings = () => {
             <p>{userData?.reviews?.length || "None"}</p>
           </div>
           <div className="mt-5">
-            <h5 className="text-xl">Profiles Previewed</h5>
-            <p>{userData?.profilesPreviewed || "None"}</p>
+            <h5 className="text-xl">Travaye Points</h5>
+            <p>Coming Soon</p>
           </div>
           {/* <div className="mt-6">
             <h5>Average Review</h5>
@@ -274,11 +309,11 @@ const UserSettings = () => {
           </InsightBox>
           <InsightBox>
             <h6>Number of Profiles Previewed</h6>
-            <p>{userData?.profilesPreviewed}</p>
+            <p>{userData?.profilesPreviewed?.length}</p>
           </InsightBox>
           <InsightBox>
             <h6>Number of Visits</h6>
-            <p>27 Outings</p>
+            <p>{userData?.visits || "0"} Outings</p>
           </InsightBox>
         </div>
         <div className="flex flex-col items-end gap-2.5 my-9">
@@ -289,9 +324,9 @@ const UserSettings = () => {
           >
             Update Profile
           </Button>
-          {/* <Button color="#FF3D00" className="!border-none ml-auto">
-          Cancel Subscription
-        </Button> */}
+          <Button color="#FF3D00" className="!border-none ml-auto" onClick={handleDeleteUserProfile}>
+            Delete Profile
+          </Button>
         </div>
       </Main>
     </Container>

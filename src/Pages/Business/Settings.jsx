@@ -1,11 +1,11 @@
 import { notification, Select } from "antd";
 import { useEffect, useState } from "react";
 // import classes from "";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useGetBudgetsQuery, useGetCategoriesQuery } from "../../redux/Api/locationApi";
-import { useGetMeQuery, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
+import { useDeleteMyProfileMutation, useGetMeQuery, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { useGetStatesQuery, useLazyGetCityQuery, useLazyGetLgaQuery } from "../../redux/Api/geoApi";
 import Dashboard, { TogleButton } from "../../components/Layout/BusinessSidebar";
@@ -13,16 +13,20 @@ import { Button } from "../../components/UI/Buttons";
 import { FaEyeSlash } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import { passwordRegex } from "../UserSettings/UserSettings";
+import { logout } from "../../redux/Slices/authSlice";
 
 const BusinessSettings = () => {
   const [seePass, setSeePass] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [updateProfile] = useUpdateBusinessProfileMutation();
+  const [deleteProfile] = useDeleteMyProfileMutation();
 
   const { data: states } = useGetStatesQuery();
   const [getCity, { data: city }] = useLazyGetCityQuery();
   const [getLga, { data: lga }] = useLazyGetLgaQuery();
   const { data: budgets } = useGetBudgetsQuery();
+
+  const dispatch = useDispatch();
 
   const userType = useSelector((state) => state.auth.userType);
 
@@ -43,7 +47,6 @@ const BusinessSettings = () => {
   const {
     data: businessData,
     isSuccess,
-    // isLoading,
     refetch,
   } = useGetMeQuery({ userType });
   const { data: categories } = useGetCategoriesQuery();
@@ -148,6 +151,36 @@ const BusinessSettings = () => {
         placement: "bottomRight"
       })
     }
+  };
+
+  const deleteUserProfile = () => {
+    notification.warning({
+      message: "Are you sure you want to Delete Your Profile?",
+      duration: 5,
+      type: "warning",
+      placement: "bottomRight",
+      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
+      onClose: async () => {
+        const response = await deleteProfile({ userType:"business", id: userData?._id });
+        
+        if (response?.data?.message) {
+          notification.success({
+            message: response?.data?.message,
+            duration: 3,
+            type: "success",
+            placement: "bottomRight"
+          })
+        } else {
+          notification.error({
+            message: response?.error?.data?.error,
+            duration: 3,
+            type: "error",
+            placement: "bottomRight"
+          })
+        }
+        dispatch(logout());
+      }
+    });
   }
 
   return (
@@ -337,20 +370,20 @@ const BusinessSettings = () => {
           <p>{userData?.reviews?.length || 76}</p>
         </InsightBox>
         <InsightBox>
-          <h6>Profile Views</h6>
-          <p>168</p>
+          <h6>Engagement Rate</h6>
+          <p>{userData?.engagementRate}%</p>
         </InsightBox>
         <InsightBox>
-          <h6>Business Growth Metric</h6>
-          <p>12% from registration</p>
+          <h6>Engagement Rate</h6>
+          <p>{userData?.conversionRate}%</p>
         </InsightBox>
       </div>
       <div className="flex flex-col items-end gap-2.5 my-9">
           <Button color="#009F57" className="!border-none ml-auto" onClick={handleSubmit}>
             Update Profile
           </Button>
-          <Button color="#FF3D00" className="!border-none ml-auto">
-            Cancel Subscription
+          <Button color="#FF3D00" className="!border-none ml-auto" onClick={deleteUserProfile}>
+            Delete Profile
           </Button>
       </div>
       </Main>
