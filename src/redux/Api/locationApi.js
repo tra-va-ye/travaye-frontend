@@ -22,7 +22,7 @@ export const LocationApi = createApi({
         params: { page, count },
       }),
       transformResponse: (apiResponse) => {
-        const newRes = apiResponse.data.filter(loc => loc.business.businessVerified === "verified");
+        const newRes = apiResponse.data.filter(loc => loc.business?.businessVerified === "verified");
         return {...apiResponse, data: newRes };
       },
       providesTags: ["Locations"],
@@ -39,6 +39,10 @@ export const LocationApi = createApi({
       query: ({ state, city, category, lga, budget, subcategory }) =>
         `locations/plan?state=${state}&category=${category}&subcategory=${subcategory}&city=${city}&lga=${lga}&budget=${budget}`,
       providesTags: ["Trip"],
+      transformResponse: (apiResponse) => {
+        const newRes = apiResponse.data.filter(loc => loc.business?.businessVerified === "verified");
+        return {...apiResponse, data: newRes };
+      },
     }),
     filterLocation: builder.query({
       query: () => `locations?filters=wildlife-attractions&location=lagos`,
