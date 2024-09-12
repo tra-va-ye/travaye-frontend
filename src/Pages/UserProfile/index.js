@@ -62,8 +62,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      const filtered = data?.data?.filter(locs => locs.business.businessVerified === "verified");
-      console.log(filtered);
+      // const filtered = data?.data?.filter(locs => locs.business.businessVerified === "verified");
+      // console.log(filtered);
       setLocations(data?.data);
     }
     if (isError) {
