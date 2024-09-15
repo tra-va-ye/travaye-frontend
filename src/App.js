@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import RequireAdmin from "./Pages/Admin/RequireAdmin";
 import { setUserType } from "./redux/Slices/authSlice";
 
-
 const AdminPage = lazy(() => {
   return import("./Pages/Admin");
 });
@@ -69,13 +68,13 @@ const UserProfile = lazy(() => {
   return import("./Pages/UserProfile");
 });
 const BusinessProfile = lazy(() => {
-  return import("./Pages/BusinessProfile/BusinessProfile");
+  return import("./Pages/BusinessProfile");
 });
 const BusinessSettings = lazy(() => {
   return import("./Pages/Business/Settings");
 });
 const UserSettings = lazy(() => {
-  return import("./Pages/UserSettings/UserSettings");
+  return import("./Pages/UserSettings");
 });
 const Subscribe = lazy(() => {
   return import("./Pages/Subscribe/Subscribe");
@@ -92,7 +91,6 @@ function App() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem("userType");
-    // console.log(saved);
     if (saved && !userType) dispatch(setUserType({userType: saved }));
   }, [dispatch, userType]);
 
@@ -117,29 +115,15 @@ function App() {
             {<Route path="/reset-password" element={<ResetPassword />} />}
             <Route element={<RequireAuth />}>
               <Route path="/register" element={<Register />} />
-              {/* Redirect for both the /business page */}
-              {userType === "business" && (
-                <Route path="/business" element={<BusinessProfile />} />
-              )}
-              {userType === "user" && (
-                <Route path="/business" element={<Navigate to='/user' />} />
-              )}
-              {userType === "business" &&  (
-                <Route path="/settings" element={<BusinessSettings />} />
-              )}
-              {userType === "user" &&  (
-                <Route path="/settings" element={<UserSettings />} />
-              )}
+
               {/* Redirect to the appropriate route if user tries to access the wrong route */}
-              {userType === "user" && (
-                <Route path="/user" element={<UserProfile />} />
-              )}
-              {userType === "business" && (
-                <Route path="/user" element={<Navigate to='/business' />} />
-              )}
-              {userType && userType === "business" && (
+              <Route path="/user" element={userType === "user" ? <UserProfile /> : <Navigate to="/business" />} />
+              <Route path="/business" element={userType === "business" ? <BusinessProfile /> : <Navigate to="/user" />} />
+              <Route path="/settings" element={userType === "business" ? <BusinessSettings /> : <UserSettings />} />
+
+              {/* {userType && userType === "business" && (
                 <Route path="/subscribe" element={<Subscribe />} />
-              )}
+              )} */}
               <Route path="/plan-a-trip" element={<PlanTrip />} />
               <Route path="/verify-email" element={<Verification />} />
               <Route path="/location/:id" element={<LocationDetails />} />

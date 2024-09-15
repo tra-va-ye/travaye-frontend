@@ -1,4 +1,4 @@
-import { Image, notification, Spin } from "antd";
+import { Image, notification } from "antd";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -7,8 +7,6 @@ import Avatar from "../../assets/user-avatar.png";
 import LocationModal from "../../components/UI/Modal/LocationModal";
 import NewLocation from "../../components/UI/Modal/NewLocation";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
-import { useGetMeQuery, useUpdateProfilePhotoMutation } from "../../redux/Api/authApi";
-import { IoIosCamera } from "react-icons/io";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { TogleButton } from "../../components/Layout/BusinessSidebar";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -18,9 +16,10 @@ import ChatIcon from "../../assets/Icons/ChatIcon";
 import { Rating } from "@mui/material";
 import { calculateAverageRating } from "../LocationDetails";
 import BusinessSupportModal from "../../components/UI/Modal/BusinessSupportModal";
+import Sidebar from "../../components/Layout/BusinessSidebar"
 
 const BusinessProfile = () => {
-  const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
+  // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [newLocationModal, setNewLocationModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -37,13 +36,7 @@ const BusinessProfile = () => {
     page: 1,
     count: 10
   });
-  const [userData, setuserData] = useState({});
-  const {
-    data: businessData
-    // isSuccess:,
-    // isLoading,
-    // refetch,
-  } = useGetMeQuery({ userType });
+  const businessData = useSelector((store) => store.auth.user);
 
   useEffect(() => {
     if (isSuccess) {
@@ -59,34 +52,30 @@ const BusinessProfile = () => {
   }, [data, error, isError, isSuccess, locations]);
 
   useEffect(() => {
-    console.log(businessData.user);
-    setuserData(businessData.user);
-    if (userData) {
-      if (userData?.businessVerified === "verified") {
+    if (businessData) {
+      if (businessData?.businessVerified === "verified") {
         navigate(`/${userType}`);
-      } else if (userData?.businessVerified === "pending") {
+      } else if (businessData?.businessVerified === "pending") {
         notification.warning({
           message: " Business Verification Pending",
           duration: 3,
           placement: "bottomRight",
         });
         navigate(`/${userType}`);
-        // refetchUserData();
-      } else if (userData?.businessVerified === "false") {
+      } else if (businessData?.businessVerified === "false") {
         notification.error({
           message: " Business not Verified ",
           duration: 3,
           placement: "bottomRight",
         });
-        // refetchUserData();
 
         // Navigate to the verification page
         // navigate("/register");
       }
     }
-  }, [userData, navigate, userType, businessData?.user]);
+  }, [businessData, navigate, userType, businessData?.user]);
 
-  const reviewRatings = userData?.reviews?.map(rev => rev?.reviewRating);
+  const reviewRatings = businessData?.reviews?.map(rev => rev?.reviewRating);
 	const avg = calculateAverageRating(reviewRatings);
 
   return (
@@ -94,56 +83,7 @@ const BusinessProfile = () => {
       <TogleButton showDashboard={showDashboard}>
         <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
       </TogleButton>
-      <Dashboard showDashboard={showDashboard}>
-        <div className="relative">
-          {isLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
-          <img
-            className="rounded-full w-[150px] h-[150px]"
-            src={userData?.profilePhoto || Avatar}
-            alt="avatar"
-          />
-          <label htmlFor="photo">
-            <IoIosCamera className="text-black text-[25px] absolute bottom-[15%] right-[5%] cursor-pointer !block" />
-          </label>
-          <input
-            onChange={(e) => {
-              const profileData = new FormData();
-              profileData.append("picture", e.target.files[0]);
-              updateProfile(profileData);
-            }}
-            id="photo"
-            accept="image/*"
-            type="file"
-            className="hidden"
-          />
-        </div>
-        <div>
-          <h4 className="mt-2 text-2xl font-bold text-[#9d9d9d] px-3">{userData?.businessName}</h4>
-          <h6 className="mt-2 text-[#E9A309] text-lg font-medium">{userData?.businessEmail}</h6>
-          <h6 className="mt-1 text-[#9d9d9d] font-semibold">{userData?.businessCategory ? `${userData?.businessCategory.replace('%26', '&')
-            ?.split("-")
-            ?.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")}` : "Parks and Recreation"}</h6>
-        </div>
-        <div>
-          <div className="mt-6">
-            <h3 className="">Address</h3>
-            <p className="mt-1">{userData?.businessAddress || "Funtasticaland, Ikorodu-Ososun Rd, Lagos 105102, Ikeja"}</p>
-          </div>
-          <div className="mt-4">
-            <h3 className="">About</h3>
-            <p className="">{userData?.description || "Maryland Mall Cinemas is one of Nigeria's leading cinema developers and operators of multiplex cinemas in Nigeria."}</p>
-          </div>
-          <div className="mt-4">
-            <h3>User Visits</h3>
-            <p>{userData.visits || "200"}</p>
-          </div>
-          <div className="my-4">
-            <h3>Price Range</h3>
-            <p>{userData?.budgetClass?.label}</p>
-          </div>
-        </div>
-      </Dashboard>
+      <Sidebar showDashboard={showDashboard} businessData={businessData} />
       <Main>
         <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
@@ -170,7 +110,7 @@ const BusinessProfile = () => {
               navigation
             >
               {
-                userData?.businessLocationImages?.map((imag, i) => (
+                businessData?.businessLocationImages?.map((imag, i) => (
                   <SwiperSlide key={i}>
                     <img src={imag} className='h-[20rem] w-full rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
                   </SwiperSlide>
@@ -179,8 +119,8 @@ const BusinessProfile = () => {
             </Swiper>
             <div className="flex-1">
               <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
-              <h4 className="font-semibold mt-2 text-nowrap">Email: {userData?.businessEmail}</h4>
-              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
+              <h4 className="font-semibold mt-2 text-nowrap">Email: {businessData?.businessEmail}</h4>
+              <h4 className="font-semibold mt-2">Phone: +234{businessData?.businessTelephone}</h4>
             </div>
           </div>
                 
@@ -188,8 +128,8 @@ const BusinessProfile = () => {
             {" "}
             <div className="col-span-7 md:col-span-3 md:hidden block">
               <ReviewH4 className="text-3xl font-bold pt-2">Contact Info</ReviewH4>
-              <h4 className="font-semibold mt-2">Email: {userData?.businessEmail}</h4>
-              <h4 className="font-semibold mt-2">Phone: +234{userData?.businessTelephone}</h4>
+              <h4 className="font-semibold mt-2">Email: {businessData?.businessEmail}</h4>
+              <h4 className="font-semibold mt-2">Phone: +234{businessData?.businessTelephone}</h4>
             </div>
             <section className="col-span-7 md:col-span-5 flex flex-col overflow-y-hidden h-[27rem] lg:h-[26rem]">
               <div className="flex justify-content-between mb-3 items-center">
@@ -200,8 +140,8 @@ const BusinessProfile = () => {
 								</div>
 							</div>
               <Review className={`flex gap-3 flex-col my-1 !overflow-y-scroll`}>
-                {userData && userData?.reviews?.length > 0 ? (
-                  userData?.reviews?.map((review, i) => {
+                {businessData && businessData?.reviews?.length > 0 ? (
+                  businessData?.reviews?.map((review, i) => {
                     return (
                       <ReviewCard key={i}>
                         <div className="flex items-center justify-between">

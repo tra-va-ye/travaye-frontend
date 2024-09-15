@@ -72,7 +72,7 @@ export const LocationApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Location", "User"],
+      invalidatesTags: ["Location", "Profile"],
     }),
     unlikeLocation: builder.mutation({
       query: (body) => ({
@@ -80,7 +80,7 @@ export const LocationApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Location", "User"],
+      invalidatesTags: ["Location", "Profile"],
     }),
     reviewLocation: builder.mutation({
       query: (body) => ({

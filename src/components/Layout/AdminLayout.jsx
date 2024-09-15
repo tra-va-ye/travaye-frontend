@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Avatar from "../../assets/user-avatar.png";
 import { IoIosCamera } from "react-icons/io";
 import { useState } from "react";
-import { useGetMeQuery, useUpdateProfilePhotoMutation } from "../../redux/Api/authApi";
+import { useUpdateProfilePhotoMutation } from "../../redux/Api/authApi";
 import { TogleButton } from "./BusinessSidebar";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { Spin } from "antd";

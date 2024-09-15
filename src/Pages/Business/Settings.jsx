@@ -1,18 +1,17 @@
 import { notification, Select } from "antd";
 import { useEffect, useState } from "react";
-// import classes from "";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useGetBudgetsQuery, useGetCategoriesQuery } from "../../redux/Api/locationApi";
-import { useDeleteMyProfileMutation, useGetMeQuery, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
+import { useDeleteMyProfileMutation, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import { useGetStatesQuery, useLazyGetCityQuery, useLazyGetLgaQuery } from "../../redux/Api/geoApi";
 import Dashboard, { TogleButton } from "../../components/Layout/BusinessSidebar";
 import { Button } from "../../components/UI/Buttons";
 import { FaEyeSlash } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
-import { passwordRegex } from "../UserSettings/UserSettings";
+import { passwordRegex } from "../UserSettings";
 import { logout } from "../../redux/Slices/authSlice";
 
 const BusinessSettings = () => {
@@ -28,8 +27,6 @@ const BusinessSettings = () => {
 
   const dispatch = useDispatch();
 
-  const userType = useSelector((state) => state.auth.userType);
-
   const navigate = useNavigate();
   
   const [businessInfo, setBusinessInfo] = useState({
@@ -44,63 +41,59 @@ const BusinessSettings = () => {
     businessSubCategory: ""
   });
 
-  const {
-    data: businessData,
-    isSuccess,
-    refetch,
-  } = useGetMeQuery({ userType });
   const { data: categories } = useGetCategoriesQuery();
   const [subData, setSubData] = useState([]);
   
-  const userData = useSelector((store) => store.auth.user).payload;
+  const businessData = useSelector((store) => store.auth.user);
+  // console.log(businessData);
 
   useEffect(() => {
-    getLga({ state: businessData?.user?.businessState?.toUpperCase() });
-    getCity({ state: businessData?.user?.businessState?.toUpperCase() });
-  }, [businessInfo?.businessState, businessData?.user.businessState]);
+    getLga({ state: businessData?.businessState?.toUpperCase() });
+    getCity({ state: businessData?.businessState?.toUpperCase() });
+  }, [businessInfo?.businessState, businessData?.businessState]);
 
   useEffect(() => {
-    setSubData(categories?.find((cat) => cat.value === businessData?.user.businessCategory)?.sub);
-  }, [businessInfo?.businessCategory, businessData?.user?.businessCategory]);
+    setSubData(categories?.find((cat) => cat.value === businessData?.businessCategory)?.sub);
+  }, [businessInfo?.businessCategory, businessData?.businessCategory]);
   
   useEffect(() => {
-    if (isSuccess && businessData?.user) {
+    if (businessData) {
       // Fetching State and LGA Data from state data
-      setSubData(categories?.find((cat) => cat.value === businessData?.user.businessCategory)?.sub);
-      getLga({ state: businessData?.user?.businessState?.toUpperCase() });
-      getCity({ state: businessData?.user?.businessState?.toUpperCase() });
+      setSubData(categories?.find((cat) => cat.value === businessData?.businessCategory)?.sub);
+      getLga({ state: businessData?.businessState?.toUpperCase() });
+      getCity({ state: businessData?.businessState?.toUpperCase() });
       
-      setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
+      setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData }));
       // eslint-disable-next-line no-useless-computed-key
-      setBusinessInfo((prev) => ({...prev, ["budgetClass"]: businessData?.user?.budgetClass?.label }));
+      setBusinessInfo((prev) => ({...prev, ["budgetClass"]: businessData?.budgetClass?.label }));
 
-      if (businessData?.user?.businessVerified === "verified") {
+      if (businessData?.businessVerified === "verified") {
         
-      } else if (businessData?.user?.businessVerified === "pending") {
+      } else if (businessData?.businessVerified === "pending") {
         notification.warning({
           message: " Business Verification Pending",
           duration: 3,
           placement: "bottomRight",
         });
-        // if (businessData?.user?.addedCard === true) {
+        // if (businessData?.addedCard === true) {
         //   navigate(`/${userType}`);
         // } else {
         //   navigate(`/subscribe`);
         // }
-        refetch();
-      } else if (businessData?.user?.businessVerified === "denied") {
+        // refetch();
+      } else if (businessData?.businessVerified === "denied") {
         notification.error({
           message: " Business not Verified ",
           duration: 3,
           placement: "bottomRight",
         });
-        refetch();
+        // refetch();
 
         // Navigate to the verification page
         // navigate("/register");
       }
     }
-  }, [isSuccess, businessData?.user, navigate, refetch, userType]);
+  }, [businessData, navigate]);
 
   const handleChange = (field, value) => {
     setBusinessInfo((prevInfo) => ({
@@ -117,18 +110,21 @@ const BusinessSettings = () => {
         duration: 5,
         type: "warning",
         placement: "bottomRight",
-        closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
-        onClose: async () => {
-          if (!passwordRegex.test(businessInfo?.password)) {
-            return notification.error({
-              message:
-              "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-              duration: 3,
-              placement: "bottomRight",
-            });
-          }
-          sendUpdateData();
-        }
+        closeIcon: 
+          <Button
+            className="!text-sm px-1.5 py-1 !ml-5"
+            onClick={async() => {
+              if (!passwordRegex.test(businessInfo?.password)) {
+                return notification.error({
+                  message:
+                  "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+                  duration: 3,
+                  placement: "bottomRight",
+                });
+              }
+              sendUpdateData();
+            }}
+          >Yes</Button>
       });
     }
     sendUpdateData();
@@ -153,33 +149,34 @@ const BusinessSettings = () => {
     }
   };
 
+  const handleDeleteRequest = async () => {
+    const response = await deleteProfile({ userType:"business", id: businessData?._id });
+        
+    if (response?.data?.message) {
+      notification.success({
+        message: response?.data?.message,
+        duration: 3,
+        type: "success",
+        placement: "bottomRight"
+      })
+    } else {
+      notification.error({
+        message: response?.error?.data?.error,
+        duration: 3,
+        type: "error",
+        placement: "bottomRight"
+      })
+    }
+    dispatch(logout());
+  }
+
   const deleteUserProfile = () => {
     notification.warning({
       message: "Are you sure you want to Delete Your Profile?",
       duration: 5,
       type: "warning",
       placement: "bottomRight",
-      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
-      onClose: async () => {
-        const response = await deleteProfile({ userType:"business", id: userData?._id });
-        
-        if (response?.data?.message) {
-          notification.success({
-            message: response?.data?.message,
-            duration: 3,
-            type: "success",
-            placement: "bottomRight"
-          })
-        } else {
-          notification.error({
-            message: response?.error?.data?.error,
-            duration: 3,
-            type: "error",
-            placement: "bottomRight"
-          })
-        }
-        dispatch(logout());
-      }
+      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5" onClick={handleDeleteRequest}>Yes</Button>
     });
   }
 
@@ -188,7 +185,7 @@ const BusinessSettings = () => {
       <TogleButton showDashboard={showDashboard}>
         <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
       </TogleButton>
-      <Dashboard showDashboard={showDashboard} setBusinessInfo={setBusinessInfo} />
+      <Dashboard showDashboard={showDashboard} businessData={businessData} />
       <Main>
         <div className="w-full flex justify-between items-center mb-4 mt-5 md:mt-0">
           <h3 className="text-2xl text-[#009F57] font-bold">Settings</h3>
@@ -363,22 +360,22 @@ const BusinessSettings = () => {
       <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
         <InsightBox>
           <h6>Number of Likes</h6>
-          <p>{userData?.likes?.length || 68}</p>
+          <p>{businessData?.likes?.length || 68}</p>
         </InsightBox>
         <InsightBox>
           <h6>Number of Reviews</h6>
-          <p>{userData?.reviews?.length || 76}</p>
+          <p>{businessData?.reviews?.length || 76}</p>
         </InsightBox>
         <InsightBox>
           <h6>Engagement Rate</h6>
-          <p>{userData?.engagementRate}%</p>
+          <p>{businessData?.engagementRate}%</p>
         </InsightBox>
         <InsightBox>
-          <h6>Engagement Rate</h6>
-          <p>{userData?.conversionRate}%</p>
+          <h6>Conversion Rate</h6>
+          <p>{businessData?.conversionRate}%</p>
         </InsightBox>
       </div>
-      <div className="flex flex-col items-end gap-2.5 my-9">
+      <div className="flex flex-col items-end gap-3 mt-9">
           <Button color="#009F57" className="!border-none ml-auto" onClick={handleSubmit}>
             Update Profile
           </Button>

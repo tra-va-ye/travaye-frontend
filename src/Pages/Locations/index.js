@@ -28,6 +28,7 @@ const Locations = () => {
 			})
 			.catch((err) => {});
 	}, [state]);
+	console.log(data);
 
 	return (
 		<>
@@ -54,7 +55,7 @@ const Locations = () => {
 									</div>
 								</div>
 								<StarContainer className="d-flex align-items-center justify-center col-span-2">
-									<Rate value={e?.locationRating || 3} disabled />
+									<Rate value={e?.business?.rating} disabled />
 								</StarContainer>
 
 
@@ -95,7 +96,7 @@ const Locations = () => {
 						</Card>
 					))}
 				</div>
-				<div className='flex justify-end mt-8'>
+				<div className='flex justify-end mt-8 mb-4'>
 					<Button onClick={() => navigate('/added-locations')}>
 						View Added Locations
 					</Button>
