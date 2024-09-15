@@ -1,18 +1,14 @@
-import { notification, Spin } from "antd";
+import { notification } from "antd";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import Avatar from "../../assets/user-avatar.png";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
 import {
   useDeleteMyProfileMutation,
-  useUpdateProfilePhotoMutation,
   useUpdateUserProfileMutation,
 } from "../../redux/Api/authApi";
-import { IoIosCamera } from "react-icons/io";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import {
-  DashboardContainer,
   TogleButton,
 } from "../../components/Layout/BusinessSidebar";
 import { InsightBox } from "../Business/Settings";
@@ -21,12 +17,12 @@ import { FaEyeSlash } from "react-icons/fa6";
 import { IoEyeSharp } from "react-icons/io5";
 import Loader from "../../components/UI/Loader";
 import { logout } from "../../redux/Slices/authSlice";
+import UserSidebar from "../../components/Layout/UserSidebar";
 
 export const passwordRegex = /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*\d)((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/;
 
 const UserSettings = () => {
   const [seePass, setSeePass] = useState(false);
-  const [updateProfilePhoto, { isLoading }] = useUpdateProfilePhotoMutation();
   const [updateProfile, { isLoading: updateProfileLoading }] = useUpdateUserProfileMutation();
   const [showDashboard, setShowDashboard] = useState(false);
   const dispatch = useDispatch();
@@ -39,7 +35,7 @@ const UserSettings = () => {
     count: 10,
   });
 
-  const userData = useSelector((store) => store.auth.user).payload;
+  const userData = useSelector((store) => store.auth.user);
   const [userInfo, setUserInfo] = useState({
     fullName: userData?.fullName,
     username: userData?.username,
@@ -76,18 +72,21 @@ const UserSettings = () => {
         duration: 0,
         type: "warning",
         placement: "bottomRight",
-        closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
-        onClose: async () => {
-          if (!passwordRegex.test(userInfo?.password)) {
-            return notification.error({
-              message:
-              "Password must contain at least 8 characters, one uppercase, one number and one special case character",
-              duration: 3,
-              placement: "bottomRight",
-            });
-          }
-          sendUpdateData();
-        }
+        closeIcon: 
+        <Button
+          className="!text-sm px-1.5 py-1 !ml-5"
+          onClick={async() => {
+            if (!passwordRegex.test(userInfo?.password)) {
+              return notification.error({
+                message:
+                "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+                duration: 3,
+                placement: "bottomRight",
+              });
+            }
+            sendUpdateData();
+          }}  
+        >Yes</Button>
       });
     }
     sendUpdateData();
@@ -118,27 +117,30 @@ const UserSettings = () => {
       duration: 5,
       type: "warning",
       placement: "bottomRight",
-      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5">Yes</Button>,
-      onClose: async () => {
-        const response = await deleteProfile({userType: "user", id: userData._id });
-        
-        if (response?.data?.message) {
-          notification.success({
-            message: response?.data?.message,
-            duration: 3,
-            type: "success",
-            placement: "bottomRight"
-          });
-        } else {
-          notification.error({
-            message: response?.error?.data?.error,
-            duration: 3,
-            type: "error",
-            placement: "bottomRight"
-          })
-        }
-        dispatch(logout());
-      }
+      closeIcon:
+        <Button 
+          className="!text-sm px-1.5 py-1 !ml-5"
+          onClick={async () => {
+            const response = await deleteProfile({userType: "user", id: userData._id });
+            
+            if (response?.data?.message) {
+              notification.success({
+                message: response?.data?.message,
+                duration: 3,
+                type: "success",
+                placement: "bottomRight"
+              });
+            } else {
+              notification.error({
+                message: response?.error?.data?.error,
+                duration: 3,
+                type: "error",
+                placement: "bottomRight"
+              })
+            }
+            dispatch(logout());
+          }}
+        >Yes</Button>
     });
   }
 
@@ -151,65 +153,7 @@ const UserSettings = () => {
           onClick={() => setShowDashboard((prev) => !prev)}
         />
       </TogleButton>
-      <DashboardContainer showDashboard={showDashboard}>
-        <div className="relative">
-          {isLoading && <Spin className="absolute bottom-[50%] left-[50%]" />}
-          <img
-            className="rounded-full w-[150px] h-[150px]"
-            src={userData?.profilePhoto || Avatar}
-            alt="avatar"
-          />
-          <label htmlFor="photo">
-            <IoIosCamera className="text-black text-[25px] absolute bottom-[15%] right-[5%] cursor-pointer !block" />
-          </label>
-          <input
-            onChange={(e) => {
-              const profileData = new FormData();
-              profileData.append("picture", e.target.files[0]);
-              updateProfilePhoto(profileData);
-            }}
-            id="photo"
-            accept="image/*"
-            type="file"
-            className="hidden"
-          />
-        </div>
-        <div>
-          <h3 className="mt-4 text-[#000000] text-2xl font-bold">
-            {userData?.fullName}
-          </h3>
-          <h6 className="mt-1 text-[#E9A309] font-medium text-xl ">
-            @{userData?.username}
-          </h6>
-          <p className="mt-1 text-[#9d9d9d] text-lg font-semibold">
-            {userData.occupation || "University Student"}
-          </p>
-        </div>
-        <div>
-          <div>
-            <h5 className="text-xl font-bold text-[#009F57] mt-6 flex gap-1 justify-center">
-              About
-            </h5>
-            <p className="mt-1 px-3">{userData?.aboutUser || "No User bio"}</p>
-          </div>
-          <div className="mt-7">
-            <h5>Total Outings</h5>
-            <p>{userData?.outings?.length || "7"} outings</p>
-          </div>
-          <div className="mt-5">
-            <h5 className="text-xl">Total Reviews</h5>
-            <p>{userData?.reviews?.length || "None"}</p>
-          </div>
-          <div className="mt-5">
-            <h5 className="text-xl">Travaye Points</h5>
-            <p>Coming Soon</p>
-          </div>
-          {/* <div className="mt-6">
-            <h5>Average Review</h5>
-            <p>4.5 stars</p>
-          </div> */}
-        </div>
-      </DashboardContainer>
+      <UserSidebar showDashboard={showDashboard} userInfo={userData} />
       <Main>
         {updateProfileLoading && <Loader />}
         <div className="w-full flex justify-between items-center mb-4">
@@ -338,9 +282,6 @@ export default UserSettings;
 const Container = styled.div`
   display: flex;
   background-color: #c4c5c72d;
-
-  /* height: calc(100vh - 95px); */
-  /* overflow: auto; */
 
   ::-webkit-scrollbar {
     width: 12px;

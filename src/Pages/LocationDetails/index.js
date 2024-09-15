@@ -20,12 +20,14 @@ import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import "swiper/css/bundle";
 import { Navigation } from 'swiper';
-import { useGetMeQuery } from '../../redux/Api/authApi';
 import { FaTrashAlt } from "react-icons/fa";
+import Avatar from "../../assets/user-avatar.png";
+import { useSelector } from 'react-redux';
 
 const { TextArea } = Input;
+
 export function calculateAverageRating (reviewArray) {
-	if (reviewArray?.length === 0) return 0; // Handle empty reviewArrayay
+	if (reviewArray?.length === 0) return 0; // Handle empty reviewArray
 	const sum = reviewArray?.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 	return sum / reviewArray?.length;
 }
@@ -58,15 +60,9 @@ const LocationDetails = () => {
 	
 	const [addLocationToLikedLocations, { isLoading: likeLocationLoading }] = useAddLocationToLikedLocationsMutation();
 	const [unlike, { isLoading: unliking }] = useUnlikeLocationMutation();
-
 	const userType = sessionStorage.getItem('userType');
 
-	const {
-		data: userData,
-		// isSuccess,
-		// isLoading,
-		refetch,
-	} = useGetMeQuery({ userType });
+	const userData = useSelector(state => state.auth.user);
 	const { data, isError, error, isLoading } = useGetLocationByIdQuery({ id });
 
 	useEffect(() => {
@@ -126,7 +122,7 @@ const LocationDetails = () => {
 					message: 'Liked',
 					duration: 3,
 				});
-				refetch();
+				// refetch();
 			})
 			.catch((err) => {
 				notification.error({
@@ -144,7 +140,7 @@ const LocationDetails = () => {
 					message: 'Unliked',
 					duration: 3,
 				});
-				refetch();
+				// refetch();
 			})
 			.catch((err) => {
 				notification.error({
@@ -219,7 +215,7 @@ const LocationDetails = () => {
 							<div className="d-flex mb-3">
 								{
 									userType === 'user' && <>
-										{userData?.user?.likedLocations?.find(
+										{userData?.likedLocations?.find(
 											(l) => l?.business?._id === location?.business?._id
 										) ? (
 											<Button
@@ -340,28 +336,29 @@ const LocationDetails = () => {
 							<Review className={`flex gap-3 flex-col overflow-y-scroll my-1`}>
 								{location && location?.business?.reviews?.length > 0 ? (
 									location?.business?.reviews?.slice(0, 8).map((review, i) => {
+										if (!review.reviewerID) return <></>;
 										return (
 											<ReviewCard key={i}>
 												<div className="flex items-center justify-between">
 													<ReviewUser>
 														<img
-															src={review.reviewerID.profilePhoto}
+															src={review?.reviewerID?.profilePhoto || Avatar}
 															className="img-fluid rounded-full"
 															alt="pfp"
 														/>
 														<p className="" style={{ color: '#009f57', fontSize: 20 }}>
-															{review?.reviewerFullname}
+															{review?.reviewerID?.fullName}
 														</p>
 													</ReviewUser>
 													<div className="flex gap-5 items-center">
 														<Rating value={review.reviewRating} readOnly />
 														{
-															userData.user._id === review?.reviewerID._id
+															userData?._id === review?.reviewerID?._id
 															&& <FaTrashAlt size={28} className='cursor-pointer' onClick={() => handleDeleteReview(review?._id)} />
 														}
 													</div>
 												</div>
-													<p className='py-2'>{review?.reviewDescription}</p>
+													<p className='py-2'>{`${review?.reviewDescription}`}</p>
 													<div>
 														<div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
 															<Image.PreviewGroup

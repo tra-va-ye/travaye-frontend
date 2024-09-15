@@ -1,47 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components';
 import { useUpdateProfilePhotoMutation } from '../../redux/Api/authApi';
 import Avatar from '../../assets/user-avatar.png';
 import { IoIosCamera } from 'react-icons/io';
-import { Spin, notification } from 'antd';
-import { useSelector } from 'react-redux';
+import { Spin } from 'antd';
 
-const Dashboard = ({ showDashboard, setBusinessInfo }) => {
+const Dashboard = ({ showDashboard, businessData }) => {
 	const [updateProfilePhoto, { isLoading: isPhotoLoading }] = useUpdateProfilePhotoMutation();
-	const userType = useSelector((state) => state.auth.userType);
-			
-	const businessData = useSelector((store) => store.auth.user).payload;
-
-	useEffect(() => {
-		if (businessData?.user) {
-			setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
-			if (businessData?.user?.businessVerified === "verified") {
-				
-			} else if (businessData?.user?.businessVerified === "pending") {
-				notification.warning({
-					message: " Business Verification Pending",
-					duration: 3,
-					placement: "bottomRight",
-				});
-				// if (businessData?.user?.addedCard === true) {
-				//   navigate(`/${userType}`);
-				// } else {
-				//   navigate(`/subscribe`);
-				// }
-				// refetch();
-			} else if (businessData?.user?.businessVerified === "denied") {
-				notification.error({
-					message: " Business not Verified ",
-					duration: 3,
-					placement: "bottomRight",
-				});
-				// refetch();
-
-				// Navigate to the verification page
-				// navigate("/register");
-			}
-		}
-	}, [businessData?.user, setBusinessInfo, userType]);
 
 	return (
 		<DashboardContainer showDashboard={showDashboard}>
@@ -91,10 +56,6 @@ const Dashboard = ({ showDashboard, setBusinessInfo }) => {
 					<p className="mt-1.5 px-4">
 						{businessData?.description || "No description yet"}
 					</p>
-				</div>
-				<div className="mt-6">
-					<h5>User Visits</h5>
-					<p>{businessData?.visits || 5}</p>
 				</div>
 				<div className="mt-6">
 					<h5>Profile Views</h5>

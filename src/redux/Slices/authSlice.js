@@ -39,12 +39,12 @@ const authSlice = createSlice({
       sessionStorage.removeItem("profileId");
       window.location.replace("/login");
     },
-    updateUser: (state, payload) => {
-      state.user = payload;
+    updateUser: (state, action) => {
+      state.user = action.payload;
     },
     setUserType: (state, action) => {
       state.userType = action.payload.userType;
-    },
+    }
   },
 });
 
@@ -55,6 +55,6 @@ export const {
   refreshToken,
   logout,
   updateUser,
-  setUserType,
+  setUserType
 } = authSlice.actions;
 export default authSlice.reducer;

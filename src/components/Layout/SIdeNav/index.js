@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import { setLogout } from "../../../state";
 import { AltButton, Button } from "../../UI/Buttons";
 import { Links, Navlink } from "../Header/Header";
 import classes from "./SideNav.module.css";
+import { logout } from "../../../redux/Slices/authSlice";
 
 const SideNav = (props) => {
   const [isActive, setIsActive] = useState("");
   const Location = useLocation();
   const dispatch = useDispatch();
-  // const token = Boolean(useSelector((state) => state.user));
+  
   const handleLogoutClick = () => {
-    dispatch(setLogout());
+    dispatch(logout());
   };
   useEffect(() => {
     setIsActive(Location.pathname);

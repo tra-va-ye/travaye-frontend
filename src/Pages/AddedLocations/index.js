@@ -23,7 +23,7 @@ const AddedLocations = () => {
         <h4>My Added Locations</h4>
         <Progress step={3} />
       </div>
-      <div className="">
+      <div className="mb-5">
         {locations?.map((e) => (
           <Card>
             <div className="row">
@@ -34,15 +34,14 @@ const AddedLocations = () => {
                   className="img-fluid"
                 />
                 <div>
-                  <p>{e?.locationName}</p>
+                  <p className="!text-2xl">{e?.locationName}</p>
                   <h5 className="text-[#9d9d9d]">{e?.locationAddress}</h5>
-                  {/* <h6>{ e?.locationCategory}</h6> */}
-                  <h6 className='mb-0'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
+                  <h6 className='mb-0 text-xl'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
 
                 </div>
                 <Rate value={e?.locationRating || 3} disabled />
                 <div className="d-flex col-md-3 justify-content-between align-items-center ">
-                  <b>#{e?.budgetClass.max}</b>
+                  <b>#{e?.business?.budgetClass.max}</b>
                   <span
                     className="cursor-pointer"
                     onClick={() => {
@@ -88,7 +87,7 @@ const AddedLocations = () => {
         <div className="col-md-3">
           <Title>Total Budget Cost</Title>
           <Value>#{locations?.reduce((acc, e)  => {
-            return acc + e.budgetClass.max
+            return acc + e?.business?.budgetClass.max
           }, 0)}</Value>
         </div>
         <div className="col-md-3">
