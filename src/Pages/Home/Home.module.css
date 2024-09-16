@@ -108,7 +108,7 @@
 .explore {
   background-image: url(../../assets/explore-bg.png);
   background-position: center;
-  width: 100vw;
+  width: 100%;
   padding: 220px 5% 0;
   height: 520px;
   margin-bottom: 240px;
