@@ -47,13 +47,6 @@ const Home = () => {
                 allow="autoplay; encrypted-media;"
               ></YouTube>
               
-              {/* <div
-                className={`d-flex flex-column justify-content-evenly ${classes.socials}`}
-              >
-                {FacebookIcon}{" "}
-                <a href="http://twitter.com/travaye_"> {TwitterIcon}</a>
-                <a href="https://www.instagram.com/travaye_/"> {InstaIcon} </a>
-              </div> */}
             </LandingImagesContainer>
 
           </div>

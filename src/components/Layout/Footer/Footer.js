@@ -12,7 +12,7 @@ const Footer = () => {
   return (
     <footer className={classes.footer}>
       <div className={classes.bgPicture} />
-      <div className="d-flex justify-content-around p-5">
+      <div className="flex justify-around flex-col gap-3 md:flex-row p-5">
         <div className="mb-4">
           <img src={WhiteLogo} alt="logo" className="img-fluid" />
           <p>
