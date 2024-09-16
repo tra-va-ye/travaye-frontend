@@ -34,6 +34,7 @@ const Contact = () => {
         }
       );
   };
+
   return (
     <div className={classes.contact}>
       <h4>Contact Us</h4>
@@ -123,23 +124,23 @@ export default Contact;
 
 const faqs = [
   {
-    question: "What is Travaye about?",
+    question: "What is Travayé?",
     answer:
-      "Travaye is a platform built to help Nigerians live their best life without worrying about Sapa. It helps you find the best places to hangout on your budget without stress.",
+      "Travaye is a lifestyle and tourism brand that utilises the power of technology and tourism to connect the adventurous with the best deals and experiences, creating a seamless journey from start to finish."
   },
   {
-    question: "Are my Generated Favicons Free for Download?",
+    question: "How does travaye work?",
     answer:
-      "Yes, the favicon generator is free. After you create your favicon, simply click the download button. Then you can save it on your computer for free and integrate it into your website. The download comes with all required instructions and HTML codes, as well as",
+      "Our platform allows users to easily find places to go based on their budget, location, and outing category, so they can make smarter decisions about their leisure activities without breaking the bank. Our platform also helps businesses earn visibility and make money, by automatically suggesting their services to users who fit their niche, making it easier to expand their customer base and grow their brand."
   },
   {
-    question: "How do i add a Favicon to my Website?",
+    question: "How do I contact customer support?",
     answer:
-      "Prepare a square dimensioned image in .png or .ico format for your website logo.  Rename the .png or .ico image to favicon. Access your public_html folder by heading over to your Panel, then File Manager -> Go To File Manager  Upload the favicon.png or .ico file into your public_html folder. Reload your website, and you’ll see the favicon.",
+      "You can do this by either filling out our compliant form on the “Contact Us” Page, Or Reaching out to us directly through our in app customer support chat box.",
   },
   {
-    question: "Is there a list of Previously Generated Favicons I can revisit?",
+    question: "Is this platform free?",
     answer:
-      "Yes. All your generated and downloaded favicons are stored for your revisit. Kindly head over to your profile page to view your favicons generation history.",
+      "YES it is free for Personal Users. Business users will be required to pay a subscription fee, However; it is currently free for new businesses as we are presently still in our pre launch phase.",
   },
 ];
