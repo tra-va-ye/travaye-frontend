@@ -69,7 +69,7 @@ const UserSettings = () => {
     if (userInfo?.password) {
       return notification.warning({
         message: "Are you sure you want to change your password?",
-        duration: 0,
+        duration: 5,
         type: "warning",
         placement: "bottomRight",
         closeIcon: 
