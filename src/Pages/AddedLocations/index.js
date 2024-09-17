@@ -19,28 +19,31 @@ const AddedLocations = () => {
   console.log(locations);
   return (
     <Container>
-      <div className="flex justify-between items-end mb-20">
+      <div className="flex justify-between items-end mb-10">
         <h4>My Added Locations</h4>
         <Progress step={3} />
       </div>
-      <div className="mb-5">
+      <div className="mb-44 md:mb-20">
         {locations?.map((e) => (
-          <Card>
-            <div className="row">
-              <div className="flex justify-between items-center">
-                <img
-                  src={e?.businessLocationImages?.[0] || e?.locationImagePath[0]}
-                  alt=""
-                  className="img-fluid"
-                />
-                <div>
-                  <p className="!text-2xl">{e?.locationName}</p>
-                  <h5 className="text-[#9d9d9d]">{e?.locationAddress}</h5>
-                  <h6 className='mb-0 text-xl'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
-
-                </div>
-                <Rate value={e?.locationRating || 3} disabled />
-                <div className="d-flex col-md-3 justify-content-between align-items-center ">
+          <article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-4 mx-auto w-full grid md:items-center justify-between gap-y-3 grid-cols-4 md:grid-cols-9">
+            <div className="col-span-2">
+              <img
+                src={e?.business.businessLocationImages[0]}
+                alt=""
+                className="rounded-xl"
+                height={120}
+                width={160}
+              />
+            </div>
+            <div className='h-4/5 flex flex-col justify-evenly col-span-2 md:col-span-4 justify-self-center px-3'>
+              <p className='text-xl mb-0'>{e?.business.businessName}</p>
+              <h5 className='text-[#9D9D9D] mb-0'>{e?.business.businessAddress}</h5>
+              <h6 className='mb-0 text-lg w-full'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
+            </div>
+            <div className="flex items-center col-span-4 md:col-span-3 justify-between">
+              <StarContainer className="">
+                <Rate value={e?.business?.rating} disabled />
+              </StarContainer>
                   <b>#{e?.business?.budgetClass.max}</b>
                   <span
                     className="cursor-pointer"
@@ -57,19 +60,49 @@ const AddedLocations = () => {
                   >
                     {Bin}
                   </span>
-                </div>
-              </div>
+                  {/* </div> */}
+              
+              {/* {!addedLocations.find(
+                (location) => location._id == e._id
+              ) && (
+                <Button
+                  onClick={() => {
+                    const currentLocations =
+                      JSON.parse(localStorage.getItem('location')) || [];
+                    if (currentLocations?.some((obj) => obj._id === e?._id))
+                      return;
+                    else {
+                      localStorage.setItem('location',
+                        JSON.stringify([
+                          ...currentLocations,
+                          {
+                            ...e,
+                          },
+                        ])
+                      );
+                      setAddedLocations([...addedLocations, e]);
+                    }
+                  }}
+                  color="green"
+                >
+                  Add Location
+                </Button>
+              )}
+
+              <Button onClick={() => navigate(`/location/${e?._id}`)}>
+                Preview
+              </Button> */}
             </div>
-          </Card>
+          </article>
         ))}
       </div>
 
-      <footer className="row fixed left-0 -right-1 border-red-600 border bottom-0 bg-white px-[5%] py-[2%] shadow-md">
-        <div className="col-md-3">
+      <footer className="grid grid-cols-4 gap-y-4 fixed left-0 -right-1 w-full border-red-600 border bottom-0 bg-white px-[4%] py-[2%] shadow-md">
+        <div className="md:justify-self-center col-span-2 md:col-span-1">
           <Title>Total Added Locations</Title>
           <Value>{locations?.length} Locations</Value>
         </div>
-        <div className="col-md-3">
+        <div className="md:justify-self-center col-span-2 md:col-span-1">
           <Title>Total Outing Categories</Title>
           <Value>
             {
@@ -84,13 +117,13 @@ const AddedLocations = () => {
             Outing Categories
           </Value>
         </div>
-        <div className="col-md-3">
+        <div className="md:justify-self-center col-span-2 md:col-span-1">
           <Title>Total Budget Cost</Title>
           <Value>#{locations?.reduce((acc, e)  => {
             return acc + e?.business?.budgetClass.max
           }, 0)}</Value>
         </div>
-        <div className="col-md-3">
+        <div className="justify-self-end col-span-2 md:col-span-1">
           <Button onClick={() => window.print()}>Finish Selection</Button>
         </div>
       </footer>

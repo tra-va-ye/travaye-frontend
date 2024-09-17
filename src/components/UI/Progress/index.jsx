@@ -5,7 +5,7 @@ const Progress = ({ step }) => {
   const width = step === 3 ? '100%' : `${Math.round(100* step/3)}%`;
 
   return (
-    <div className="w-[23rem]">
+    <div className="w-full sm:w-[23rem]">
       <div className="flex justify-between mb-2">
         <h5 className="text-lg">Progress</h5>
         <p className="!text-[#9D9D9D] text-lg">{step}/3</p>

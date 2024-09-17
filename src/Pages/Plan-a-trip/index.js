@@ -54,8 +54,8 @@ const PlanTrip = () => {
     <div className=" ">
       {/* {isLoading && <Loader />} */}
       <form onSubmit={handleSubmit} className={classes.trip}>
-        <div className="flex justify-between items-center">
-          <div className="w-2/3">
+        <div className="flex justify-between md:items-center gap-3 flex-col-reverse md:flex-row">
+          <div className="w-full md:w-2/3">
             <h1 className="text-3xl font-extrabold mb-2">
               Plan Your desired Trip with Travaye
             </h1>
@@ -68,7 +68,7 @@ const PlanTrip = () => {
         <div className="pt-4">
           <h4 className="mt-3 mb-2">Step 1</h4>
           <p>Please Fill in Your City / Address Details </p>
-          <div className="mt-2 flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-8 md:w-4/5">
+          <div className="mt-2 flex flex-wrap md:flex-nowrap flex-col md:flex-row gap-3 md:gap-8 w-full md:w-4/5">
             <Select
               placeholder="State"
               onSelect={(value, obj) => {
@@ -109,14 +109,11 @@ const PlanTrip = () => {
         <div className="mt-3">
           <h4 className="mb-2">Step 2</h4>
           <p className="mb-2">Please Select a Category of Outing Venues</p>
-          <div className="mt-2 flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-8 md:w-4/5">
+          <div className="mt-2 flex flex-wrap md:flex-nowrap flex-col md:flex-row gap-3 md:gap-8 w-full md:w-4/5">
             <Select
               placeholder="Category"
               showSearch
               mode="multiple"
-              // onSelect={(value) => {
-              //   setSubData([]);
-              // }}
               onChange={(value) => {
                 setSubData([]);
                 setQueryData((prev) => ({ ...prev, category: value }));
@@ -166,6 +163,7 @@ const ButtonContainer = styled.div`
   button {
     margin-left: auto;
     border-radius: 10px;
+    margin-top: 16px;
     @media (max-width: 767px) {
       margin-left: 0;
     }

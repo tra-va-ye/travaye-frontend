@@ -28,72 +28,70 @@ const Locations = () => {
 			})
 			.catch((err) => {});
 	}, [state]);
-	console.log(data);
+	// console.log(data);
 
 	return (
 		<>
 			{isLoading && <Loader />}
 			<Container>
-				<div className="d-flex justify-content-between mt-5 align-items-center ">
+				<div className="flex justify-between md:flex-row flex-col mt-5 md:items-center">
 					<h3>Locations</h3>
 					<Progress step={2} />
 				</div>
 				<div>
 					{data?.data.map((e, i) => (
-						<Card key={e._id}>
-							<div className="w-full grid grid-cols-8 items-center content-center">
-								<div className="d-flex items-center col-span-3">
-									<img
-										src={e?.business.businessLocationImages[0]}
-										alt=""
-										className="img-fluid w-[230px] h-[100px] rounded-xl"
-									/>
-									<div>
-										<p className='text-lg mb-1'>{e?.business.businessName}</p>
-										<h5 className='text-[#9D9D9D] mb-2'>{e?.business.businessAddress}</h5>
-										<h6 className='mb-0'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
-									</div>
-								</div>
-								<StarContainer className="d-flex align-items-center justify-center col-span-2">
-									<Rate value={e?.business?.rating} disabled />
-								</StarContainer>
-
-
-								<div className="flex align-items-center justify-end w-full col-span-3">
-									<p className="me-3 mb-0">{e?.business?.budgetClass?.label}</p>
-									{!addedLocations.find(
-										(location) => location._id == e._id
-									) && (
-										<Button
-											onClick={() => {
-												const currentLocations =
-													JSON.parse(localStorage.getItem('location')) || [];
-												if (currentLocations?.some((obj) => obj._id === e?._id))
-													return;
-												else {
-													localStorage.setItem('location',
-														JSON.stringify([
-															...currentLocations,
-															{
-																...e,
-															},
-														])
-													);
-													setAddedLocations([...addedLocations, e]);
-												}
-											}}
-											color="green"
-										>
-											Add Location
-										</Button>
-									)}
-
-									<Button onClick={() => navigate(`/location/${e?._id}`)}>
-										Preview
-									</Button>
+						<article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-5 mx-auto w-full grid start md:items-center justify-between gap-y-3 grid-cols-9">
+							<div className="flex items-stretch gap-4 col-span-9 md:col-span-6 lg:col-span-3">
+								<img
+									src={e?.business.businessLocationImages[0]}
+									alt=""
+									className="rounded-xl"
+									height={128}
+									width={160}
+								/>
+								<div className='flex flex-col justify-evenly flex-1'>
+									<p className='text-xl mb-0'>{e?.business.businessName}</p>
+									<h5 className='text-[#9D9D9D] mb-0'>{e?.business.businessAddress}</h5>
+									<h6 className='mb-0 text-lg'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
 								</div>
 							</div>
-						</Card>
+							<StarContainer className="col-span-9 md:col-span-3 lg:col-span-2 justify-self-center">
+								<Rate value={e?.business?.rating} disabled />
+							</StarContainer>
+							<div className="flex items-center col-span-9 lg:col-span-4 justify-between">
+								<p className="!text-lg mb-0">{e?.business?.budgetClass?.label}</p>
+								{!addedLocations.find(
+									(location) => location._id == e._id
+								) && (
+									<Button
+										onClick={() => {
+											const currentLocations =
+												JSON.parse(localStorage.getItem('location')) || [];
+											if (currentLocations?.some((obj) => obj._id === e?._id))
+												return;
+											else {
+												localStorage.setItem('location',
+													JSON.stringify([
+														...currentLocations,
+														{
+															...e,
+														},
+													])
+												);
+												setAddedLocations([...addedLocations, e]);
+											}
+										}}
+										color="green"
+									>
+										Add Location
+									</Button>
+								)}
+
+								<Button onClick={() => navigate(`/location/${e?._id}`)}>
+									Preview
+								</Button>
+							</div>
+						</article>
 					))}
 				</div>
 				<div className='flex justify-end mt-8 mb-4'>

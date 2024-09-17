@@ -46,7 +46,7 @@ const UserSidebar = ({ showDashboard, userInfo }) => {
       </div>
       <div className="mt-4">
         <h5 className="text-xl">Total Outings</h5>
-        <h6>27 Outings</h6>
+        <h6>{userInfo?.outings || `${userInfo?.outings} Outings` || "None"}</h6>
       </div>
       <div className="mt-4">
         <h5 className="text-xl">Total Reviews</h5>
