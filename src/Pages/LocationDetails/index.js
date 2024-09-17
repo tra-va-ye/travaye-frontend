@@ -339,7 +339,7 @@ const LocationDetails = () => {
 										if (!review.reviewerID) return <></>;
 										return (
 											<ReviewCard key={i}>
-												<div className="flex items-center justify-between">
+												<div className="flex items-center justify-between md:flex-row flex-col gap-2">
 													<ReviewUser>
 														<img
 															src={review?.reviewerID?.profilePhoto || Avatar}

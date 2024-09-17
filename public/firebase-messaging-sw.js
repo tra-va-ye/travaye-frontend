@@ -34,8 +34,18 @@ firebase.initializeApp(firebaseConfig);
 // Retrieve firebase messaging
 const messaging = firebase.messaging();
 
+// eslint-disable-next-line no-restricted-globals
+self.addEventListener("install", (event) => {
+  console.log("Service worker installed");
+});
+  
+// eslint-disable-next-line no-restricted-globals
+self.addEventListener("activate", (event) => {
+  console.log("Service worker activated");
+});
+
 messaging.onBackgroundMessage(payload => {
-  console.log('Received background message ', payload);
+  console.log('Received background message', payload);
 
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
