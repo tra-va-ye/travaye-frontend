@@ -8,7 +8,6 @@ import { FileUpload } from "../Business/Register";
 import { Box, Typography } from "@mui/material";
 import { CloudUpload } from "../../components/UI/svgs/svgs";
 import logo from "../../assets/logo.png";
-// import { ArrowCloud } from "../../components/UI/svgs/svgs";
 
 const Flex = styled(Box)({
 	display: 'flex',
@@ -48,7 +47,6 @@ const CreateEvent = () => {
   };
 
   const handleLocationImagesFileDrop = (acceptedFiles, field) => {
-    // console.log(acceptedFiles);
     setAdvertForm((prevInfo) => ({
       ...prevInfo,
       [field]: [...advertForm.advertImages, ...acceptedFiles],
@@ -264,25 +262,5 @@ const FormControl = styled.div`
 	}
   span.ant-select-selection-item {
     color: #9D9D9D;
-  }
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: end;
-  margin-top: 50px;
-  @media (max-width: 600px) {
-    justify-content: center;
-  }
-`;
-
-const TopGrid = styled.div`
-  display: flex;
-  justify-content: space-between;
-  @media (max-width: 525px) {
-    flex-direction: column;
-    span {
-      color: #009f57;
-    }
   }
 `;

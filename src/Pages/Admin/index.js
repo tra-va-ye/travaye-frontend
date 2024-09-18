@@ -50,9 +50,7 @@ const AdminPage = () => {
 
   const {
     data: allBusinesses,
-    isError: allError,
     isFetching: allFetching,
-    // error
   } = useGetAllBusinessesQuery();
 
   useEffect(() => {

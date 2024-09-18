@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useDeleteBusinessProfileMutation, useGetBusinessByIdQuery, useVerifyBusinessMutation } from "../../redux/Api/adminApi";
 import { Image, notification } from "antd";
 import Loader from "../../components/UI/Loader";
-import { useDeleteMyProfileMutation } from "../../redux/Api/authApi";
 
 const BusinessDetails = () => {
 	const { id } = useParams();

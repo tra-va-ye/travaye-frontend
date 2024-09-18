@@ -44,7 +44,7 @@ const Locations = () => {
     } else {
       data && setLocations(data?.data);
     }
-  }, [searchTerm]);
+  }, [searchTerm, data]);
 
   useEffect(() => {
     const loweredStates = selectedLocationStates.map(el => el.toLowerCase());

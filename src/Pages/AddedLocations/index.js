@@ -1,19 +1,23 @@
 import { Button } from "../../components/UI/Buttons";
 import styled from "styled-components";
-import MaryLandImg from "../../assets/maryland-mall.png";
-import { FourStars, Bin } from "../../components/UI/svgs/svgs";
 import { useEffect, useState } from "react";
 import { Rate } from "antd";
 import Progress from "../../components/UI/Progress";
 import { useGetCategoriesQuery } from "../../redux/Api/locationApi";
+import { Bin } from "../../components/UI/svgs/svgs";
 
 const AddedLocations = () => {
+  const locationStr = JSON.stringify(localStorage.getItem("location"))
+  const [printing, setPrinting] = useState(false);
+
   const [locations, setLocations] = useState(
     JSON.parse(localStorage.getItem("location"))
   );
+
   useEffect(() => {
     setLocations(JSON.parse(localStorage.getItem("location")));
-  }, [JSON.stringify(localStorage.getItem("location"))]);
+  }, [locationStr]);
+
 	const { data: categories } = useGetCategoriesQuery();
 
   console.log(locations);
@@ -23,7 +27,7 @@ const AddedLocations = () => {
         <h4>My Added Locations</h4>
         <Progress step={3} />
       </div>
-      <div className="mb-44 md:mb-20">
+      <div className={printing ? "mb-24 md:mb-10" : "mb-44 md:mb-20"}>
         {locations?.map((e) => (
           <article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-4 mx-auto w-full grid md:items-center justify-between gap-y-3 grid-cols-4 md:grid-cols-9">
             <div className="col-span-2">
@@ -44,54 +48,22 @@ const AddedLocations = () => {
               <StarContainer className="">
                 <Rate value={e?.business?.rating} disabled />
               </StarContainer>
-                  <b>#{e?.business?.budgetClass.max}</b>
-                  <span
-                    className="cursor-pointer"
-                    onClick={() => {
-                      const newLocations = locations.filter(
-                        (loc) => loc?.businessName !== e?.businessName
-                      );
-                      localStorage.setItem(
-                        "location",
-                        JSON.stringify(newLocations)
-                      );
-                      setLocations(newLocations);
-                    }}
-                  >
-                    {Bin}
-                  </span>
-                  {/* </div> */}
-              
-              {/* {!addedLocations.find(
-                (location) => location._id == e._id
-              ) && (
-                <Button
-                  onClick={() => {
-                    const currentLocations =
-                      JSON.parse(localStorage.getItem('location')) || [];
-                    if (currentLocations?.some((obj) => obj._id === e?._id))
-                      return;
-                    else {
-                      localStorage.setItem('location',
-                        JSON.stringify([
-                          ...currentLocations,
-                          {
-                            ...e,
-                          },
-                        ])
-                      );
-                      setAddedLocations([...addedLocations, e]);
-                    }
-                  }}
-                  color="green"
-                >
-                  Add Location
-                </Button>
-              )}
-
-              <Button onClick={() => navigate(`/location/${e?._id}`)}>
-                Preview
-              </Button> */}
+              <b className="text-xl">#{e?.business?.budgetClass.max}</b>
+              <span
+                className="cursor-pointer"
+                onClick={() => {
+                  const newLocations = locations.filter(
+                    (loc) => loc?.businessName !== e?.businessName
+                  );
+                  localStorage.setItem(
+                    "location",
+                    JSON.stringify(newLocations)
+                  );
+                  setLocations(newLocations);
+                }}
+              >
+                {Bin}
+              </span>
             </div>
           </article>
         ))}
@@ -124,7 +96,13 @@ const AddedLocations = () => {
           }, 0)}</Value>
         </div>
         <div className="justify-self-end col-span-2 md:col-span-1">
-          <Button onClick={() => window.print()}>Finish Selection</Button>
+          <Button
+            onFocus={() => {
+              setPrinting(true);
+              window.print();
+            }}
+            onBlur={() => setPrinting(false)}
+          >Finish Selection</Button>
         </div>
       </footer>
     </Container>
