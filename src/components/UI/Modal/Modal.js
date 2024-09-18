@@ -1,11 +1,11 @@
 import classes from "./Modal.module.css";
 import { createPortal } from "react-dom";
 import { CloseModalBtn } from "../svgs/svgs";
-import styled from "styled-components";
 
 export const BackDrop = (props) => {
   return <div className={classes.backdrop} onClick={props.onClick} />;
 };
+
 const ModalOverlay = (props) => {
   return (
     <div

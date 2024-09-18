@@ -48,7 +48,7 @@ const PlanTrip = () => {
         );
       }
     }
-  }, [queryData.category]);
+  }, [queryData.category, categories]);
 
   return (
     <div className=" ">
