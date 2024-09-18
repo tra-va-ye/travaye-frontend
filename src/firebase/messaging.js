@@ -9,8 +9,6 @@ async function requestPermission(userId) {
     try {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
-            console.log("Permission granted");
-            
             if ("serviceWorker" in navigator) {
                 try {
                     // Register the Service Worker
@@ -19,14 +17,10 @@ async function requestPermission(userId) {
                     // Wait for the Service Worker to be ready
                     await navigator.serviceWorker.ready;
 
-                    console.log('Notification permission granted.');
                     await saveDeviceMessagingToken(userId);
                 } catch (error) {
                     console.error("Error setting up Service Worker or getting token:", error);
                 }
-            } else {
-                console.error("No service worker");
-                
             }
         } else {
             notification.error({
@@ -41,22 +35,27 @@ async function requestPermission(userId) {
 }
 
 export async function saveDeviceMessagingToken (userId) {
-    const msg = await messaging();
-    const fcmToken = await getToken(msg, { vapidKey: process.env.REACT_APP_VAPID_KEY });
-    
-    if (fcmToken) {
-        console.log("Token found", fcmToken);
+    try {
+
+        const msg = await messaging();
+        const fcmToken = await getToken(msg, { vapidKey: process.env.REACT_APP_VAPID_KEY });
         
-        const tokenRef = doc(db, FCM_TOKEN_COLLECTION, userId);
-
-        await setDoc(tokenRef, { fcmToken });
-
-        onMessage(msg, (message) => {
-            console.log("New foreground notification from FCM", message);
+        if (fcmToken) {
+            // console.log("Token found", fcmToken);
             
-            new Notification(message.notification.title, { body: message.notification.body });
-        });
-    } else {
-        requestPermission(userId);
+            const tokenRef = doc(db, FCM_TOKEN_COLLECTION, userId);
+    
+            await setDoc(tokenRef, { fcmToken });
+    
+            onMessage(msg, (message) => {
+                // console.log("New foreground notification from FCM", message);
+                
+                new Notification(message.notification.title, { body: message.notification.body });
+            });
+        } else {
+            requestPermission(userId);
+        }
+    } catch (err) {
+        console.error(err);
     }
 }

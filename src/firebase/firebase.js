@@ -2,17 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getMessaging, isSupported } from "firebase/messaging";
 import { getFirestore } from "firebase/firestore";
 
-
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_KEY,
-  authDomain: "travaye-dev.firebaseapp.com",
-  projectId: "travaye-dev",
-  storageBucket: "travaye-dev.appspot.com",
-  messagingSenderId: "675047268961",
-  appId: "1:675047268961:web:d29b9de37d5488fa658020",
-  measurementId: "G-WZQ37JMJHY"
+  authDomain: "travaye-production.firebaseapp.com",
+  projectId: "travaye-production",
+  storageBucket: "travaye-production.appspot.com",
+  messagingSenderId: "477282518114",
+  appId: "1:477282518114:web:93a0f76b8575dc46597d3b",
+  measurementId: "G-BB45CKRSBL"
 };
-
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const db = getFirestore(firebaseApp);
