@@ -1,6 +1,5 @@
-import { notification, Spin } from "antd";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { notification } from "antd";
+import { useState } from "react";
 import styled from "styled-components";
 import { Button } from "../../components/UI/Buttons";
 import Loader from "../../components/UI/Loader";
@@ -8,10 +7,9 @@ import { useForgotPasswordMutation } from "../../redux/Api/authApi";
 import { AuthFormWrapper } from "../Login";
 
 const ForgotPassword = () => {
-  const navigate = useNavigate();
-  const [forgotPassword, { isLoading, error, isError, isSuccess, data }] =
-    useForgotPasswordMutation();
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const [email, setEmail] = useState("");
+
   const handleResetPassword = (e) => {
     e.preventDefault();
     forgotPassword({ email })
@@ -32,6 +30,7 @@ const ForgotPassword = () => {
         });
       });
   };
+
   return (
     <Container className="d-flex justify-content-center col-md-6 offset-md-3 mt-3 text-center">
       {isLoading && <Loader />}
@@ -62,14 +61,6 @@ const ForgotPassword = () => {
 };
 
 export default ForgotPassword;
-
-const Timer = styled.p`
-  text-align: end;
-
-  span {
-    color: #e9a009;
-  }
-`;
 
 const Container = styled.div`
   input {

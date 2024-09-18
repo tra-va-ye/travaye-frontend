@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button } from '../../components/UI/Buttons';
-import { Card, StarContainer } from '../AddedLocations';
+import { StarContainer } from '../AddedLocations';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
 	useLazyPlanATripQuery,
@@ -23,12 +23,9 @@ const Locations = () => {
 	useEffect(() => {
 		planATrip(state)
 			.unwrap()
-			.then((res) => {
-				console.log(res);
-			})
-			.catch((err) => {});
-	}, [state]);
-	// console.log(data);
+			.then((res) => console.log(res))
+			.catch((err) => console.error(err));
+	}, [state, planATrip]);
 
 	return (
 		<>
@@ -61,7 +58,7 @@ const Locations = () => {
 							<div className="flex items-center col-span-9 lg:col-span-4 justify-between">
 								<p className="!text-lg mb-0">{e?.business?.budgetClass?.label}</p>
 								{!addedLocations.find(
-									(location) => location._id == e._id
+									(location) => location._id === e._id
 								) && (
 									<Button
 										onClick={() => {

@@ -233,6 +233,7 @@ const Login = () => {
                     placeholder="Password"
                     value={values.passWord}
                     onChange={handleChange}
+                    autoComplete="current-password"
                   />
                   {seePass ? (
                     <FaEyeSlash

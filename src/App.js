@@ -76,9 +76,9 @@ const BusinessSettings = lazy(() => {
 const UserSettings = lazy(() => {
   return import("./Pages/UserSettings");
 });
-const Subscribe = lazy(() => {
-  return import("./Pages/Subscribe/Subscribe");
-});
+// const Subscribe = lazy(() => {
+//   return import("./Pages/Subscribe/Subscribe");
+// });
 
 function App() {
   const dispatch = useDispatch();

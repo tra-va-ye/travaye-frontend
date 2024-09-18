@@ -57,12 +57,11 @@ const Register = () => {
 		isLoading,
 		refetch,
 	} = useGetMeQuery({ userType });
+
 	const [
-		completeBusiness,
-		{
+		completeBusiness, {
 			isLoading: completeBusinessLoading,
 			isSuccess: completeBusinessSuccess,
-			data,
 			error,
 			isError,
 		},
@@ -112,12 +111,12 @@ const Register = () => {
 	};
 
 	const handleFileDrop = (acceptedFiles, field) => {
-		// console.log(acceptedFiles);
 		setBusinessInfo((prevInfo) => ({
 			...prevInfo,
 			[field]: [...acceptedFiles],
 		}));
 	};
+
 	const handleLocationImagesFileDrop = (acceptedFiles, field) => {
 		// console.log(acceptedFiles);
 		setBusinessInfo((prevInfo) => ({
@@ -128,7 +127,6 @@ const Register = () => {
 
 	useEffect(() => {
 		if (isError) {
-      // console.log(error.data.error);
       if (error.data.error[0].message) {
         notification.error({
           message: error.data.error[0].message,

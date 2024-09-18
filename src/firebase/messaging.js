@@ -14,17 +14,13 @@ async function requestPermission(userId) {
             if ("serviceWorker" in navigator) {
                 try {
                     // Register the Service Worker
-                    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
-                    console.log(registration);
+                    await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
                     // Wait for the Service Worker to be ready
                     await navigator.serviceWorker.ready;
 
                     console.log('Notification permission granted.');
                     await saveDeviceMessagingToken(userId);
-
-                    // Replace the above with your own logic
-
                 } catch (error) {
                     console.error("Error setting up Service Worker or getting token:", error);
                 }
@@ -49,7 +45,8 @@ export async function saveDeviceMessagingToken (userId) {
     const fcmToken = await getToken(msg, { vapidKey: process.env.REACT_APP_VAPID_KEY });
     
     if (fcmToken) {
-        // console.log("Token found", fcmToken);
+        console.log("Token found", fcmToken);
+        
         const tokenRef = doc(db, FCM_TOKEN_COLLECTION, userId);
 
         await setDoc(tokenRef, { fcmToken });
@@ -58,7 +55,7 @@ export async function saveDeviceMessagingToken (userId) {
             console.log("New foreground notification from FCM", message);
             
             new Notification(message.notification.title, { body: message.notification.body });
-        })
+        });
     } else {
         requestPermission(userId);
     }
