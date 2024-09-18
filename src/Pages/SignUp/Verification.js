@@ -1,6 +1,6 @@
 import { notification, Spin } from "antd";
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../../components/UI/Buttons";
@@ -13,7 +13,6 @@ import { AuthFormWrapper } from "../Login";
 
 const Verification = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const [codes, setCodes] = useState(["", "", "", ""]);
   const [codeTimeOut, setCodeTimeOut] = useState(59);
   const nonEmptyElements = codes.filter((element) => element !== "");
@@ -25,12 +24,10 @@ const Verification = () => {
     }, 1000);
     return () => clearTimeout(timer);
   }, [codeTimeOut]);
+
   const userType = useSelector((state) => state.auth.userType);
-  console.log(userType);
-  const [codeVerify, { isLoading, error, isError, isSuccess, data }] =
-    useCodeVerifyMutation();
-  const [resendCode, { isLoading: resending }] =
-    useResendVerificationMailMutation();
+  const [codeVerify, { isLoading }] = useCodeVerifyMutation();
+  const [resendCode, { isLoading: resending }] = useResendVerificationMailMutation();
 
   const handleChange = (index, value) => {
     const newCodes = [...codes];

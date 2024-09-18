@@ -20,13 +20,13 @@ importScripts('https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js');
 importScripts('https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js');
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCwE4EZt6wyVwdTr-mKyC2hb13ThBmpGFM",
-  authDomain: "travaye-dev.firebaseapp.com",
-  projectId: "travaye-dev",
-  storageBucket: "travaye-dev.appspot.com",
-  messagingSenderId: "675047268961",
-  appId: "1:675047268961:web:d29b9de37d5488fa658020",
-  measurementId: "G-WZQ37JMJHY"
+  apiKey: "AIzaSyA3Yt285UY9vSAwgM5ldHQeqgDahAZ-aUc",
+  authDomain: "travaye-production.firebaseapp.com",
+  projectId: "travaye-production",
+  storageBucket: "travaye-production.appspot.com",
+  messagingSenderId: "477282518114",
+  appId: "1:477282518114:web:93a0f76b8575dc46597d3b",
+  measurementId: "G-BB45CKRSBL"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -45,7 +45,7 @@ self.addEventListener("activate", (event) => {
 });
 
 messaging.onBackgroundMessage(payload => {
-  console.log('Received background message', payload);
+  // console.log('Received background message', payload);
 
   const notificationTitle = payload.notification.title;
   const notificationOptions = {

@@ -34,6 +34,7 @@ const initialValues = {
   locationAddedBy: sessionStorage.getItem("user_id"),
   locationContact: "",
 };
+
 const NewLocation = ({ open, setOpen }) => {
   const navigate = useNavigate();
   const userType = useSelector((state) => state.auth.userType);
@@ -46,8 +47,7 @@ const NewLocation = ({ open, setOpen }) => {
 
   // const user = useSelector((state) => state.authuser);
   const [rating, setRating] = useState(2);
-  const { data: categories, isLoading: isFetchingCategories } =
-    useGetCategoriesQuery();
+  const { data: categories } = useGetCategoriesQuery();
   const [subCat, setSubCat] = useState([]);
   const [values, setValues] = useState(initialValues);
 

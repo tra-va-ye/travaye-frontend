@@ -1,6 +1,5 @@
-import { notification, Spin } from "antd";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { notification } from "antd";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Button } from "../../components/UI/Buttons";
@@ -10,7 +9,6 @@ import { AuthFormWrapper } from "../Login";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { useLocation } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
 import { IoEyeSharp } from "react-icons/io5";
 import { FaEyeSlash } from "react-icons/fa6";
 
@@ -30,12 +28,11 @@ const updatePasswordSchema = yup.object().shape({
 });
 const ResetPassword = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   let location = useLocation();
   let searchParams = new URLSearchParams(location.search);
   let token = searchParams.get("token");
   let email = searchParams.get("email");
-  const [resetPassword, { isLoading, error, isError, isSuccess, data }] =
+  const [resetPassword, { isLoading }] =
     useResetPasswordMutation();
   const [seePass, setSeePass] = useState(false);
   const { values, errors, handleChange, handleSubmit } = useFormik({
@@ -129,14 +126,6 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
-
-const Timer = styled.p`
-  text-align: end;
-
-  span {
-    color: #e9a009;
-  }
-`;
 
 const Container = styled.div`
   input {
