@@ -45,15 +45,16 @@ const BusinessSettings = () => {
   const [subData, setSubData] = useState([]);
   
   const businessData = useSelector((store) => store.auth.user);
-  // console.log(businessData);
 
   useEffect(() => {
     getLga({ state: businessData?.businessState?.toUpperCase() });
     getCity({ state: businessData?.businessState?.toUpperCase() });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessInfo?.businessState, businessData?.businessState]);
 
   useEffect(() => {
     setSubData(categories?.find((cat) => cat.value === businessData?.businessCategory)?.sub);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessInfo?.businessCategory, businessData?.businessCategory]);
   
   useEffect(() => {
@@ -93,6 +94,7 @@ const BusinessSettings = () => {
         // navigate("/register");
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessData, navigate]);
 
   const handleChange = (field, value) => {
