@@ -3,6 +3,9 @@ import Modal from './Modal'
 import styled from 'styled-components'
 import { Button } from '../Buttons'
 import TextArea from 'antd/es/input/TextArea';
+import emailjs from "@emailjs/browser";
+import { message } from "antd";
+import { useSelector } from 'react-redux';
 
 const supportObject = {
     newLocation: '',
@@ -12,10 +15,29 @@ const supportObject = {
 
 const UserSupportModal = ({ onClick, username }) => {
     const [supportForm, setSupportForm] = useState(supportObject);
+    const userData = useSelector((state) => state.auth.user);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(supportForm);
+        emailjs.send(
+          "service_2awgc2q",
+          "template_56hvrxa",
+          {
+            username: userData?.username,
+            message: `Location Suggestion: ${supportForm.newLocation} \nFeature Suggestion: ${supportForm?.newFeature} \nComplaint: ${supportForm?.complaint}`,
+            reply_to: userData?.email
+          },
+          "sJVfx0jMMQwTWPNnl"
+        ).then(
+          (result) => {
+            console.log(result.text);
+            message.success("Thanks for reaching out. We appreciate your feedback");
+            onClick();
+          },
+          (error) => {
+            console.log(error.text);
+          }
+        );
     }
 
     const handleChange = (field, value) => {
@@ -28,10 +50,10 @@ const UserSupportModal = ({ onClick, username }) => {
     return (
         <Modal onClick={onClick} alignRight={true}>
             <h3 className='-mt-8 !text-lg !md:text-xl font-bold'>Chat Support</h3>
-            <p className='text-justify text-black font-normal mt-3 md:mt-6'>
+            <p className='text-justify text-black font-normal mt-2 md:mt-5'>
                 Hello <span className='italic'>{username}!</span>
             </p>
-            <p className='text-justify text-black font-normal mb-4 md:mb-8 '>
+            <p className='text-justify text-black font-normal mb-3 md:mb-6'>
                 Welcome to the Travaye admin support system. Please check the questions below. Help us serve you better.
             </p>
             <SupportForm onSubmit={handleSubmit}>
@@ -52,7 +74,7 @@ const UserSupportModal = ({ onClick, username }) => {
                     </label>
                     <TextArea
                         placeholder="Enter suggestion"
-                        rows="3"
+                        rows="2"
                         name="newFeature"
                         value={supportForm.newFeature}
                         onChange={(e) => handleChange("newFeature", e.target.value)}
@@ -64,7 +86,7 @@ const UserSupportModal = ({ onClick, username }) => {
                     </label>
                     <TextArea
                         placeholder="Type here"
-                        rows="3"
+                        rows="2"
                         name="complaint"
                         value={supportForm.complaint}
                         onChange={(e) => handleChange("complaint", e.target.value)}

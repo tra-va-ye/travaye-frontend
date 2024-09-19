@@ -105,9 +105,9 @@ const UserProfile = () => {
               Settings{">"}
             </button>
           </div>
-          <Button color="green">
+          {/* <Button color="green">
             Created Events
-          </Button>
+          </Button> */}
         </div>
         <BoxContainer>
           {showSupportModal && (

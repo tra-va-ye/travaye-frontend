@@ -15,24 +15,25 @@ const Contact = () => {
 
   const sendEmail = (e) => {
     e.preventDefault();
-
-    emailjs
-      .sendForm(
-        "service_je05kl9",
-        "template_2ft9dno",
-        form.current,
-        "f3heQFk_ycb7UsDKq"
-      )
-      .then(
-        (result) => {
-          console.log(result.text);
-          message.success("thanks for reaching out we'll get back to you soon");
-          form.current.reset();
-        },
-        (error) => {
-          console.log(error.text);
-        }
-      );
+    emailjs.send(
+      "service_2awgc2q",
+      "template_56hvrxa",
+      {
+        username: form.current.from_name.value,
+        message: form.current.message.value,
+        reply_to: form.current.from_email.value
+      },
+      "sJVfx0jMMQwTWPNnl"
+    ).then(
+      (result) => {
+        console.log(result.text);
+        message.success("thanks for reaching out we'll get back to you soon");
+        form.current.reset();
+      },
+      (error) => {
+        console.log(error.text);
+      }
+    );
   };
 
   return (
@@ -71,7 +72,7 @@ const Contact = () => {
           <label htmlFor="message">Message</label>
           <textarea
             name="message"
-            rows="10"
+            rows="5"
             placeholder="Say something"
             id="message"
           />
