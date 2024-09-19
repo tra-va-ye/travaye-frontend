@@ -3,6 +3,9 @@ import Modal from './Modal'
 import styled from 'styled-components'
 import { Button } from '../Buttons'
 import TextArea from 'antd/es/input/TextArea';
+import emailjs from "@emailjs/browser";
+import { message } from "antd";
+import { useSelector } from 'react-redux';
 
 const supportObject = {
     newFeature: '',
@@ -11,10 +14,30 @@ const supportObject = {
 
 const BusinessSupportModal = ({ onClick, username }) => {
     const [supportForm, setSupportForm] = useState(supportObject);
+    const userData = useSelector((state) => state.auth.user);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(supportForm);
+        // console.log(userData);
+        emailjs.send(
+            "service_2awgc2q",
+            "template_56hvrxa",
+            {
+              username: userData?.businessName,
+              message: `Feature Suggestion: ${supportForm?.newFeature} \nComplaint: ${supportForm?.complaint}`,
+              reply_to: userData?.businessEmail
+            },
+            "sJVfx0jMMQwTWPNnl"
+          ).then(
+            (result) => {
+              console.log(result.text);
+              message.success("Thanks for reaching out. We appreciate your feedback");
+              onClick();
+            },
+            (error) => {
+              console.log(error.text);
+            }
+          );
     }
 
     const handleChange = (field, value) => {

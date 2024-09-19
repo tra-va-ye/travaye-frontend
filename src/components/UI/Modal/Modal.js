@@ -10,7 +10,7 @@ const ModalOverlay = (props) => {
   return (
     <div
       className={`${classes.overlay} ${
-        props.className === "points-modal" && classes["points-modal"]}
+        props.className === "points-modal" ? classes["points-modal"] : ""}
         ${props.alignRight === true ? 'w-4/5 md:w-4/6' : 'w-1/3'}
       `}
     >

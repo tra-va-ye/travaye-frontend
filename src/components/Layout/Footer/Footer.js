@@ -2,13 +2,45 @@ import classes from "./Footer.module.css";
 import WhiteLogo from "../../../assets/white-logo.png";
 import { FacebookIcon, TwitterIcon, InstaIcon } from "../../UI/svgs/svgs";
 import { Link } from "react-router-dom";
+import emailjs from "@emailjs/browser";
+import { useRef } from "react";
+import { message } from "antd";
+import { useSelector } from "react-redux";
 
 const Links = [
   { name: "My Account", href: "/user" },
   { name: "View Locations", href: "/business-locations" },
   { name: "Watch Stories", href: "/" },
 ];
+
 const Footer = () => {
+  const form = useRef();
+  const userData = useSelector((state) => state.auth.user);
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    emailjs.send(
+      "service_2awgc2q",
+      "template_56hvrxa",
+      {
+        username: userData?.username || "New user",
+        message: "I would love to join the Travaye waitlist",
+        reply_to: form.current.from_email.value
+      },
+      "sJVfx0jMMQwTWPNnl"
+    ).then(
+      (result) => {
+        console.log(result.text);
+        message.success("thanks for reaching out we'll get back to you soon");
+        form.current.reset();
+      },
+      (error) => {
+        console.log(error.text);
+        message.error(error.text);
+      }
+    );
+  };
+
   return (
     <footer className={classes.footer}>
       <div className={classes.bgPicture} />
@@ -27,15 +59,15 @@ const Footer = () => {
           </div>
         </div>
         <div className="mb-5">
-          {/* <h4>Subscribe To Our Newsletter</h4> */}
           <h4>Join Our Waitlist</h4>
-          <form>
+          <form ref={form} onSubmit={sendEmail}>
             <input
               className="text-black"
+              name="from_email"
               type="email"
               placeholder="Enter Your Email"
             />
-            <button className="md:mx-auto">
+            <button type="submit" className="md:mx-auto">
               <svg
                 width="30"
                 height="22"
@@ -66,11 +98,6 @@ const Footer = () => {
                 </li>
               );
             })}
-            {/* <li>
-              <a target="_blank" href="https://forms.gle/qgZ2RVkkqt2f49bs8">
-                submit survey
-              </a>
-            </li> */}
           </ul>
         </div>
       </div>
