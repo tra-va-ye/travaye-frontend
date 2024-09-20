@@ -74,6 +74,13 @@ export const LocationApi = createApi({
       }),
       invalidatesTags: ["Location", "Profile"],
     }),
+    logLocationVisit: builder.mutation({
+      query: ({location}) => ({
+        url: `locations/visits?location=${location}`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["Profile"],
+    }),
     unlikeLocation: builder.mutation({
       query: (body) => ({
         url: "locations/unlike",

@@ -89,7 +89,10 @@ const SignUp = () => {
         navigate("/verify-email"); // Redirect to the email verification page
       }
     } else if (businessSuccess) {
-      const businessEmailVerified = businessData?.user?.emailVerified;
+      const businessEmailVerified = businessData?.business?.emailVerified;
+      // console.log(businessData?.business);
+      sessionStorage.setItem("authToken", businessData?.token);
+      sessionStorage.setItem("user_id", businessData?.business?._id);
 
       if (businessEmailVerified) {
         notification.success({
@@ -98,15 +101,15 @@ const SignUp = () => {
           placement: "bottomRight",
         });
 
-        if (businessData?.user?.businessVerified === "verified") {
-          navigate(`/${userType}`);
-        } else if (businessData?.user?.businessVerified === "pending") {
+        if (businessData?.business?.businessVerified === "verified") {
+          navigate("/business");
+        } else if (businessData?.business?.businessVerified === "pending") {
           notification.warning({
             message: " Business Verification Pending",
             duration: 3,
             placement: "bottomRight",
           });
-          navigate(`/${userType}`);
+          navigate("/business");
         } else {
           navigate(`/register`);
         }

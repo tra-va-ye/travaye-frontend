@@ -14,14 +14,16 @@ import SupportModal from "../../components/UI/Modal/UserSupportModal";
 import { TogleButton } from "../../components/Layout/BusinessSidebar";
 import { BsBoxArrowInLeft } from "react-icons/bs";
 import UserSidebar from "../../components/Layout/UserSidebar";
+import { Html5Qrcode } from "html5-qrcode";
 
 const UserProfile = () => {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  // const [openScanner, setOpenScanner] = useState(false);
   const userData = useSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
-
+  const location = useLocation();
   const [firstVisit, setFirstVisit] = useState(true);
   const [locations, setLocations] = useState([]);
 
@@ -39,7 +41,6 @@ const UserProfile = () => {
     page: 1,
     count: 10
   });
-  const location = useLocation();
 
   const [userInfo, setUserInfo] = useState();
   useEffect(() => {
@@ -59,7 +60,6 @@ const UserProfile = () => {
     }
   }, [data, error?.error, isError, isSuccess, locations]);
 
-
   useEffect(() => {
     // Check if it's the first visit
     if (firstVisit) {
@@ -75,6 +75,58 @@ const UserProfile = () => {
   // Filter out any undefined values in case a location name doesn't match any location
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
 
+  const logUserVisit = async (url) => {
+    const res = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${sessionStorage.getItem("authToken")}`
+      }
+    });
+    const data = await res.json();
+    if (res.status === 201) {
+      notification.success({
+        message: data.message,
+        duration: 3,
+        placement: "bottomRight",
+      });
+    } else {
+      notification.error({
+        message: data.message,
+        duration: 3,
+        placement: "bottomRight",
+      });
+    }
+};
+
+  const startScanningProccess = () => {
+    Html5Qrcode.getCameras().then(devices => {
+      if (devices && devices.length) {
+        var cameraId = devices[0].id;
+        const html5QrCode = new Html5Qrcode("reader");
+
+        html5QrCode.start(
+          cameraId,
+          {
+            fps: 10,    // Optional, frame per seconds for qr code scanning
+            qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
+          },
+          (decodedText) => {
+            // console.log(decodedText);
+            logUserVisit(decodedText);
+            html5QrCode.stop();
+            // do something when code is read
+          },
+          (errorMessage) => {
+            // console.log({errorMessage});
+            // parse error, ignore it.
+          })
+        .catch((err) => {
+          // Start failed, handle it.
+        });
+      }
+    }).catch(err => console.error(err))
+  }
+
   return (
     <Container>
       <TogleButton showDashboard={showDashboard}>
@@ -85,9 +137,10 @@ const UserProfile = () => {
         <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
         </button>
-        <button className="fixed right-9 bottom-24 p-2.5 bg-[#FDEECE] rounded-full shadow-md">
+        <button className="fixed right-9 bottom-24 p-2.5 bg-[#FDEECE] rounded-full shadow-md" onClick={startScanningProccess}>
           <ScanIcon />
         </button>
+        <div id="reader" width="600px" />
         <div className="d-flex justify-content-between align-items-center mb-5 mt-3">
           <div className="flex justify-start items-center gap-2 flex-wrap">
             <Link to="/create-event">
@@ -105,9 +158,6 @@ const UserProfile = () => {
               Settings{">"}
             </button>
           </div>
-          {/* <Button color="green">
-            Created Events
-          </Button> */}
         </div>
         <BoxContainer>
           {showSupportModal && (

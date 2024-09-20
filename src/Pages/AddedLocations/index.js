@@ -8,7 +8,7 @@ import { Bin } from "../../components/UI/svgs/svgs";
 
 const AddedLocations = () => {
   const locationStr = JSON.stringify(localStorage.getItem("location"))
-  const [printing, setPrinting] = useState(false);
+  // const [printing, setPrinting] = useState(false);
 
   const [locations, setLocations] = useState(
     JSON.parse(localStorage.getItem("location"))
@@ -20,29 +20,27 @@ const AddedLocations = () => {
 
 	const { data: categories } = useGetCategoriesQuery();
 
-  console.log(locations);
   return (
     <Container>
-      <div className="flex justify-between items-end mb-10">
+      <div className="flex sm:flex-row flex-col justify-between gap-3 sm:gap-0 sm:items-end mb-10">
         <h4>My Added Locations</h4>
         <Progress step={3} />
       </div>
-      <div className={printing ? "mb-24 md:mb-10" : "mb-44 md:mb-20"}>
+      <div className="mb-48 sm:mb-40 md:mb-24">
         {locations?.map((e) => (
           <article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-4 mx-auto w-full grid md:items-center justify-between gap-y-3 grid-cols-4 md:grid-cols-9">
-            <div className="col-span-2">
+            <div className="col-span-4 sm:col-span-2">
               <img
                 src={e?.business.businessLocationImages[0]}
-                alt=""
-                className="rounded-xl"
-                height={120}
-                width={160}
+                alt="Location "
+                className="rounded-xl h-36 md:!h-[9.3rem] w-3/4 mx-auto sm:!mx-0 sm:w-auto"
+                width={180}
               />
             </div>
-            <div className='h-4/5 flex flex-col justify-evenly col-span-2 md:col-span-4 justify-self-center px-3'>
-              <p className='text-xl mb-0'>{e?.business.businessName}</p>
+            <div className='h-4/5 flex flex-col justify-evenly gap-2 sm:gap-0 col-span-4 sm:col-span-2 md:col-span-4 sm:justify-self-center'>
+              <p className='!text-xl mb-0'>{e?.business.businessName}</p>
               <h5 className='text-[#9D9D9D] mb-0'>{e?.business.businessAddress}</h5>
-              <h6 className='mb-0 text-lg w-full'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
+              <h6 className='mb-0 !text-lg w-full'>{categories?.find(cat => cat?.value === e?.locationCategory.replace('&', '%26'))?.label}</h6>
             </div>
             <div className="flex items-center col-span-4 md:col-span-3 justify-between">
               <StarContainer className="">
@@ -53,7 +51,7 @@ const AddedLocations = () => {
                 className="cursor-pointer"
                 onClick={() => {
                   const newLocations = locations.filter(
-                    (loc) => loc?.businessName !== e?.businessName
+                    (loc) => loc?.business?.businessName !== e?.business?.businessName
                   );
                   localStorage.setItem(
                     "location",
@@ -79,10 +77,10 @@ const AddedLocations = () => {
           <Value>
             {
               locations?.reduce((acc, e) => {
-                if (acc.includes(e?.businessCategory)) {
+                if (acc.includes(e?.business?.businessCategory)) {
                   return acc;
                 } else {
-                  return [...acc, e?.businessCategory];
+                  return [...acc, e?.business?.businessCategory];
                 }
               }, []).length
             }{" "}
@@ -97,11 +95,7 @@ const AddedLocations = () => {
         </div>
         <div className="justify-self-end col-span-2 md:col-span-1">
           <Button
-            onFocus={() => {
-              setPrinting(true);
-              window.print();
-            }}
-            onBlur={() => setPrinting(false)}
+            onClick={() => window.print()}
           >Finish Selection</Button>
         </div>
       </footer>
@@ -111,7 +105,7 @@ const AddedLocations = () => {
 export default AddedLocations;
 
 const Container = styled.div`
-  padding: 5%;
+  padding: 3% 5%;
   position: relative;
   h4 {
     text-align: center;
