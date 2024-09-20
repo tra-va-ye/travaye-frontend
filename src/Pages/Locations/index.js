@@ -37,8 +37,8 @@ const Locations = () => {
 				</div>
 				<div>
 					{data?.data.map((e, i) => (
-						<article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-5 mx-auto w-full grid start md:items-center justify-between gap-y-3 grid-cols-9">
-							<div className="flex items-stretch gap-4 col-span-9 md:col-span-6 lg:col-span-3">
+						<article key={e._id} className="bg-white shadow-lg rounded-2xl p-3 my-5 mx-auto w-full grid start md:items-center justify-between gap-y-3 grid-cols-9 lg:grid-cols-10">
+							<div className="flex items-stretch gap-4 col-span-9 md:col-span-6 lg:col-span-4">
 								<img
 									src={e?.business.businessLocationImages[0]}
 									alt=""
