@@ -19,7 +19,6 @@ import { Html5Qrcode } from "html5-qrcode";
 const UserProfile = () => {
   const [showSupportModal, setShowSupportModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-  // const [openScanner, setOpenScanner] = useState(false);
   const userData = useSelector((state) => state.auth.user);
 
   const navigate = useNavigate();
@@ -86,45 +85,47 @@ const UserProfile = () => {
     if (res.status === 201) {
       notification.success({
         message: data.message,
-        duration: 3,
-        placement: "bottomRight",
+        duration: 5,
+        placement: "bottom",
       });
     } else {
       notification.error({
         message: data.message,
-        duration: 3,
-        placement: "bottomRight",
+        duration: 5,
+        placement: "bottom",
       });
     }
-};
+  };
+
+  let html5QrCode;
 
   const startScanningProccess = () => {
+    if (html5QrCode !== undefined) {
+      const state = html5QrCode.getState();
+      if (state === 2) {
+        return html5QrCode.stop();
+      }
+    }
+
+    html5QrCode = new Html5Qrcode("reader");
     Html5Qrcode.getCameras().then(devices => {
       if (devices && devices.length) {
-        var cameraId = devices[0].id;
-        const html5QrCode = new Html5Qrcode("reader");
+        let cameraId = devices[0].id;
+        if (window.innerWidth < 800) cameraId = devices[1].id;
 
         html5QrCode.start(
           cameraId,
           {
-            fps: 10,    // Optional, frame per seconds for qr code scanning
+            fps: 14,   // Optional, frame per seconds for qr code scanning
             qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
           },
           (decodedText) => {
-            // console.log(decodedText);
             logUserVisit(decodedText);
             html5QrCode.stop();
-            // do something when code is read
-          },
-          (errorMessage) => {
-            // console.log({errorMessage});
-            // parse error, ignore it.
           })
-        .catch((err) => {
-          // Start failed, handle it.
-        });
       }
-    }).catch(err => console.error(err))
+    })
+    .catch(err => console.error(err));
   }
 
   return (
@@ -134,13 +135,17 @@ const UserProfile = () => {
       </TogleButton>
       <UserSidebar showDashboard={showDashboard} userInfo={userInfo} />
       <Main>
-        <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
+        <button className="fixed right-7 bottom-6 shadow-md rounded-full z-50 !scale-90" onClick={() => setShowSupportModal(true)}>
           <ChatIcon />
         </button>
-        <button className="fixed right-9 bottom-24 p-2.5 bg-[#FDEECE] rounded-full shadow-md" onClick={startScanningProccess}>
+        <button
+          className="fixed right-7 bottom-28 shadow-md rounded-full z-50 !scale-90 bg-[#FDEECE] p-2.5"
+          onClick={() => startScanningProccess()}
+          onBlur={() => (html5QrCode!== undefined) && html5QrCode.stop()}
+        >
           <ScanIcon />
         </button>
-        <div id="reader" width="600px" />
+        <div id="reader" width="560px" />
         <div className="d-flex justify-content-between align-items-center mb-5 mt-3">
           <div className="flex justify-start items-center gap-2 flex-wrap">
             <Link to="/create-event">
