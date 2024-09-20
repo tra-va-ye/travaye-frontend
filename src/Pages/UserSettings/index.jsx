@@ -257,7 +257,7 @@ const UserSettings = () => {
           </InsightBox>
           <InsightBox>
             <h6>Number of Visits</h6>
-            <p>{userData?.visits || "0"} Outings</p>
+            <p>{userData?.numberOfVisits || "0"} Outing{userData?.numberOfVisits > 1 ? "s" : ""}</p>
           </InsightBox>
         </div>
         <div className="flex flex-col items-end gap-2.5 my-9">
