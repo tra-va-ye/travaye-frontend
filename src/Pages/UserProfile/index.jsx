@@ -75,24 +75,25 @@ const UserProfile = () => {
   const filteredUserLikedLocations = userLikedLocations?.filter(Boolean) || [];
 
   const logUserVisit = async (url) => {
-    const res = await fetch(url, {
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}locations/visits?location=`, {
       method: "PUT",
       headers: {
         "Authorization": `Bearer ${sessionStorage.getItem("authToken")}`
       }
     });
     const data = await res.json();
+    
     if (res.status === 201) {
       notification.success({
         message: data.message,
-        duration: 5,
-        placement: "bottom",
+        duration: 3,
+        placement: "top",
       });
     } else {
       notification.error({
         message: data.message,
-        duration: 5,
-        placement: "bottom",
+        duration: 3,
+        placement: "top",
       });
     }
   };
@@ -116,12 +117,14 @@ const UserProfile = () => {
         html5QrCode.start(
           cameraId,
           {
-            fps: 14,   // Optional, frame per seconds for qr code scanning
+            fps: 10,   // Optional, frame per seconds for qr code scanning
             qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
           },
           (decodedText) => {
-            logUserVisit(decodedText);
-            html5QrCode.stop();
+            if (decodedText === "https://qr.link/Wk38Ni") {
+              logUserVisit(decodedText);
+              html5QrCode.stop();
+            }
           })
       }
     })
