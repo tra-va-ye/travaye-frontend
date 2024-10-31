@@ -16,8 +16,8 @@ const Verification = () => {
   const [codes, setCodes] = useState(["", "", "", ""]);
   const [codeTimeOut, setCodeTimeOut] = useState(59);
   const nonEmptyElements = codes.filter((element) => element !== "");
-  // const [isLoading, setIsLoading] = useState(false);
   let buttonDisabled = Boolean(nonEmptyElements.length < 4);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       if (codeTimeOut > 0) setCodeTimeOut((prev) => prev - 1);
@@ -34,6 +34,7 @@ const Verification = () => {
     newCodes[index] = value;
     setCodes(newCodes);
   };
+
   const handleKeyDown = (index, event) => {
     if (event.key === "Backspace" && !codes[index] && index > 0) {
       const newCodes = [...codes];
@@ -65,7 +66,8 @@ const Verification = () => {
           duration: 3,
           placement: "bottomRight",
         });
-        navigate(`/register`);
+        
+        navigate(`${userType}`);
       })
       .catch((error) => {
         notification.error({
@@ -75,6 +77,7 @@ const Verification = () => {
         });
       });
   };
+
   return (
     <Container className="d-flex justify-content-center col-md-6 offset-md-3 mt-3 text-center">
       {isLoading && <Loader />}

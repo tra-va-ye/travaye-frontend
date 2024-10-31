@@ -147,7 +147,7 @@ const Register = () => {
 				duration: 3,
 				placement: 'bottomRight',
 			});
-			navigate(`/subscribe`);
+			navigate("/business");
 		}
 	}, [isError, error, completeBusinessSuccess, userType, navigate]);
 

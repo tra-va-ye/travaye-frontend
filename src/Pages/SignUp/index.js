@@ -73,7 +73,7 @@ const SignUp = () => {
     }
 
     if (userSuccess) {
-      const userEmailVerified = data?.user?.emailVerified;
+      const userEmailVerified = data?.user.emailVerified;
       sessionStorage.setItem("user_id", data?.user?._id);
       sessionStorage.setItem("authToken", data?.token);
 
@@ -89,8 +89,7 @@ const SignUp = () => {
         navigate("/verify-email"); // Redirect to the email verification page
       }
     } else if (businessSuccess) {
-      const businessEmailVerified = businessData?.business?.emailVerified;
-      // console.log(businessData?.business);
+      const businessEmailVerified = businessData?.business.emailVerified;
       sessionStorage.setItem("authToken", businessData?.token);
       sessionStorage.setItem("user_id", businessData?.business?._id);
 
