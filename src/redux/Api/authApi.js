@@ -30,7 +30,7 @@ export const AuthApi = createApi({
         method: "POST",
         body,
       }),
-      invalidatesTags: ["Profile"],
+      // invalidatesTags: ["Profile"],
     }),
     businessRegister: builder.mutation({
       query: (body) => ({

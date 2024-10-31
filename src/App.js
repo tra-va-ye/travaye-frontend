@@ -122,10 +122,11 @@ function App() {
               </Route>
             }
             <Route path="/" element={<Home />} />
-            {<Route path="/login" element={<Login />} />}
-            {<Route path="/signup" element={<SignUp />} />}
-            {<Route path="/forgot-password" element={<ForgotPassword />} />}
-            {<Route path="/reset-password" element={<ResetPassword />} />}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/verify-email" element={<Verification />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<RequireAuth />}>
               <Route path="/register" element={<Register />} />
 
@@ -145,7 +146,6 @@ function App() {
             </Route>
             <Route path="/business-locations" element={<BusinessLocations />} />
             <Route path="/locations" element={<Locations />} />
-            <Route path="/verify-email" element={<Verification />} />
             <Route path="/create-event" element={<CreateEvent />} />
             <Route path="/contact-us" element={<Contact />} />
           </Routes>

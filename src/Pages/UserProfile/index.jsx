@@ -6,7 +6,6 @@ import { Button } from "../../components/UI/Buttons";
 import LocationBox from "../../components/UI/Location/LocationBox";
 import { useGetLocationsQuery } from "../../redux/Api/locationApi";
 import { notification } from "antd";
-// import NewLocation from "../../components/UI/Modal/NewLocation";
 import ChatIcon from "../../assets/Icons/ChatIcon";
 import { Main } from "../BusinessProfile";
 import ScanIcon from "../../assets/Icons/ScanIcon";
