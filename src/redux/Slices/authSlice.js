@@ -1,27 +1,27 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
   token: null,
   timeout: false,
   loading: false,
-  userType: "",
+  userType: '',
   error: null,
   idleTimeOut: 10000000,
   lastActionTimestamp: null,
 };
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     timeout: (state) => {
       state.timeout = true;
       state.token = null;
       state.user = null;
-      sessionStorage.removeItem("newtoken");
-      sessionStorage.removeItem("profileId");
-      state.error = "Token expired or idle timeout expired.";
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('user_id');
+      state.error = 'Token expired or idle timeout expired.';
     },
     resetTimeout: (state) => {
       state.error = null;
@@ -35,16 +35,16 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
-      sessionStorage.removeItem("newtoken");
-      sessionStorage.removeItem("profileId");
-      window.location.replace("/login");
+      sessionStorage.removeItem('authToken');
+      sessionStorage.removeItem('user_id');
+      window.location.replace('/login');
     },
     updateUser: (state, action) => {
       state.user = action.payload;
     },
     setUserType: (state, action) => {
       state.userType = action.payload.userType;
-    }
+    },
   },
 });
 
@@ -55,6 +55,6 @@ export const {
   refreshToken,
   logout,
   updateUser,
-  setUserType
+  setUserType,
 } = authSlice.actions;
 export default authSlice.reducer;

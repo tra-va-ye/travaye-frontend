@@ -1,25 +1,25 @@
-import CloseIcon from "@mui/icons-material/Close";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux/es";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Logo from "../../../assets/logo.png";
-import { AltButton, Button } from "../../UI/Buttons";
-import classes from "./Header.module.css";
-import { logout } from "../../../redux/Slices/authSlice";
+import CloseIcon from '@mui/icons-material/Close';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux/es';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Logo from '../../../assets/logo.png';
+import { AltButton, Button } from '../../UI/Buttons';
+import classes from './Header.module.css';
+import { logout } from '../../../redux/Slices/authSlice';
 
 const Header = (props) => {
   const dispatch = useDispatch();
-  const [isActive, setIsActive] = useState("");
+  const [isActive, setIsActive] = useState('');
   const Location = useLocation();
   const navigate = useNavigate();
-  const token = sessionStorage.getItem("authToken");
+  const token = sessionStorage.getItem('authToken');
 
   const handleLogoutClick = () => {
     dispatch(logout());
-    sessionStorage.removeItem("authToken");
-    navigate("/login");
+    // sessionStorage.removeItem("authToken");
+    // navigate("/login");
   };
 
   useEffect(() => {
@@ -29,8 +29,8 @@ const Header = (props) => {
   return (
     <header className={classes.header}>
       <nav className={classes.nav}>
-        <Link to="/">
-          <img src={Logo} alt="logo" className={classes.logo} />
+        <Link to='/'>
+          <img src={Logo} alt='logo' className={classes.logo} />
         </Link>
 
         <div>
@@ -51,10 +51,10 @@ const Header = (props) => {
             })}
             {token && (
               <Navlink
-                active={isActive === "/user"}
+                active={isActive === '/user'}
                 onClick={() => {
-                  setIsActive("/user");
-                  navigate("/user");
+                  setIsActive('/user');
+                  navigate('/user');
                 }}
               >
                 <Link>My Account</Link>
@@ -63,23 +63,23 @@ const Header = (props) => {
           </ul>
           <div>
             {!token && (
-              <Link style={{ textDecoration: "none" }} to={`/signup`}>
+              <Link style={{ textDecoration: 'none' }} to={`/signup`}>
                 <Button
                   // header={true}
-                  color="green"
+                  color='green'
                 >
                   Sign Up
                 </Button>
               </Link>
             )}
             {!token && (
-              <Link style={{ textDecoration: "none" }} to={`/login`}>
+              <Link style={{ textDecoration: 'none' }} to={`/login`}>
                 <AltButton>Login</AltButton>
               </Link>
             )}
             {token && (
               <Link
-                style={{ textDecoration: "none" }}
+                style={{ textDecoration: 'none' }}
                 onClick={handleLogoutClick}
               >
                 <AltButton>Logout</AltButton>
@@ -98,17 +98,17 @@ const Header = (props) => {
 export default Header;
 
 export const Links = [
-  { name: "Home", path: "/" },
-  { name: "Locations", path: "/business-locations" },
-  { name: "Contact Us", path: "/contact-us" },
+  { name: 'Home', path: '/' },
+  { name: 'Locations', path: '/business-locations' },
+  { name: 'Contact Us', path: '/contact-us' },
 ];
 
 export const Navlink = styled.li`
   a {
-    color: ${(props) => (props.active ? "#e9a009" : "#000")};
+    color: ${(props) => (props.active ? '#e9a009' : '#000')};
     text-decoration: none;
     &:hover {
-      color: ${(props) => !props.active && "#e9a0097d"};
+      color: ${(props) => !props.active && '#e9a0097d'};
       transition: 200ms ease-in-out;
     }
   }
