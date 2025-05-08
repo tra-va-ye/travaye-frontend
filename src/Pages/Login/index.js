@@ -1,22 +1,23 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useFormik } from "formik";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux/es";
-import { Link, useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { Button } from "../../components/UI/Buttons";
-import Loader from "../../components/UI/Loader";
-import { IoEyeSharp } from "react-icons/io5";
-import { FaEyeSlash } from "react-icons/fa6";
+import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux/es';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Button } from '../../components/UI/Buttons';
+import Loader from '../../components/UI/Loader';
+import { IoEyeSharp } from 'react-icons/io5';
+import { FaEyeSlash } from 'react-icons/fa6';
 
-import classes from "./Login.module.css";
+import classes from './Login.module.css';
 
-import { notification } from "antd";
+import { notification } from 'antd';
 import {
   useBusinessLoginMutation,
   useUserLoginMutation,
-} from "../../redux/Api/authApi";
-import { setUserType } from "../../redux/Slices/authSlice";
+} from '../../redux/Api/authApi';
+import { setUserType } from '../../redux/Slices/authSlice';
+import { toTitleCase } from '../../utils';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -32,11 +33,7 @@ const Login = () => {
 
   const [
     userLogin,
-    {
-      isLoading: loginLoading,
-      isSuccess: loginSuccess,
-      data,
-    },
+    { isLoading: loginLoading, isSuccess: loginSuccess, data },
   ] = useUserLoginMutation();
 
   const [
@@ -49,122 +46,106 @@ const Login = () => {
   ] = useBusinessLoginMutation();
 
   useEffect(() => {
-    if(userType) {
-      sessionStorage.setItem("userType", userType);
+    if (userType) {
+      sessionStorage.setItem('userType', userType);
     }
     if (loginSuccess) {
       const user = data?.user;
 
       const authToken = data?.token;
       dispatch(setUserType({ userType }));
-      sessionStorage.setItem("authToken", authToken);
-      sessionStorage.setItem("user_id", data?.user?._id);
-      
+      sessionStorage.setItem('authToken', authToken);
+      sessionStorage.setItem('user_id', data?.user?._id);
+
       if (user?.emailVerified) {
         notification.success({
-          message: "Login Successfully",
+          message: 'Login Successfully',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
-        
-        if (user?.role === "admin") {
-          dispatch(setUserType({ userType: "admin" }));
-          
+
+        if (user?.role === 'admin') {
+          dispatch(setUserType({ userType: 'admin' }));
+
           setTimeout(() => {
             navigate('/admin/businesses');
           }, 1000);
           return;
         }
-        
+
         setTimeout(() => {
           navigate(`/${userType}`);
         }, 1000);
       } else {
         // Navigate to the verification page
-        navigate("/verify-email");
+        navigate('/verify-email');
       }
     } else if (businessSuccess) {
       const business = businessData?.user;
 
       const authToken = businessData?.token;
-      sessionStorage.setItem("authToken", authToken);
+      sessionStorage.setItem('authToken', authToken);
       dispatch(setUserType({ userType }));
-      sessionStorage.setItem("user_id", businessData?.user?._id);
+      sessionStorage.setItem('user_id', businessData?.user?._id);
 
       if (business?.emailVerified) {
         notification.success({
-          message: "Login Successfully",
+          message: 'Login Successfully',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
 
-        if (businessData?.user?.businessVerified === "verified") {
+        if (businessData?.user?.businessVerified === 'verified') {
           setTimeout(() => {
             navigate(`/${userType}`);
           }, 1000);
-          // if (businessData?.user?.addedCard === true) {
-          //   setTimeout(() => {
-          //     navigate(`/${userType}`);
-          //   }, 1000);
-          // } else {
-          //   navigate(`/subscribe`);
-          // }
-        } else if (businessData?.user?.businessVerified === "pending") {
-          notification.warning({
-            message: " Business Verification Pending",
-            duration: 3,
-            placement: "bottomRight",
-          });
+        } else {
           setTimeout(() => {
-            navigate("/register");
+            navigate('/register');
           }, 1000);
         }
-          // if (businessData?.user?.addedCard === true) {
-          // } else {
-          //   navigate(`/subscribe`);
-          // }
-        // } else {
-        //   navigate(`/register`);
-        // }
       } else {
         // Navigate to the verification page
-        navigate("/verify-email");
+        navigate('/verify-email');
       }
     }
   }, [dispatch, businessSuccess, loginSuccess, data, businessData, userType]);
 
-  
   const onSubmit = async () => {
     if (userSignUp) {
-      dispatch(setUserType({ userType: "user" }));
+      dispatch(setUserType({ userType: 'user' }));
 
       await userLogin({ username: values.userName, password: values.passWord })
         .unwrap()
         .catch((err) => {
           notification.error({
-            message: err?.data?.error || "an error occured",
-            placement: "bottomRight",
+            message: err?.data?.error || 'an error occured',
+            placement: 'bottomRight',
           });
         });
     }
     if (!userSignUp) {
-      dispatch(setUserType({ userType: "business" }));
+      dispatch(setUserType({ userType: 'business' }));
 
       await businessLogin({
         businessEmail: values.email,
         password: values.passWord,
-      }).unwrap()
+      })
+        .unwrap()
         .catch((err) => {
-          notification.error(err?.data?.error || "an error occured");
+          notification.error({
+            message: err?.data?.error || 'an error occured',
+            placement: 'bottomRight',
+          });
         });
     }
   };
 
   const { values, errors, handleChange, handleSubmit } = useFormik({
     initialValues: {
-      userName: "",
-      email: "",
-      passWord: "",
+      userName: '',
+      email: '',
+      passWord: '',
     },
     onSubmit,
   });
@@ -173,46 +154,46 @@ const Login = () => {
     <>
       {(loginLoading || businessLoading) && <Loader />}
       <section className={classes.login}>
-        <div className="row">
+        <div className='row'>
           <div
             className={`col-md-6 flex justify-start items-center flex-col gap-3 mb-4 ${classes.text}`}
           >
             <div>
-              <h3 className="text-3xl">
+              <h3 className='text-3xl'>
                 Ready to have fun on a <br />
                 <span className={classes.sapa}>Budget?</span>
               </h3>
-              <p className="text-2xl mt-2">Login now and Plan a Trip</p>
+              <p className='text-2xl mt-2'>Login now and Plan a Trip</p>
             </div>
           </div>
-          <div className="col-md-6 d-flex justify-content-center">
+          <div className='col-md-6 d-flex justify-content-center'>
             <AuthFormWrapper onSubmit={handleSubmit}>
               <AuthRoutes>
                 <RouteLink
-                  onClick={!userSignUp ? () => toggleSignUp("user") : undefined}
+                  onClick={!userSignUp ? () => toggleSignUp('user') : undefined}
                   active={userSignUp}
                 >
                   USER
                 </RouteLink>
                 <RouteLink
                   onClick={
-                    userSignUp ? () => toggleSignUp("business") : undefined
+                    userSignUp ? () => toggleSignUp('business') : undefined
                   }
                   active={!userSignUp}
                 >
                   BUSINESS
                 </RouteLink>
               </AuthRoutes>
-              <div className="d-flex flex-column">
+              <div className='d-flex flex-column'>
                 <input
-                  id={userSignUp ? "userName" : "email"}
-                  name={userSignUp ? "userName" : "email"}
+                  id={userSignUp ? 'userName' : 'email'}
+                  name={userSignUp ? 'userName' : 'email'}
                   className={`${
                     (userSignUp ? errors.userName : errors.email) &&
-                    classes["input-error"]
+                    classes['input-error']
                   } mt-5`}
-                  type={`${userSignUp ? "text" : "email"}`}
-                  placeholder={`${userSignUp ? "Username" : "Email Address"}`}
+                  type={`${userSignUp ? 'text' : 'email'}`}
+                  placeholder={`${userSignUp ? 'Username' : 'Email Address'}`}
                   value={userSignUp ? values.userName : values.email}
                   onChange={handleChange}
                 />
@@ -222,34 +203,34 @@ const Login = () => {
                 {!userSignUp && errors.email && (
                   <ErrorText>{errors.email}</ErrorText>
                 )}
-                <span className="relative block mt-5">
+                <span className='relative block mt-5'>
                   <input
                     className={`${
-                      errors.passWord && classes["input-error"]
+                      errors.passWord && classes['input-error']
                     } w-full`}
-                    id="passWord"
-                    name="passWord"
-                    type={seePass ? "text" : "password"}
-                    placeholder="Password"
+                    id='passWord'
+                    name='passWord'
+                    type={seePass ? 'text' : 'password'}
+                    placeholder='Password'
                     value={values.passWord}
                     onChange={handleChange}
-                    autoComplete="current-password"
+                    autoComplete='current-password'
                   />
                   {seePass ? (
                     <FaEyeSlash
-                      className="absolute right-[2%] top-[10%] translate-y-[50%] cursor-pointer"
+                      className='absolute right-[2%] top-[10%] translate-y-[50%] cursor-pointer'
                       onClick={() => setSeePass((prev) => !prev)}
                     />
                   ) : (
                     <IoEyeSharp
-                      className="absolute right-[2%] top-[10%] translate-y-[50%] cursor-pointer"
+                      className='absolute right-[2%] top-[10%] translate-y-[50%] cursor-pointer'
                       onClick={() => setSeePass((prev) => !prev)}
                     />
                   )}
                 </span>
                 {errors.passWord && <ErrorText> {errors.passWord}</ErrorText>}
                 <Link
-                  to={"/forgot-password"}
+                  to={'/forgot-password'}
                   className={`mb-3 text-end mt-4 ${classes.p}`}
                 >
                   Forgot Password?
@@ -258,15 +239,15 @@ const Login = () => {
               <div
                 className={`d-flex justify-content-between mt-3 ${classes.text}`}
               >
-                <p className="align-self-center" login="true">
-                  New To Travaye?{" "}
-                  <Link to="/signup">
+                <p className='align-self-center' login='true'>
+                  New To Travaye?{' '}
+                  <Link to='/signup'>
                     <span>Sign Up</span>
                   </Link>
                 </p>
                 <Button
-                  color="green"
-                  type="submit"
+                  color='green'
+                  type='submit'
                   disabled={errors.email || errors.passWord || errors.userName}
                 >
                   Login
@@ -275,7 +256,7 @@ const Login = () => {
             </AuthFormWrapper>
           </div>
         </div>
-      </section>{" "}
+      </section>{' '}
     </>
   );
 };
@@ -290,8 +271,8 @@ export const AuthFormWrapper = (props) => {
 };
 
 export const RouteLink = styled.li`
-  color: ${(props) => (props.active ? "#009f57" : "#9d9d9d")};
-  border-bottom: 3px solid ${(props) => (props.active ? "#009f57" : "#9d9d9d")};
+  color: ${(props) => (props.active ? '#009f57' : '#9d9d9d')};
+  border-bottom: 3px solid ${(props) => (props.active ? '#009f57' : '#9d9d9d')};
   width: 100%;
   height: 43px;
   cursor: pointer;

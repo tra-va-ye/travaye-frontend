@@ -1,21 +1,22 @@
-import { notification, Spin } from "antd";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { Button } from "../../components/UI/Buttons";
-import Loader from "../../components/UI/Loader";
+import { notification, Spin } from 'antd';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { Button } from '../../components/UI/Buttons';
+import Loader from '../../components/UI/Loader';
 import {
   useCodeVerifyMutation,
   useResendVerificationMailMutation,
-} from "../../redux/Api/authApi";
-import { AuthFormWrapper } from "../Login";
+} from '../../redux/Api/authApi';
+import { AuthFormWrapper } from '../Login';
+import { toTitleCase } from '../../utils';
 
 const Verification = () => {
   const navigate = useNavigate();
-  const [codes, setCodes] = useState(["", "", "", ""]);
+  const [codes, setCodes] = useState(['', '', '', '']);
   const [codeTimeOut, setCodeTimeOut] = useState(59);
-  const nonEmptyElements = codes.filter((element) => element !== "");
+  const nonEmptyElements = codes.filter((element) => element !== '');
   let buttonDisabled = Boolean(nonEmptyElements.length < 4);
 
   useEffect(() => {
@@ -27,7 +28,8 @@ const Verification = () => {
 
   const userType = useSelector((state) => state.auth.userType);
   const [codeVerify, { isLoading }] = useCodeVerifyMutation();
-  const [resendCode, { isLoading: resending }] = useResendVerificationMailMutation();
+  const [resendCode, { isLoading: resending }] =
+    useResendVerificationMailMutation();
 
   const handleChange = (index, value) => {
     const newCodes = [...codes];
@@ -36,11 +38,11 @@ const Verification = () => {
   };
 
   const handleKeyDown = (index, event) => {
-    if (event.key === "Backspace" && !codes[index] && index > 0) {
+    if (event.key === 'Backspace' && !codes[index] && index > 0) {
       const newCodes = [...codes];
       if (index > 0) {
         event.target.previousSibling.focus();
-        newCodes[index - 1] = "";
+        newCodes[index - 1] = '';
         setCodes(newCodes);
       }
       event.preventDefault();
@@ -57,29 +59,30 @@ const Verification = () => {
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
-    const code = codes.join("");
+    const code = codes.join('');
     codeVerify({ code, userType })
       .unwrap()
       .then(() => {
         notification.success({
-          message: "Email Verified Successfully",
+          message: 'Email Verified Successfully',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
-        
-        navigate(`${userType}`);
+        setTimeout(() => {
+          navigate('/register');
+        }, 1500);
       })
       .catch((error) => {
         notification.error({
           message: error?.data?.error,
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
       });
   };
 
   return (
-    <Container className="d-flex justify-content-center col-md-6 offset-md-3 mt-3 text-center">
+    <Container className='d-flex justify-content-center col-md-6 offset-md-3 mt-3 text-center'>
       {isLoading && <Loader />}
       <AuthFormWrapper>
         <h3>Verify Account</h3>
@@ -87,14 +90,14 @@ const Verification = () => {
           A 4-digit verification code has been sent to your e-mail. Please enter
           the code sent to your email to verify your account.
         </p>
-        <div className="d-flex justify-content-between  mt-5 mb-3">
+        <div className='d-flex justify-content-between mt-5 mb-3'>
           {codes.map((code, index) => (
             <input
               key={index}
-              type="text"
+              type='text'
               value={code}
               maxLength={1}
-              className="verification-box"
+              className='verification-box p-3 px-2 text-center'
               onChange={(e) => handleChange(index, e.target.value)}
               onKeyDown={(e) => handleKeyDown(index, e)}
             />
@@ -103,7 +106,7 @@ const Verification = () => {
         <Timer>
           <span>
             {codeTimeOut > 0 ? (
-              <> Resend code in : {codeTimeOut}:00 </>
+              <> Resend code in {codeTimeOut} seconds </>
             ) : (
               <>
                 {resending ? (
@@ -118,7 +121,7 @@ const Verification = () => {
                         })
                     }
                   >
-                    click here
+                    Resend Code
                   </span>
                 )}
               </>
@@ -126,7 +129,7 @@ const Verification = () => {
           </span>
         </Timer>
         <Button
-          color="green"
+          color='green'
           disabled={buttonDisabled}
           onClick={handleVerifyCode}
         >

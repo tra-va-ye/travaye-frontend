@@ -1,49 +1,49 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryForAuth } from "../queryInterceptors";
-import { updateUser, logout } from "../Slices/authSlice";
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryForAuth } from '../queryInterceptors';
+import { updateUser, logout } from '../Slices/authSlice';
 
 export const AuthApi = createApi({
-  reducerPath: "profile",
+  reducerPath: 'profile',
   baseQuery: baseQueryForAuth,
   refetchOnReconnect: true,
-  tagTypes: ["Profile", "User"],
+  tagTypes: ['Profile', 'User'],
   endpoints: (builder) => ({
     userLogin: builder.mutation({
       query: (body) => ({
-        url: "user/login",
-        method: "POST",
+        url: 'user/login',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     businessLogin: builder.mutation({
       query: (body) => ({
-        url: "business/login",
-        method: "POST",
+        url: 'business/login',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     userRegister: builder.mutation({
       query: (body) => ({
-        url: "user",
-        method: "POST",
+        url: 'user',
+        method: 'POST',
         body,
       }),
       // invalidatesTags: ["Profile"],
     }),
     businessRegister: builder.mutation({
       query: (body) => ({
-        url: "business",
-        method: "POST",
+        url: 'business',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Profile"],
+      invalidatesTags: ['Profile'],
     }),
     codeVerify: builder.mutation({
       query: ({ code, userType }) => ({
         url: `${userType}/verify`,
-        method: "POST",
+        method: 'POST',
         body: { code },
       }),
     }),
@@ -51,7 +51,7 @@ export const AuthApi = createApi({
       query: ({ userType }) => ({
         url: userType,
       }),
-      providesTags: ["User"],
+      providesTags: ['User'],
       onQueryStarted(id, { dispatch, queryFulfilled }) {
         queryFulfilled
           .then((apiResponse) => {
@@ -64,62 +64,62 @@ export const AuthApi = createApi({
     }),
     completeBusinessRegistration: builder.mutation({
       query: (body) => ({
-        url: "business/complete",
-        method: "POST",
+        url: 'business/complete',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Profile"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     deleteMyProfile: builder.mutation({
       query: ({ userType, id }) => ({
         url: `${userType}/${id}`,
-        method: "DELETE"
+        method: 'DELETE',
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     updateProfilePhoto: builder.mutation({
       query: (body) => ({
-        url: "user/profile-photo",
-        method: "POST",
+        url: 'user/profile-photo',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     updateUserProfile: builder.mutation({
       query: (body) => ({
-        url: "user/edit-profile",
-        method: "PUT",
+        url: 'user/edit-profile',
+        method: 'PUT',
         body,
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     updateBusinessProfile: builder.mutation({
       query: (body) => ({
-        url: "business/edit-profile",
-        method: "PUT",
+        url: 'business/edit-profile',
+        method: 'PUT',
         body,
       }),
-      invalidatesTags: ["Profile", "User"],
+      invalidatesTags: ['Profile', 'User'],
     }),
     resendVerificationMail: builder.mutation({
       query: () => ({
-        url: "user/resend-verification",
-        method: "POST",
+        url: 'user/resend-verification',
+        method: 'POST',
         body: {},
       }),
     }),
     forgotPassword: builder.mutation({
       query: (body) => ({
-        url: "user/forgot-password",
+        url: 'user/forgot-password',
         body,
-        method: "POST",
+        method: 'POST',
       }),
     }),
     resetPassword: builder.mutation({
       query: (body) => ({
-        url: "user/reset-password",
+        url: 'user/reset-password',
         body,
-        method: "POST",
+        method: 'POST',
       }),
     }),
   }),
@@ -139,5 +139,5 @@ export const {
   useResendVerificationMailMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
-  useDeleteMyProfileMutation
+  useDeleteMyProfileMutation,
 } = AuthApi;

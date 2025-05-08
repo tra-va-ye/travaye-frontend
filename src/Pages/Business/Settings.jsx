@@ -1,18 +1,25 @@
-import { notification, Select } from "antd";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import { useGetBudgetsQuery, useGetCategoriesQuery } from "../../redux/Api/locationApi";
-import { useDeleteMyProfileMutation, useUpdateBusinessProfileMutation } from "../../redux/Api/authApi";
-import { BsBoxArrowInLeft } from "react-icons/bs";
-import { useGetStatesQuery, useLazyGetCityQuery, useLazyGetLgaQuery } from "../../redux/Api/geoApi";
-import Dashboard, { TogleButton } from "../../components/Layout/BusinessSidebar";
-import { Button } from "../../components/UI/Buttons";
-import { FaEyeSlash } from "react-icons/fa6";
-import { IoEyeSharp } from "react-icons/io5";
-import { passwordRegex } from "../UserSettings";
-import { logout } from "../../redux/Slices/authSlice";
+import { notification, Select } from 'antd';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import {
+  useGetBudgetsQuery,
+  useGetCategoriesQuery,
+} from '../../redux/Api/locationApi';
+import {
+  useDeleteMyProfileMutation,
+  useUpdateBusinessProfileMutation,
+} from '../../redux/Api/authApi';
+import { BsBoxArrowInLeft } from 'react-icons/bs';
+import Dashboard, {
+  TogleButton,
+} from '../../components/Layout/BusinessSidebar';
+import { Button } from '../../components/UI/Buttons';
+import { FaEyeSlash } from 'react-icons/fa6';
+import { IoEyeSharp } from 'react-icons/io5';
+import { passwordRegex } from '../UserSettings';
+import { logout } from '../../redux/Slices/authSlice';
 
 const BusinessSettings = () => {
   const [seePass, setSeePass] = useState(false);
@@ -20,73 +27,67 @@ const BusinessSettings = () => {
   const [updateProfile] = useUpdateBusinessProfileMutation();
   const [deleteProfile] = useDeleteMyProfileMutation();
 
-  const { data: states } = useGetStatesQuery();
-  const [getCity, { data: city }] = useLazyGetCityQuery();
-  const [getLga, { data: lga }] = useLazyGetLgaQuery();
+  // const { data: states } = useGetStatesQuery();
+  // const [getCity, { data: city }] = useLazyGetCityQuery();
+  // const [getLga, { data: lga }] = useLazyGetLgaQuery();
   const { data: budgets } = useGetBudgetsQuery();
 
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
-  
+
   const [businessInfo, setBusinessInfo] = useState({
-    businessName: "",
-    businessCategory: "default",
-    businessAddress: "",
-    businessLGA: "",
-    businessState: "",
-    businessCity: "",
-    budgetClass: "",
-    description: "",
-    businessSubCategory: ""
+    businessName: '',
+    businessAddress: '',
+    businessLGA: 'Lagos Mainland',
+    businessState: 'Lagos',
+    businessCity: 'Lagos',
+    budgetClass: '',
+    description: '',
+    businessCategory: 'default',
+    businessSubCategory: 'default',
   });
 
   const { data: categories } = useGetCategoriesQuery();
   const [subData, setSubData] = useState([]);
-  
+
   const businessData = useSelector((store) => store.auth.user);
 
-  useEffect(() => {
-    getLga({ state: businessData?.businessState?.toUpperCase() });
-    getCity({ state: businessData?.businessState?.toUpperCase() });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessInfo?.businessState, businessData?.businessState]);
+  // useEffect(() => {
+  //   // console.log(categories);
+  //   setSubData(
+  //     categories?.find((cat) => cat.value === businessData?.businessCategory)
+  //       ?.sub
+  //   );
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [businessInfo?.businessCategory, businessData?.businessCategory]);
 
-  useEffect(() => {
-    setSubData(categories?.find((cat) => cat.value === businessData?.businessCategory)?.sub);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [businessInfo?.businessCategory, businessData?.businessCategory]);
-  
   useEffect(() => {
     if (businessData) {
       // Fetching State and LGA Data from state data
-      setSubData(categories?.find((cat) => cat.value === businessData?.businessCategory)?.sub);
-      getLga({ state: businessData?.businessState?.toUpperCase() });
-      getCity({ state: businessData?.businessState?.toUpperCase() });
-      
-      setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData }));
-      // eslint-disable-next-line no-useless-computed-key
-      setBusinessInfo((prev) => ({...prev, ["budgetClass"]: businessData?.budgetClass?.label }));
+      setSubData(
+        categories?.find((cat) => cat.value === businessData?.businessCategory)
+          ?.sub
+      );
 
-      if (businessData?.businessVerified === "verified") {
-        
-      } else if (businessData?.businessVerified === "pending") {
+      setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData }));
+      setBusinessInfo((prev) => ({
+        ...prev,
+        // eslint-disable-next-line no-useless-computed-key
+        ['budgetClass']: businessData?.budgetClass?.label,
+      }));
+
+      if (businessData?.businessVerified === 'verified') {
+      } else if (businessData?.businessVerified === 'pending') {
         notification.warning({
-          message: " Business Verification Pending",
+          message: ' Business Verification Pending',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
-        // if (businessData?.addedCard === true) {
-        //   navigate(`/${userType}`);
-        // } else {
-        //   navigate(`/subscribe`);
-        // }
-        // refetch();
-      } else if (businessData?.businessVerified === "denied") {
+      } else if (businessData?.businessVerified === 'denied') {
         notification.error({
-          message: " Business not Verified ",
+          message: ' Business not Verified ',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
         // refetch();
 
@@ -94,7 +95,7 @@ const BusinessSettings = () => {
         // navigate("/register");
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [businessData, navigate]);
 
   const handleChange = (field, value) => {
@@ -103,30 +104,33 @@ const BusinessSettings = () => {
       [field]: value,
     }));
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (businessInfo?.password) {
       return notification.warning({
-        message: "Are you sure you want to change your password?",
+        message: 'Are you sure you want to change your password?',
         duration: 5,
-        type: "warning",
-        placement: "bottomRight",
-        closeIcon: 
+        type: 'warning',
+        placement: 'bottomRight',
+        closeIcon: (
           <Button
-            className="!text-sm px-1.5 py-1 !ml-5"
-            onClick={async() => {
+            className='!text-sm px-1.5 py-1 !ml-5'
+            onClick={async () => {
               if (!passwordRegex.test(businessInfo?.password)) {
                 return notification.error({
                   message:
-                  "Password must contain at least 8 characters, one uppercase, one number and one special case character",
+                    'Password must contain at least 8 characters, one uppercase, one number and one special case character',
                   duration: 3,
-                  placement: "bottomRight",
+                  placement: 'bottomRight',
                 });
               }
               sendUpdateData();
             }}
-          >Yes</Button>
+          >
+            Yes
+          </Button>
+        ),
       });
     }
     sendUpdateData();
@@ -138,253 +142,263 @@ const BusinessSettings = () => {
       notification.success({
         message: response?.data?.message,
         duration: 3,
-        type: "success",
-        placement: "bottomRight"
-      })
+        type: 'success',
+        placement: 'bottomRight',
+      });
     } else {
       notification.error({
         message: response?.error?.data?.error,
         duration: 3,
-        type: "error",
-        placement: "bottomRight"
-      })
+        type: 'error',
+        placement: 'bottomRight',
+      });
     }
   };
 
   const handleDeleteRequest = async () => {
-    const response = await deleteProfile({ userType:"business", id: businessData?._id });
-        
+    const response = await deleteProfile({
+      userType: 'business',
+      id: businessData?._id,
+    });
+
     if (response?.data?.message) {
       notification.success({
         message: response?.data?.message,
         duration: 3,
-        type: "success",
-        placement: "bottomRight"
-      })
+        type: 'success',
+        placement: 'bottomRight',
+      });
     } else {
       notification.error({
         message: response?.error?.data?.error,
         duration: 3,
-        type: "error",
-        placement: "bottomRight"
-      })
+        type: 'error',
+        placement: 'bottomRight',
+      });
     }
     dispatch(logout());
-  }
+  };
 
   const deleteUserProfile = () => {
     notification.warning({
-      message: "Are you sure you want to Delete Your Profile?",
+      message: 'Are you sure you want to Delete Your Profile?',
       duration: 5,
-      type: "warning",
-      placement: "bottomRight",
-      closeIcon: <Button className="!text-sm px-1.5 py-1 !ml-5" onClick={handleDeleteRequest}>Yes</Button>
+      type: 'warning',
+      placement: 'bottomRight',
+      closeIcon: (
+        <Button
+          className='!text-sm px-1.5 py-1 !ml-5'
+          onClick={handleDeleteRequest}
+        >
+          Yes
+        </Button>
+      ),
     });
-  }
+  };
 
   return (
     <Container>
       <TogleButton showDashboard={showDashboard}>
-        <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
+        <BsBoxArrowInLeft
+          size={28}
+          fill='black'
+          onClick={() => setShowDashboard((prev) => !prev)}
+        />
       </TogleButton>
       <Dashboard showDashboard={showDashboard} businessData={businessData} />
       <Main>
-        <div className="w-full flex justify-between items-center mb-4 mt-5 md:mt-0">
-          <h3 className="text-2xl text-[#009F57] font-bold">Settings</h3>
-          <button className="text-[#E9A309] font-semibold underline" onClick={() => window.history.back()}>Go back{">"}</button>
+        <div className='w-full flex justify-between items-center mb-4 mt-5 md:mt-0'>
+          <h3 className='text-2xl text-[#009F57] font-bold'>Settings</h3>
+          <button
+            className='text-[#E9A309] font-semibold underline'
+            onClick={() => window.history.back()}
+          >
+            Go back{'>'}
+          </button>
         </div>
-        <h5 className="text-xl text-[#E9A309] font-semibold">*Edit Basic Information</h5>
+        <h5 className='text-xl text-[#E9A309] font-semibold'>
+          *Edit Basic Information
+        </h5>
         <form onSubmit={handleSubmit}>
-        <div className="row mt-3">
-          <div className="col-md-6">
-            <div>
-              <label htmlFor="name">
-                Business Name
-              </label>
-              <input
-                id="name"
-                value={businessInfo?.businessName}
-                onChange={(e) => handleChange("businessName", e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="category">
-                Business Category
-              </label>
-              <select
-                value={businessInfo.businessCategory}
-                required={true}
-                id="category"
-                onChange={(e) => {
-                  handleChange("businessCategory", e.target.value);
-                  setSubData(categories?.find((cat) => cat.value === e.target.value)?.sub);
-                }}
-              >
-                <option value="default" disabled>
-                  Select a category
-                </option>
-                {categories?.map((category, i) => (
-                  <option value={category.value} key={i}>
-                    {category.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="category">
-                Business SubCategory
-              </label>
-              <select
-                value={businessInfo?.businessSubCategory}
-                required={true}
-                id="subCategory"
-                onChange={(e) => handleChange("businessSubCategory", e.target.value)}
-              >
-                <option value="default" disabled>
-                  Select a Sub-Category
-                </option>
-                {subData?.map((subCat, i) => (
-                  <option value={subCat.value} key={i}>
-                    {subCat.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="about">
-                About Business
-              </label>
-              <textarea
-                id="about"
-                value={businessInfo?.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-                rows={5}
-                placeholder="We are a sports and rec brand dedicated to helping athletes destress after a workout session or other related activities."
-              />
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div>
-              <label htmlFor="address">
-                Business Address
-              </label>
-              <input
-                id="address"
-                value={businessInfo?.businessAddress}
-                onChange={(e) =>
-                  handleChange("businessAddress", e.target.value)
-                }
-              />
-            </div>
-            <div>
-              <label htmlFor="address">
-                Business Address
-              </label>
-              <div className="mt-2 mb-3.5 flex flex-wrap gap-3 md:gap-5">
-                <Select
-                  placeholder="State"
-                  onSelect={(value) => {
-                    getLga({ state: value.toUpperCase() });
-                    getCity({ state: value.toUpperCase() });
-                    handleChange("businessState", value);
-                  }}
-                  showSearch
-                  className="flex-1"
-                  options={states}
-                  value={businessInfo?.businessState}
-                />
-                <Select
-                  placeholder="City"
-                  showSearch
-                  onSelect={(value) => {
-                    handleChange("businessCity", value);
-                  }}
-                  // value={queryData.city}
-                  className="flex-1"
-                  options={city}
-                  value={businessInfo?.businessCity}
-                  />
-                <Select
-                  placeholder="LGA"
-                  // showSearch
-                  onSelect={(value) => {
-                    handleChange("businessLGA", value);
-                  }}
-                  className="flex-1"
-                  value={businessInfo?.businessLGA}
-                  options={lga}
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="businessPriceRange">
-                Price Range
-              </label>
-              <div className="mb-4 flex">
-                <Select
-                  placeholder="Select Your Budget"
-                  className="flex-1"
-                  options={budgets?.map(b => ({ value: b.label, label: b.label }))}
-                  value={businessInfo?.budgetClass}
-                  onSelect={(value) => handleChange("budgetClass", value)}
-                />
-              </div>
-            </div>
-            <div>
-              <label htmlFor="password"  className="!mb-2">Password</label>
-              <div className="relative mb-4">
+          <div className='row mt-3'>
+            <div className='col-md-6'>
+              <div>
+                <label htmlFor='name'>Business Name</label>
                 <input
-                  id="password"
-                  placeholder="*********"
-                  type={seePass ? "text" : "password"}
-                  value={businessInfo?.password}
-                  onChange={(e) => handleChange("password", e.target.value)}
+                  id='name'
+                  value={businessInfo?.businessName}
+                  onChange={(e) => handleChange('businessName', e.target.value)}
                 />
-                {seePass ? (
-                  <FaEyeSlash
-                    className="absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer"
-                    onClick={() => setSeePass((prev) => !prev)}
+              </div>
+              <div>
+                <label htmlFor='category'>Business Category</label>
+                <select
+                  value={businessInfo.businessCategory}
+                  required={true}
+                  id='category'
+                  onChange={(e) => {
+                    handleChange('businessCategory', e.target.value);
+                    // console.log(e.target.value);
+                    setSubData(
+                      categories?.find((cat) => cat.value === e.target.value)
+                        ?.sub
+                    );
+                  }}
+                >
+                  <option value='default' disabled>
+                    Select a category
+                  </option>
+                  {categories?.map((category, i) => (
+                    <option value={category.value} key={i}>
+                      {category.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor='category'>Business SubCategory</label>
+                <select
+                  value={businessInfo?.businessSubCategory}
+                  required={true}
+                  id='subCategory'
+                  onChange={(e) =>
+                    handleChange('businessSubCategory', e.target.value)
+                  }
+                >
+                  <option value='default' disabled>
+                    Select a Sub-Category
+                  </option>
+                  {subData?.map((subCat, i) => (
+                    <option value={subCat.value} key={i}>
+                      {subCat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor='about'>About Business</label>
+                <textarea
+                  id='about'
+                  value={businessInfo?.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  rows={5}
+                  placeholder='We are a sports and rec brand dedicated to helping athletes destress after a workout session or other related activities.'
+                />
+              </div>
+            </div>
+            <div className='col-md-6'>
+              <div>
+                <label htmlFor='address'>Business Address</label>
+                <input
+                  id='address'
+                  value={businessInfo?.businessAddress}
+                  onChange={(e) =>
+                    handleChange('businessAddress', e.target.value)
+                  }
+                />
+              </div>
+              <div>
+                <label htmlFor='address'>Business State/City/LGA</label>
+                <div className='mt-2 mb-3.5 flex flex-wrap gap-3 md:gap-5'>
+                  <Select
+                    placeholder='State'
+                    className='flex-1'
+                    value={businessInfo?.businessState}
                   />
-                ) : (
-                  <IoEyeSharp
-                    className="absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer"
-                    onClick={() => setSeePass((prev) => !prev)}
+                  <Select
+                    placeholder='City'
+                    value={businessInfo?.businessCity}
+                    className='flex-1'
                   />
-                )}
+                  <Select
+                    placeholder='LGA'
+                    className='flex-1'
+                    value={businessInfo?.businessLGA}
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor='businessPriceRange'>Price Range</label>
+                <div className='mb-4 flex'>
+                  <Select
+                    placeholder='Select Your Budget'
+                    className='flex-1'
+                    options={budgets?.map((b) => ({
+                      value: b.label,
+                      label: b.label,
+                    }))}
+                    value={businessInfo?.budgetClass}
+                    onSelect={(value) => handleChange('budgetClass', value)}
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor='password' className='!mb-2'>
+                  Password
+                </label>
+                <div className='relative mb-4'>
+                  <input
+                    id='password'
+                    placeholder='*********'
+                    type={seePass ? 'text' : 'password'}
+                    value={businessInfo?.password}
+                    onChange={(e) => handleChange('password', e.target.value)}
+                  />
+                  {seePass ? (
+                    <FaEyeSlash
+                      className='absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer'
+                      onClick={() => setSeePass((prev) => !prev)}
+                    />
+                  ) : (
+                    <IoEyeSharp
+                      className='absolute right-[4%] top-[10%] translate-y-[50%] cursor-pointer'
+                      onClick={() => setSeePass((prev) => !prev)}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
+        </form>
+        <h5 className='text-xl text-[#E9A309] font-semibold py-3.5'>
+          *View Insights
+        </h5>
+        <div className='grid md:grid-cols-2 gap-x-8 gap-y-3'>
+          <InsightBox>
+            <h6>Number of Likes</h6>
+            <p>{businessData?.likes?.length || 0}</p>
+          </InsightBox>
+          <InsightBox>
+            <h6>Number of Reviews</h6>
+            <p>{businessData?.reviews?.length || 0}</p>
+          </InsightBox>
+          <InsightBox>
+            <h6>Engagement Rate</h6>
+            <p>{businessData?.engagementRate}%</p>
+          </InsightBox>
+          <InsightBox>
+            <h6>Conversion Rate</h6>
+            <p>{businessData?.conversionRate}%</p>
+          </InsightBox>
         </div>
-      </form>
-      <h5 className="text-xl text-[#E9A309] font-semibold py-3.5">*View Insights</h5>
-      <div className="grid md:grid-cols-2 gap-x-8 gap-y-3">
-        <InsightBox>
-          <h6>Number of Likes</h6>
-          <p>{businessData?.likes?.length || 68}</p>
-        </InsightBox>
-        <InsightBox>
-          <h6>Number of Reviews</h6>
-          <p>{businessData?.reviews?.length || 76}</p>
-        </InsightBox>
-        <InsightBox>
-          <h6>Engagement Rate</h6>
-          <p>{businessData?.engagementRate}%</p>
-        </InsightBox>
-        <InsightBox>
-          <h6>Conversion Rate</h6>
-          <p>{businessData?.conversionRate}%</p>
-        </InsightBox>
-      </div>
-      <div className="flex flex-col items-end gap-3 mt-9">
-          <Button color="#009F57" className="!border-none ml-auto" onClick={handleSubmit}>
+        <div className='flex flex-col items-end gap-3 mt-9'>
+          <Button
+            color='#009F57'
+            className='!border-none ml-auto'
+            onClick={handleSubmit}
+          >
             Update Profile
           </Button>
-          <Button color="#FF3D00" className="!border-none ml-auto" onClick={deleteUserProfile}>
+          <Button
+            color='#FF3D00'
+            className='!border-none ml-auto'
+            onClick={deleteUserProfile}
+          >
             Delete Profile
           </Button>
-      </div>
+        </div>
       </Main>
     </Container>
   );
@@ -430,7 +444,8 @@ const Main = styled.div`
     font-size: 15px;
   }
   input,
-  select, textarea {
+  select,
+  textarea {
     outline: none;
     display: block;
     width: 100%;
@@ -483,7 +498,7 @@ export const InsightBox = styled.div`
   align-items: center;
   border-radius: 6px;
   background-color: #ffffff;
-  box-shadow: 0px 4px 16px 0px #009F571F;
+  box-shadow: 0px 4px 16px 0px #009f571f;
 
   h6 {
     font-weight: 600;
@@ -493,7 +508,7 @@ export const InsightBox = styled.div`
 
   p {
     font-weight: 600;
-    color: #009F57;
+    color: #009f57;
     text-align: end;
   }
 `;
