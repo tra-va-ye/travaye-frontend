@@ -1,22 +1,22 @@
-import { Image, notification } from "antd";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Avatar from "../../assets/user-avatar.png";
-import LocationModal from "../../components/UI/Modal/LocationModal";
-import NewLocation from "../../components/UI/Modal/NewLocation";
-import { useGetLocationsQuery } from "../../redux/Api/locationApi";
-import { BsBoxArrowInLeft } from "react-icons/bs";
-import { TogleButton } from "../../components/Layout/BusinessSidebar";
+import { Image, notification } from 'antd';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Avatar from '../../assets/user-avatar.png';
+import LocationModal from '../../components/UI/Modal/LocationModal';
+import NewLocation from '../../components/UI/Modal/NewLocation';
+import { useGetLocationsQuery } from '../../redux/Api/locationApi';
+import { BsBoxArrowInLeft } from 'react-icons/bs';
+import { TogleButton } from '../../components/Layout/BusinessSidebar';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import "swiper/css/bundle";
-import { Navigation } from "swiper";
-import ChatIcon from "../../assets/Icons/ChatIcon";
-import { Rating } from "@mui/material";
-import { calculateAverageRating } from "../LocationDetails";
-import BusinessSupportModal from "../../components/UI/Modal/BusinessSupportModal";
-import Sidebar from "../../components/Layout/BusinessSidebar"
+import 'swiper/css/bundle';
+import { Navigation } from 'swiper';
+import ChatIcon from '../../assets/Icons/ChatIcon';
+import { Rating } from '@mui/material';
+// import { calculateAverageRating } from '../LocationDetails';
+import BusinessSupportModal from '../../components/UI/Modal/BusinessSupportModal';
+import Sidebar from '../../components/Layout/BusinessSidebar';
 
 const BusinessProfile = () => {
   // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
@@ -34,7 +34,7 @@ const BusinessProfile = () => {
   const [locations, setLocations] = useState([]);
   const { data, isError, error, isSuccess } = useGetLocationsQuery({
     page: 1,
-    count: 10
+    count: 10,
   });
   const businessData = useSelector((store) => store.auth.user);
 
@@ -46,27 +46,27 @@ const BusinessProfile = () => {
       notification.error({
         message: error?.error,
         duration: 3,
-        placement: "bottomRight",
+        placement: 'bottomRight',
       });
     }
   }, [data, error, isError, isSuccess, locations]);
 
   useEffect(() => {
     if (businessData) {
-      if (businessData?.businessVerified === "verified") {
+      if (businessData?.businessVerified === 'verified') {
         navigate(`/${userType}`);
-      } else if (businessData?.businessVerified === "pending") {
+      } else if (businessData?.businessVerified === 'pending') {
         notification.warning({
-          message: " Business Verification Pending",
+          message: ' Business Verification Pending',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
         navigate(`/${userType}`);
-      } else if (businessData?.businessVerified === "false") {
+      } else if (businessData?.businessVerified === 'false') {
         notification.error({
-          message: " Business not Verified ",
+          message: ' Business not Verified ',
           duration: 3,
-          placement: "bottomRight",
+          placement: 'bottomRight',
         });
 
         // Navigate to the verification page
@@ -75,83 +75,119 @@ const BusinessProfile = () => {
     }
   }, [businessData, navigate, userType, businessData?.user]);
 
-  const reviewRatings = businessData?.reviews?.map(rev => rev?.reviewRating);
-	const avg = calculateAverageRating(reviewRatings);
-
   return (
     <Container>
       <TogleButton showDashboard={showDashboard}>
-        <BsBoxArrowInLeft size={28} fill="black" onClick={() => setShowDashboard(prev => !prev)} />
+        <BsBoxArrowInLeft
+          size={28}
+          fill='black'
+          onClick={() => setShowDashboard((prev) => !prev)}
+        />
       </TogleButton>
       <Sidebar showDashboard={showDashboard} businessData={businessData} />
       <Main>
-        <button className="fixed right-9 bottom-8 shadow-md rounded-full" onClick={() => setShowSupportModal(true)}>
+        <button
+          className='fixed right-9 bottom-8 shadow-md rounded-full'
+          onClick={() => setShowSupportModal(true)}
+        >
           <ChatIcon />
         </button>
-        <div className="mt-5 lg:mt-0">
-          <div className="flex items-center justify-between">
-            <H3 color="#009f57" fontWeight="700" className="mb-1 text-xl md:text-3xl">
+        <div className='mt-5 lg:mt-0'>
+          <div className='flex items-center justify-between'>
+            <H3
+              color='#009f57'
+              fontWeight='700'
+              className='mb-1 text-xl md:text-3xl'
+            >
               Your Profile
             </H3>
             <button
-              className="text-[#E9A309] font-semibold underline !scale-100"
+              className='text-[#E9A309] font-semibold underline !scale-100'
               onClick={() => navigate('/settings')}
             >
-              Settings{">"}
+              Settings{'>'}
             </button>
           </div>
-          <div className="flex gap-3 md:flex-row flex-col">
+          <div className='flex gap-3 md:flex-row flex-col'>
             <Swiper
               className='!scale-100 w-full mx-auto'
               slidesPerView={1}
-              modules={[ Navigation ]}
+              modules={[Navigation]}
               spaceBetween={20}
               loop={true}
               navigation
             >
-              {
-                businessData?.businessLocationImages?.map((imag, i) => (
-                  <SwiperSlide key={i}>
-                    <img src={imag} className='h-[20rem] w-full rounded-lg border border-red-500' alt={`Poster ${i+1}`} />
-                  </SwiperSlide>
-                ))
-              }
+              {businessData?.businessLocationImages.length === 0 && (
+                <h2 className='text-xl font-semibold'>No Images Found</h2>
+              )}
+              {businessData?.businessLocationImages?.map((imag, i) => (
+                <SwiperSlide key={i}>
+                  <img
+                    src={imag}
+                    className='h-[20rem] w-full rounded-lg border border-red-500'
+                    alt={`Poster ${i + 1}`}
+                  />
+                </SwiperSlide>
+              ))}
             </Swiper>
-            <div className="flex-1">
-              <ReviewH4 className="text-2xl font-bold pt-2">Contact Info</ReviewH4>
-              <h4 className="font-semibold mt-2 text-nowrap">Email: {businessData?.businessEmail}</h4>
-              <h4 className="font-semibold mt-2">Phone: +234{businessData?.businessTelephone}</h4>
+            <div className='flex-1'>
+              <ReviewH4 className='text-2xl font-bold pt-2'>
+                Contact Info
+              </ReviewH4>
+              <h4 className='font-semibold mt-2 text-nowrap'>
+                Email: {businessData?.businessEmail}
+              </h4>
+              <h4 className='font-semibold mt-2'>
+                Phone:{' '}
+                {businessData?.businessTelephone &&
+                  `+234${businessData?.businessTelephone}`}
+              </h4>
             </div>
           </div>
-                
-          <section className="grid grid-cols-7 gap-4 mt-6">
-            {" "}
-            <div className="col-span-7 md:col-span-3 md:hidden block">
-              <ReviewH4 className="text-3xl font-bold pt-2">Contact Info</ReviewH4>
-              <h4 className="font-semibold mt-2">Email: {businessData?.businessEmail}</h4>
-              <h4 className="font-semibold mt-2">Phone: +234{businessData?.businessTelephone}</h4>
+
+          <section className='grid grid-cols-7 gap-4 mt-6'>
+            {' '}
+            <div className='col-span-7 md:col-span-3 md:hidden block'>
+              <ReviewH4 className='text-3xl font-bold pt-2'>
+                Contact Info
+              </ReviewH4>
+              <h4 className='font-semibold mt-2'>
+                Email: {businessData?.businessEmail}
+              </h4>
+              <h4 className='font-semibold mt-2'>
+                Phone:{' '}
+                {businessData?.businessTelephone &&
+                  `+234${businessData?.businessTelephone}`}
+              </h4>
             </div>
-            <section className="col-span-7 md:col-span-5 flex flex-col overflow-y-hidden h-[27rem] lg:h-[26rem]">
-              <div className="flex justify-content-between mb-3 items-center">
-								<ReviewH4 className="text-2xl font-bold">Reviews</ReviewH4>
-								<div className="flex gap-2 md:gap-4 flex-col md:flex-row">
-									<p className="text-black font-medium">Average Rating</p>{' '}
-									<Rating value={avg} readOnly precision={0.5} />
-								</div>
-							</div>
+            <section className='col-span-7 md:col-span-5 flex flex-col overflow-y-hidden h-[27rem] lg:h-[26rem]'>
+              <div className='flex justify-content-between mb-3 items-center'>
+                <ReviewH4 className='text-2xl font-bold'>Reviews</ReviewH4>
+                <div className='flex gap-2 md:gap-4 flex-col md:flex-row'>
+                  <p className='text-black font-medium'>Average Rating</p>{' '}
+                  <Rating
+                    value={businessData.rating}
+                    readOnly
+                    precision={0.5}
+                  />
+                </div>
+              </div>
               <Review className={`flex gap-3 flex-col my-1 !overflow-y-scroll`}>
                 {businessData && businessData?.reviews?.length > 0 ? (
                   businessData?.reviews?.map((review, i) => {
                     return (
                       <ReviewCard key={i}>
-                        <div className="flex items-center justify-between">
+                        <div className='flex items-center justify-between'>
                           <ReviewUser>
                             <img
                               src={Avatar}
-                              className="img-fluid "
-                              alt="pfp"
+                              className='img-fluid '
+                              alt='pfp'
                             />
-                            <p className="" style={{ color: '#009f57', fontSize: 20 }}>
+                            <p
+                              className=''
+                              style={{ color: '#009f57', fontSize: 20 }}
+                            >
                               {review?.reviewerFullname}
                             </p>
                           </ReviewUser>
@@ -160,7 +196,7 @@ const BusinessProfile = () => {
 
                         <p className='py-2'>{review?.reviewDescription}</p>
                         <div>
-                          <div className="flex gap-3 rounded-lg overflow-hidden mt-1 flex-container">
+                          <div className='flex gap-3 rounded-lg overflow-hidden mt-1 flex-container'>
                             <Image.PreviewGroup
                               preview={{
                                 onChange: (current, prev) =>
@@ -175,7 +211,7 @@ const BusinessProfile = () => {
                                     key={key}
                                     src={image}
                                     height={100}
-                                    className=" object-cover  rounded-lg"
+                                    className=' object-cover  rounded-lg'
                                   />
                                 );
                               })}
@@ -190,7 +226,6 @@ const BusinessProfile = () => {
                 )}
               </Review>
             </section>
-            
           </section>
         </div>
         <BoxContainer>
@@ -198,7 +233,9 @@ const BusinessProfile = () => {
             <LocationModal onClick={toggleShowLocationModal} />
           )}
           {showSupportModal && (
-            <BusinessSupportModal onClick={() => setShowSupportModal((prev) => !prev)} />
+            <BusinessSupportModal
+              onClick={() => setShowSupportModal((prev) => !prev)}
+            />
           )}
           <NewLocation open={newLocationModal} setOpen={setNewLocationModal} />
         </BoxContainer>
@@ -292,22 +329,22 @@ export const Dashboard = styled.div`
     margin-top: 6px;
   }
 
-	@media (max-width: 1150px) {
-		max-width: ${(props) => (props.showDashboard ? "auto" : "0")};
-		width: 25%;
-	}
+  @media (max-width: 1150px) {
+    max-width: ${(props) => (props.showDashboard ? 'auto' : '0')};
+    width: 25%;
+  }
 
-	@media (max-width: 950px) {
-		width: 34%;
-	}
+  @media (max-width: 950px) {
+    width: 34%;
+  }
 
-	@media (max-width: 720px) {
-		width: 45%;
-	}
+  @media (max-width: 720px) {
+    width: 45%;
+  }
 
-	@media (max-width: 560px) {
-		width: 56%;
-	}
+  @media (max-width: 560px) {
+    width: 56%;
+  }
 `;
 
 const H3 = styled.h3`
@@ -338,57 +375,57 @@ export const Main = styled.div`
   @media (max-width: 1150px) {
     margin-left: 0;
   }
-  
+
   @media (max-width: 576px) {
     padding: 16px;
   }
 `;
 
 export const ReviewH4 = styled.h4`
-	color: #009f57;
+  color: #009f57;
 `;
 const Review = styled.div`
-	display: flex;
-	overflow-y: auto;
-	padding-inline: 8px;
+  display: flex;
+  overflow-y: auto;
+  padding-inline: 8px;
 
-	::-webkit-scrollbar {
-		width: 12px;
-	}
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
 
-	::-webkit-scrollbar-thumb {
-		background-color: #9d9d9d;
-		border-radius: 8px;
-	}
+  ::-webkit-scrollbar-thumb {
+    background-color: #9d9d9d;
+    border-radius: 8px;
+  }
 
-	::-webkit-scrollbar-track {
-		background-color: #d9d9d9;
-	}
+  ::-webkit-scrollbar-track {
+    background-color: #d9d9d9;
+  }
 `;
 
 const ReviewCard = styled.article`
-	background: #ffffff;
-	border: 2px solid rgba(0, 159, 87, 0.5);
-	border-radius: 10px;
-	padding: 16px;
-	flex: 1;
-	position: relative;
+  background: #ffffff;
+  border: 2px solid rgba(0, 159, 87, 0.5);
+  border-radius: 10px;
+  padding: 16px;
+  flex: 1;
+  position: relative;
 
-	p {
-		color: #9d9d9d;
-		font-weight: 600;
-		font-size: 15px;
-		line-height: 24px;
-	}
+  p {
+    color: #9d9d9d;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 24px;
+  }
 `;
 
 const ReviewUser = styled.div`
-	display: flex;
-	gap: 1rem;
-	align-items: center;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 
-	img {
-		width: 40px;
-		height: 40px;
-	}
+  img {
+    width: 40px;
+    height: 40px;
+  }
 `;

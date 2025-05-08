@@ -9,124 +9,111 @@ import { Button } from '../../components/UI/Buttons';
 import Loader from '../../components/UI/Loader';
 import { CloudUpload } from '../../components/UI/svgs/svgs';
 import {
-	useCompleteBusinessRegistrationMutation,
-	useGetMeQuery,
+  useCompleteBusinessRegistrationMutation,
+  useGetMeQuery,
 } from '../../redux/Api/authApi';
-import { useLazyGetCityQuery, useLazyGetLgaQuery, useGetStatesQuery } from '../../redux/Api/geoApi';
-
-import { useGetCategoriesQuery } from '../../redux/Api/locationApi';
+import {
+  useGetBudgetsQuery,
+  useGetCategoriesQuery,
+} from '../../redux/Api/locationApi';
+import { toTitleCase } from '../../utils';
 const Flex = styled(Box)({
-	display: 'flex',
-	alignItems: 'center',
-	gap: '1px',
-	flexWrap: 'wrap',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1px',
+  flexWrap: 'wrap',
 });
 
 const { TextArea } = Input;
 
 const Register = () => {
-  const { data: states } = useGetStatesQuery();
-  const { data: categories, isLoading: getCategoriesLoading } = useGetCategoriesQuery();
-
-  const [getCity, { data: city }] = useLazyGetCityQuery();
-  const [getLga, { data: lga }] = useLazyGetLgaQuery();
+  const { data: categories, isLoading: getCategoriesLoading } =
+    useGetCategoriesQuery();
+  const { data: budgets } = useGetBudgetsQuery();
   const [subData, setSubData] = useState([]);
   const [loading, setIsLoading] = useState(false);
 
-	const [businessInfo, setBusinessInfo] = useState({
-		businessName: '',
-		businessCategory: '',
-		businessSubCategory: '',
-		businessEmail: '',
-		businessAddress: '',
-		businessTelephone: '',
+  const [businessInfo, setBusinessInfo] = useState({
+    businessName: '',
+    businessCategory: '',
+    businessSubCategory: '',
+    businessEmail: '',
+    businessAddress: '',
+    businessTelephone: '',
     businessAbout: '',
-		businessLGA: '',
-		businessState: '',
-		businessCity: '',
-		businessLocationImages: [],
-		cacRegistrationProof: [],
-		proofOfAddress: [],
+    businessLGA: 'Lagos Mainland',
+    businessState: 'Lagos',
+    businessCity: 'Lagos',
+    businessLocationImages: [],
     businessBudget: '',
-	});
-	const navigate = useNavigate();
-	const userType = useSelector((state) => state.auth.userType);
-	const {
-		data: businessData,
-		isSuccess,
-		isLoading,
-		refetch,
-	} = useGetMeQuery({ userType });
+  });
 
-	const [
-		completeBusiness, {
-			isLoading: completeBusinessLoading,
-			isSuccess: completeBusinessSuccess,
-			error,
-			isError,
-		},
-	] = useCompleteBusinessRegistrationMutation();
+  const navigate = useNavigate();
+  const userType = useSelector((state) => state.auth.userType);
+  const {
+    data: businessData,
+    isSuccess,
+    isLoading,
+    refetch,
+  } = useGetMeQuery({ userType });
 
-	useEffect(() => {
-		if (isSuccess && businessData?.user) {
-			setBusinessInfo((prevInfo) => ({ ...prevInfo, ...businessData.user }));
-			if (businessData?.user?.businessVerified === 'verified') {
+  const [
+    completeBusiness,
+    {
+      isLoading: completeBusinessLoading,
+      isSuccess: completeBusinessSuccess,
+      error,
+      isError,
+    },
+  ] = useCompleteBusinessRegistrationMutation();
+
+  useEffect(() => {
+    if (isSuccess && businessData?.user) {
+      console.log(businessData?.user);
+
+      setBusinessInfo((prevInfo) => ({
+        ...prevInfo,
+        ...businessData.user,
+        businessBudget: businessData?.user?.budgetClass?.label || '',
+        businessAbout: businessData?.user?.description || '',
+      }));
+      if (businessData.user.businessCategory) {
+        setSubData(
+          categories.find(
+            (cat) => cat.value === businessData.user.businessCategory
+          )?.sub || []
+        );
+      }
+      if (businessData?.user?.businessVerified === 'verified') {
         navigate(`/${userType}`);
-				// if (businessData?.user?.addedCard === true) {
-				// 	navigate(`/${userType}`);
-				// } else {
-				// 	navigate(`/subscribe`);
-				// }
-			} else if (businessData?.user?.businessVerified === 'pending') {
-				notification.warning({
-					message: ' Business Verification Pending',
-					duration: 3,
-					placement: 'bottomRight',
-				});
-				// if (businessData?.user?.addedCard === true) {
-				// 	navigate(`/${userType}`);
-				// } else {
-				// 	navigate(`/subscribe`);
-				// }
-				// refetch();
-        navigate('/register');
-			} else if (businessData?.user?.businessVerified === 'denied') {
-				notification.error({
-					message: ' Business not Verified',
-					duration: 3,
-					placement: 'bottomRight',
-				});
-				// refetch(); 
-				// Navigate to the verification page
-				navigate('/register');
-			}
-		}
-	}, [isSuccess, businessData?.user, navigate, refetch, userType]);
+      } else {
+        notification.warning({
+          message: `Business Verification ${toTitleCase(
+            businessData?.user?.businessVerified || 'Not Initiated'
+          )}`,
+          duration: 3,
+          placement: 'bottomRight',
+        });
+      }
+    }
+  }, [isSuccess, businessData?.user, navigate, refetch, userType, categories]);
 
-	const handleChange = (field, value) => {
-		setBusinessInfo((prevInfo) => ({
-			...prevInfo,
-			[field]: value,
-		}));
-	};
+  const handleChange = (field, value) => {
+    setBusinessInfo((prevInfo) => ({
+      ...prevInfo,
+      [field]: value,
+    }));
+  };
 
-	const handleFileDrop = (acceptedFiles, field) => {
-		setBusinessInfo((prevInfo) => ({
-			...prevInfo,
-			[field]: [...acceptedFiles],
-		}));
-	};
+  const handleLocationImagesFileDrop = (acceptedFiles, field) => {
+    setBusinessInfo((prevInfo) => ({
+      ...prevInfo,
+      [field]: [...businessInfo.businessLocationImages, ...acceptedFiles],
+    }));
+  };
 
-	const handleLocationImagesFileDrop = (acceptedFiles, field) => {
-		// console.log(acceptedFiles);
-		setBusinessInfo((prevInfo) => ({
-			...prevInfo,
-			[field]: [...businessInfo.businessLocationImages, ...acceptedFiles],
-		}));
-	};
-
-	useEffect(() => {
-		if (isError) {
+  useEffect(() => {
+    if (isError) {
       if (error.data.error[0].message) {
         notification.error({
           message: error.data.error[0].message,
@@ -140,239 +127,212 @@ const Register = () => {
           placement: 'topRight',
         });
       }
-		}
-		if (completeBusinessSuccess) {
-			notification.success({
-				message: 'Business Verification Pending',
-				duration: 3,
-				placement: 'bottomRight',
-			});
-			navigate("/business");
-		}
-	}, [isError, error, completeBusinessSuccess, userType, navigate]);
+    }
+    if (completeBusinessSuccess) {
+      notification.success({
+        message: 'Business Verification Pending',
+        duration: 3,
+        placement: 'bottomRight',
+      });
+      navigate('/business');
+    }
+  }, [isError, error, completeBusinessSuccess, userType, navigate]);
 
-	const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-		setIsLoading(true);
-		const formData = new FormData();
-		Object.entries(businessInfo).forEach(([key, value]) => {
-			formData.append(key, value);
-		});
-		businessInfo.businessLocationImages.forEach((file) => {
-			formData.append('businessLocationImages', file);
-		});
-		businessInfo.cacRegistrationProof.forEach((file) => {
-			formData.append('cacRegistrationProof', file);
-		});
-		businessInfo.proofOfAddress.forEach((file) => {
-			formData.append('proofOfAddress', file);
-		});
-		// console.log(formData);
-		await completeBusiness(formData);
-		setIsLoading(false);
-	};
+    setIsLoading(true);
+    const formData = new FormData();
+    // console.log({ businessInfo });
 
-	return (
-		<Container>
-			{(isLoading ||
-				loading ||
-				getCategoriesLoading ||
-				completeBusinessLoading) && <Loader />}
-			<h4>Complete Registration</h4>
-			<h6>
-				Please Complete Your Registration to gain full access to your Travaye
-				Business Page
-			</h6>
-			<h6>
-				Users can't see your business until you Complete Your Registration
-			</h6>
-			<form onSubmit={handleSubmit}>
-				<div className="row mt-3">
-					<div className="col-md-6">
-						<div>
-							<label htmlFor="name">
-								Business Name <span>*</span>
-							</label>
-							<input
-								id="name"
-								value={businessInfo?.businessName}
-								onChange={(e) => handleChange('businessName', e.target.value)}
-							/>
-						</div>
-						<div>
-							<label htmlFor="category">
-								Business Category <span>*</span>
-							</label>
-							<select
-								value={businessInfo.businessCategory}
-								required={true}
-								id="category"
-								onChange={(e) => {
-									handleChange('businessCategory', e.target.value);
-									setSubData([]);
-									setSubData(
-										categories.find((cat) => cat.value === e.target.value)
-											?.sub || []
-									);
-								}}
-							>
-								<option value="default" disabled>
-									Select a category
-								</option>
-								{categories?.map((category, i) => (
-									<option value={category.value} key={i}>
-										{category.label}
-									</option>
-								))}
-							</select>
-						</div>
+    Object.entries(businessInfo).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    businessInfo.businessLocationImages.forEach((file) => {
+      formData.append('businessLocationImages', file);
+    });
+    await completeBusiness(formData);
+    setIsLoading(false);
+  };
+
+  return (
+    <Container>
+      {(isLoading ||
+        loading ||
+        getCategoriesLoading ||
+        completeBusinessLoading) && <Loader />}
+      <h4>Complete Registration</h4>
+      <h6>
+        Please Complete Your Registration to gain full access to your Travaye
+        Business Page
+      </h6>
+      <h6>
+        Users can't see your business until you Complete Your Registration
+      </h6>
+      <form onSubmit={handleSubmit}>
+        <div className='row mt-3'>
+          <div className='col-md-6'>
+            <div>
+              <label htmlFor='name'>
+                Business Name <span>*</span>
+              </label>
+              <input
+                id='name'
+                value={businessInfo?.businessName}
+                onChange={(e) => handleChange('businessName', e.target.value)}
+              />
+            </div>
+            <div>
+              <label htmlFor='category'>
+                Business Category <span>*</span>
+              </label>
+              <select
+                value={businessInfo.businessCategory}
+                required={true}
+                id='category'
+                onChange={(e) => {
+                  handleChange('businessCategory', e.target.value);
+                  setSubData([]);
+                  setSubData(
+                    categories.find((cat) => cat.value === e.target.value)
+                      ?.sub || []
+                  );
+                }}
+              >
+                <option value='default' disabled>
+                  Select a category
+                </option>
+                {categories?.map((category, i) => (
+                  <option value={category.value} key={i}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             <div>
-              <label htmlFor="subCategory">
+              <label htmlFor='subCategory'>
                 Business Sub Category <span>*</span>
               </label>
               <select
                 required={true}
-                id="subCategory"
+                id='subCategory'
                 value={businessInfo.businessSubCategory}
                 onChange={(e) =>
-                  handleChange("businessSubCategory", e.target.value)
+                  handleChange('businessSubCategory', e.target.value)
                 }
               >
-                <option value="" disabled>
+                <option value='' disabled>
                   Select a Sub-category
                 </option>
                 {subData?.map((category, i) => (
-                  <option
-                    value={category.value}
-                    // selected={i === 0 ? true : false}
-                    key={i}
-                  >
+                  <option value={category.value} key={i}>
                     {category.label}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <label htmlFor="email">
+              <label htmlFor='email'>
                 Business Email <span>*</span>
               </label>
               <input
-                id="email"
-                type="email"
+                id='email'
+                type='email'
                 value={businessInfo?.businessEmail}
-                onChange={(e) => handleChange("businessEmail", e.target.value)}
+                onChange={(e) => handleChange('businessEmail', e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="email">
+              <label htmlFor='email'>
                 About Business<span>*</span>
               </label>
               <TextArea
-                placeholder="Write about your business"
-                rows="4"
-                name="businessAbout"
+                placeholder='Write about your business'
+                rows='4'
+                name='businessAbout'
                 value={businessInfo.businessAbout}
                 required
-                onChange={(e) => handleChange("businessAbout", e.target.value)}
+                onChange={(e) => handleChange('businessAbout', e.target.value)}
               />
-              </div>
+            </div>
           </div>
-          <div className="col-md-6">
+          <div className='col-md-6'>
             <div>
-              <label htmlFor="address">
+              <label htmlFor='address'>
                 Business Address <span>*</span>
               </label>
               <input
-                id="address"
+                id='address'
                 value={businessInfo?.businessAddress}
                 onChange={(e) =>
-                  handleChange("businessAddress", e.target.value)
+                  handleChange('businessAddress', e.target.value)
                 }
               />
             </div>
             <div>
-              <label htmlFor="address">
-                Business Address <span>*</span>
+              <label htmlFor='address'>
+                Business State/City/LGA<span>*</span>
               </label>
-              <div className="mt-2 mb-[1rem] flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-5">
+              <div className='mt-2 mb-[1rem] flex flex-wrap md:flex-row gap-3 md:gap-5'>
                 <Select
-                  placeholder="State"
-                  onSelect={(value) => {
-                    getLga({ state: value.toUpperCase() });
-                    getCity({ state: value.toUpperCase() });
-                    handleChange("businessState", value);
-                  }}
-                  // value={queryData.state}
-                  // showSearch
-                  className="flex-1"
-                  options={states}
+                  placeholder='State'
+                  className='flex-1'
+                  defaultValue={businessInfo?.businessState}
                 />
                 <Select
-                  placeholder="City"
-                  // showSearch
-                  onSelect={(value) => {
-                    handleChange("businessCity", value);
-                  }}
-                  // value={queryData.city}
-                  className="flex-1"
-                  options={city}
+                  placeholder='City'
+                  defaultValue={businessInfo?.businessCity}
+                  className='flex-1'
                 />
                 <Select
-                  placeholder="LGA"
-                  // showSearch
-                  onSelect={(value) => {
-                    handleChange("businessLGA", value);
-                  }}
-                  // value={queryData.lga}
-                  className="flex-1"
-                  options={lga}
+                  placeholder='LGA'
+                  className='flex-1'
+                  defaultValue={businessInfo?.businessLGA}
                 />
               </div>
             </div>
             <div>
-              <label htmlFor="phone">
+              <label htmlFor='phone'>
                 Business Telephone <span>*</span>
               </label>
               <input
-                id="phone"
-                type="number"
-                min={1}
+                id='phone'
+                type='tel'
+                min={11}
                 value={businessInfo?.businessTelephone}
                 onChange={(e) =>
-                  handleChange("businessTelephone", e.target.value)
+                  handleChange('businessTelephone', e.target.value)
                 }
               />
             </div>
             <div>
-              <label htmlFor="businessBudget">
+              <label htmlFor='businessBudget'>
                 Price Range <span>*</span>
               </label>
               <Select
-                placeholder="Select Your Price Range"
-                className="w-full mt-3"
-                options={[
-                  { value: "free", label: "free" },
-                  { value: "free - 5k", label: "free - 5k" },
-                  { value: "5k - 10k", label: "5k - 10k" },
-                  { value: "10k - 20k", label: "10k - 20k" },
-                ]}
-                onSelect={(value) => handleChange("businessBudget", value)}
+                placeholder='Select Your Price Range'
+                className='w-full'
+                options={budgets?.map((budget) => ({
+                  label: budget?.label,
+                  value: budget?.label,
+                }))}
+                onSelect={(value) => handleChange('businessBudget', value)}
+                value={businessInfo?.businessBudget}
               />
             </div>
           </div>
         </div>
-        <div className="row mt-3">
-          <div className="col-md-6">
+        <div className='row mt-3'>
+          <div className='col-md-6'>
             <h4>Upload Documents</h4>
             <h6>
               Please ensure to upload clear, concise and correct documents.
             </h6>
-            <Dropzone
-              acceptedFiles=".jpg,.jpeg,.png"
+            {/* <Dropzone
+              acceptedFiles='.jpg,.jpeg,.png'
               multiple={false}
               onDrop={(acceptedFiles) =>
-                handleFileDrop(acceptedFiles, "cacRegistrationProof")
+                handleFileDrop(acceptedFiles, 'cacRegistrationProof')
               }
             >
               {({ getRootProps, getInputProps }) => (
@@ -382,28 +342,28 @@ const Register = () => {
                     {businessInfo.cacRegistrationProof.length === 0 ? (
                       `CAC Registration Proof`
                     ) : (
-                      <div className="flex gap-3 flex-wrap">
+                      <div className='flex gap-3 flex-wrap'>
                         {businessInfo.cacRegistrationProof.map(
                           (file, index) => (
                             <Flex key={index}>
-                              <Typography sx={{ marginRight: "1px" }}>
+                              <Typography sx={{ marginRight: '1px' }}>
                                 {file.name}
                               </Typography>
                             </Flex>
                           )
                         )}
                       </div>
-                    )}{" "}
+                    )}{' '}
                     <i>{CloudUpload}</i>
                   </FileUpload>
                 </section>
               )}
             </Dropzone>
             <Dropzone
-              acceptedFiles=".jpg,.jpeg,.png"
+              acceptedFiles='.jpg,.jpeg,.png'
               multiple={false}
               onDrop={(acceptedFiles) =>
-                handleFileDrop(acceptedFiles, "proofOfAddress")
+                handleFileDrop(acceptedFiles, 'proofOfAddress')
               }
             >
               {({ getRootProps, getInputProps }) => (
@@ -413,10 +373,10 @@ const Register = () => {
                     {businessInfo.proofOfAddress.length === 0 ? (
                       ` Proof Of Address (e.g Utility Bill)`
                     ) : (
-                      <div className="flex gap-3 flex-wrap">
+                      <div className='flex gap-3 flex-wrap'>
                         {businessInfo.proofOfAddress.map((file, index) => (
                           <Flex key={index}>
-                            <Typography sx={{ marginRight: "1px" }}>
+                            <Typography sx={{ marginRight: '1px' }}>
                               {file.name}
                             </Typography>
                           </Flex>
@@ -427,14 +387,14 @@ const Register = () => {
                   </FileUpload>
                 </section>
               )}
-            </Dropzone>
+            </Dropzone> */}
             <Dropzone
-              acceptedFiles=".jpg,.jpeg,.png"
+              acceptedFiles='.jpg,.jpeg,.png'
               multiple={true}
               onDrop={(acceptedFiles) =>
                 handleLocationImagesFileDrop(
                   acceptedFiles,
-                  "businessLocationImages"
+                  'businessLocationImages'
                 )
               }
             >
@@ -445,11 +405,11 @@ const Register = () => {
                     {businessInfo.businessLocationImages.length === 0 ? (
                       `Pictures of Location`
                     ) : (
-                      <div className="flex gap-3 flex-wrap">
+                      <div className='flex gap-3 flex-wrap'>
                         {businessInfo.businessLocationImages.map(
                           (file, index) => (
                             <Flex key={index}>
-                              <Typography sx={{ marginRight: "1px" }}>
+                              <Typography sx={{ marginRight: '1px' }}>
                                 {file.name}
                               </Typography>
                             </Flex>
@@ -463,6 +423,7 @@ const Register = () => {
               )}
             </Dropzone>
           </div>
+
           {/* <div className="col-md-6">
             <h4>Add Card Information</h4>
             <div>
@@ -500,70 +461,71 @@ const Register = () => {
               </div>
             </div>
           </div> */}
-					<div>
-						<Button color="green" type="submit">
-							Submit
-						</Button>
-					</div>
-				</div>
-			</form>
-		</Container>
-	);
+          <div>
+            <Button color='green' type='submit'>
+              Submit
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Container>
+  );
 };
 
 export default Register;
 
 const Container = styled.div`
-	padding: 2% 5%;
+  padding: 2% 5%;
 
-	span {
-		color: #ff3d00;
-		font-weight: 600;
-		font-size: 18px;
-	}
-	label {
-		display: block;
-		margin-bottom: 10px;
-		font-weight: 700;
-		font-size: 15px;
-	}
-	input,
-	select, textarea {
-		outline: none;
-		display: block;
-		width: 100%;
-		background: #ffffff;
-		border: 2px solid rgba(0, 159, 87, 0.25);
-		border-radius: 5px;
+  span {
+    color: #ff3d00;
+    font-weight: 600;
+    font-size: 18px;
+  }
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  input,
+  select,
+  textarea {
+    outline: none;
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    border: 2px solid rgba(0, 159, 87, 0.25);
+    border-radius: 5px;
 
-		margin-bottom: 16px;
-		padding: 4px 8px;
-	}
+    margin-bottom: 16px;
+    padding: 4px 8px;
+  }
 
-	h4 {
-		font-weight: 600;
-		font-size: 24px;
-		color: #009f57;
-	}
-	button {
-		margin-left: auto;
-		border-radius: 5px;
-	}
+  h4 {
+    font-weight: 600;
+    font-size: 24px;
+    color: #009f57;
+  }
+  button {
+    margin-left: auto;
+    border-radius: 5px;
+  }
 `;
 
 export const FileUpload = styled.div`
-	display: block;
-	width: 100%;
-	background: #ffffff;
-	text-align: center;
-	color: #e9a309;
-	border: 2px solid rgba(0, 159, 87, 0.25);
-	border-radius: 5px;
-	margin-top: 16px;
-	margin-bottom: 16px;
-	padding: 4px 8px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: auto;
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  text-align: center;
+  color: #e9a309;
+  border: 2px solid rgba(0, 159, 87, 0.25);
+  border-radius: 5px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: auto;
 `;
