@@ -16,12 +16,6 @@ const Header = (props) => {
   const navigate = useNavigate();
   const token = sessionStorage.getItem('authToken');
 
-  const handleLogoutClick = () => {
-    dispatch(logout());
-    // sessionStorage.removeItem("authToken");
-    // navigate("/login");
-  };
-
   useEffect(() => {
     setIsActive(Location.pathname);
   }, [Location.pathname]);
@@ -80,7 +74,7 @@ const Header = (props) => {
             {token && (
               <Link
                 style={{ textDecoration: 'none' }}
-                onClick={handleLogoutClick}
+                onClick={() => dispatch(logout())}
               >
                 <AltButton>Logout</AltButton>
               </Link>
