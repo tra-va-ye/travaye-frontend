@@ -20,7 +20,7 @@ const authSlice = createSlice({
       state.token = null;
       state.user = null;
       sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('user_id');
+      sessionStorage.removeItem('userType');
       state.error = 'Token expired or idle timeout expired.';
     },
     resetTimeout: (state) => {
@@ -36,8 +36,7 @@ const authSlice = createSlice({
       state.token = null;
       state.user = null;
       sessionStorage.removeItem('authToken');
-      sessionStorage.removeItem('user_id');
-      window.location.replace('/login');
+      sessionStorage.removeItem('userType');
     },
     updateUser: (state, action) => {
       state.user = action.payload;

@@ -62,15 +62,13 @@ const BusinessProfile = () => {
           placement: 'bottomRight',
         });
         navigate(`/${userType}`);
-      } else if (businessData?.businessVerified === 'false') {
+      } else if (!businessData?.businessVerified) {
         notification.error({
           message: ' Business not Verified ',
           duration: 3,
           placement: 'bottomRight',
         });
-
-        // Navigate to the verification page
-        // navigate("/register");
+        navigate('/register');
       }
     }
   }, [businessData, navigate, userType, businessData?.user]);

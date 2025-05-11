@@ -10,7 +10,6 @@ import {
   useResendVerificationMailMutation,
 } from '../../redux/Api/authApi';
 import { AuthFormWrapper } from '../Login';
-import { toTitleCase } from '../../utils';
 
 const Verification = () => {
   const navigate = useNavigate();
@@ -68,9 +67,11 @@ const Verification = () => {
           duration: 3,
           placement: 'bottomRight',
         });
-        setTimeout(() => {
+        if (userType === 'user') {
+          navigate('/user');
+        } else {
           navigate('/register');
-        }, 1500);
+        }
       })
       .catch((error) => {
         notification.error({

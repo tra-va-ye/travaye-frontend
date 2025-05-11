@@ -71,13 +71,15 @@ const SignUp = () => {
     }
 
     if (userSuccess) {
-      sessionStorage.setItem('user_id', data?.user?._id);
+      // sessionStorage.setItem('user_id', data?.user?._id);
+      sessionStorage.setItem('userType', 'user');
       sessionStorage.setItem('authToken', data?.token);
       navigate('/verify-email');
     } else if (businessSuccess) {
       const businessEmailVerified = businessData?.business.emailVerified;
       sessionStorage.setItem('authToken', businessData?.token);
-      sessionStorage.setItem('user_id', businessData?.business?._id);
+      // sessionStorage.setItem('user_id', businessData?.business?._id);
+      sessionStorage.setItem('userType', 'business');
 
       if (businessEmailVerified) {
         notification.success({
