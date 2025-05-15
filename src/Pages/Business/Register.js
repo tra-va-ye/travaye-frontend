@@ -69,8 +69,6 @@ const Register = () => {
 
   useEffect(() => {
     if (isSuccess && businessData?.user) {
-      console.log(businessData?.user);
-
       setBusinessInfo((prevInfo) => ({
         ...prevInfo,
         ...businessData.user,
@@ -79,7 +77,7 @@ const Register = () => {
       }));
       if (businessData.user.businessCategory) {
         setSubData(
-          categories.find(
+          categories?.find(
             (cat) => cat.value === businessData.user.businessCategory
           )?.sub || []
         );
@@ -142,7 +140,6 @@ const Register = () => {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData();
-    // console.log({ businessInfo });
 
     Object.entries(businessInfo).forEach(([key, value]) => {
       formData.append(key, value);

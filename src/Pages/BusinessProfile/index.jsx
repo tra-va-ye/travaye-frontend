@@ -17,6 +17,7 @@ import { Rating } from '@mui/material';
 // import { calculateAverageRating } from '../LocationDetails';
 import BusinessSupportModal from '../../components/UI/Modal/BusinessSupportModal';
 import Sidebar from '../../components/Layout/BusinessSidebar';
+import { addWaterMarkToImage } from '../../utils';
 
 const BusinessProfile = () => {
   // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
@@ -53,15 +54,12 @@ const BusinessProfile = () => {
 
   useEffect(() => {
     if (businessData) {
-      if (businessData?.businessVerified === 'verified') {
-        navigate(`/${userType}`);
-      } else if (businessData?.businessVerified === 'pending') {
+      if (businessData?.businessVerified === 'pending') {
         notification.warning({
           message: ' Business Verification Pending',
           duration: 3,
           placement: 'bottomRight',
         });
-        navigate(`/${userType}`);
       } else if (!businessData?.businessVerified) {
         notification.error({
           message: ' Business not Verified ',
@@ -121,7 +119,7 @@ const BusinessProfile = () => {
               {businessData?.businessLocationImages?.map((imag, i) => (
                 <SwiperSlide key={i}>
                   <img
-                    src={imag}
+                    src={addWaterMarkToImage(imag)}
                     className='h-[20rem] w-full rounded-lg border border-red-500'
                     alt={`Poster ${i + 1}`}
                   />

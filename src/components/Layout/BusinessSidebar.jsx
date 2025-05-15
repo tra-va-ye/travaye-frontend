@@ -8,7 +8,6 @@ import { Spin } from 'antd';
 const Dashboard = ({ showDashboard, businessData }) => {
   const [updateProfilePhoto, { isLoading: isPhotoLoading }] =
     useUpdateProfilePhotoMutation();
-  console.log(businessData);
 
   return (
     <DashboardContainer showDashboard={showDashboard}>
