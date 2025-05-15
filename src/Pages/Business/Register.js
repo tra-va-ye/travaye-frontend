@@ -141,6 +141,16 @@ const Register = () => {
     setIsLoading(true);
     const formData = new FormData();
 
+    if (businessData?.user?.businessVerified) {
+      notification.warning({
+        message: 'Business Verification Pending',
+        duration: 3,
+        placement: 'bottomRight',
+      });
+      navigate('/business');
+      return;
+    }
+
     Object.entries(businessInfo).forEach(([key, value]) => {
       formData.append(key, value);
     });

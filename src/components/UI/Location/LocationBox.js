@@ -10,7 +10,7 @@ const LocationBox = (props) => {
       className='flex flex-col justify-between gap-1'
     >
       <img
-        src={addWaterMarkToImage(props.location?.businessLocationImages[0])}
+        src={addWaterMarkToImage(props.location?.locationImages[0])}
         alt='location'
         className='w-full h-[200px]'
       />

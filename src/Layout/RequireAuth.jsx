@@ -2,7 +2,7 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useGetMeQuery } from '../redux/Api/authApi';
 import Loader from '../components/UI/Loader';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { logout } from '../redux/Slices/authSlice';
 import { saveDeviceMessagingToken } from '../firebase/messaging';
@@ -13,16 +13,19 @@ const RequireAuth = () => {
   const { isSuccess, isLoading, data } = useGetMeQuery({
     userType: sessionStorage.getItem('userType'),
   });
+  const { user, token } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (isSuccess && !isLoading) {
       saveDeviceMessagingToken(data?.user?._id);
     }
-    if (!isSuccess && !isLoading) {
-      dispatch(logout());
-      navigate('/login');
+    if (!isLoading) {
+      if (!user?._id) {
+        navigate('/login');
+        dispatch(logout());
+      }
     }
-  }, [isLoading, data]);
+  }, [isLoading, data, user]);
 
   return isLoading ? <Loader /> : isSuccess ? <Outlet /> : null;
 };

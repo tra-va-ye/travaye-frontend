@@ -1,14 +1,21 @@
-import React from 'react'
-import { useSelector } from 'react-redux';
-import { Navigate, Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate, Outlet, useNavigate } from 'react-router-dom';
+import { logout } from '../../redux/Slices/authSlice';
 
 const RequireAdmin = () => {
-  const userType = useSelector((state) => state.auth.userType);
-//   const { isSuccess, isLoading, data } = useGetMeQuery({ userType });
-//   console.log(data);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userType, user, token } = useSelector((state) => state.auth);
 
-  return  userType === "admin" ? <Outlet /> : <Navigate to="/" />;
+  useEffect(() => {
+    if (!user?.email) {
+      dispatch(logout());
+      navigate('/login');
+    }
+  }, [user, token]);
 
-}
+  return userType === 'admin' ? <Outlet /> : <Navigate to='/' />;
+};
 
-export default RequireAdmin
+export default RequireAdmin;

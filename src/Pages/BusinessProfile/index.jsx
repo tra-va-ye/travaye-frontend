@@ -162,7 +162,7 @@ const BusinessProfile = () => {
                 <div className='flex gap-2 md:gap-4 flex-col md:flex-row'>
                   <p className='text-black font-medium'>Average Rating</p>{' '}
                   <Rating
-                    value={businessData.rating}
+                    value={businessData?.rating}
                     readOnly
                     precision={0.5}
                   />

@@ -16,7 +16,7 @@ import {
   useBusinessLoginMutation,
   useUserLoginMutation,
 } from '../../redux/Api/authApi';
-import { setUserType } from '../../redux/Slices/authSlice';
+import { setUserType, updateUser } from '../../redux/Slices/authSlice';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -53,6 +53,7 @@ const Login = () => {
 
       const authToken = data?.token;
       dispatch(setUserType({ userType }));
+      dispatch(updateUser(user));
       sessionStorage.setItem('authToken', authToken);
       sessionStorage.setItem('user_id', data?.user?._id);
 
@@ -65,6 +66,7 @@ const Login = () => {
 
         if (user?.role === 'admin') {
           dispatch(setUserType({ userType: 'admin' }));
+          // dispatch(updateUser({ user }));
 
           setTimeout(() => {
             navigate('/admin/businesses');

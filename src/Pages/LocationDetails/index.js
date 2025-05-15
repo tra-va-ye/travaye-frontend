@@ -23,6 +23,7 @@ import { Navigation } from 'swiper';
 import { FaTrashAlt } from "react-icons/fa";
 import Avatar from "../../assets/user-avatar.png";
 import { useSelector } from 'react-redux';
+import { addWaterMarkToImage } from '../../utils';
 
 const { TextArea } = Input;
 
@@ -184,7 +185,7 @@ const LocationDetails = () => {
 								{
 									location?.business?.businessLocationImages?.map((imag, i) => (
 										<SwiperSlide key={i}>
-											<img src={imag} className='h-[25rem] rounded-lg border border-red-500 w-5/6' alt={`Poster ${i+1}`} />
+											<img src={addWaterMarkToImage(imag)} className='h-[25rem] rounded-lg border border-red-500 w-5/6' alt={`Poster ${i+1}`} />
 										</SwiperSlide>
 									))
 								}
