@@ -1,26 +1,31 @@
-import { IoIosStar } from "react-icons/io";
-import styled from "styled-components";
+import { IoIosStar } from 'react-icons/io';
+import styled from 'styled-components';
+import { addWaterMarkToImage } from '../../../utils';
 
 const LocationBox = (props) => {
   return (
     <Box
       onClick={props.onClick}
       search={props.search}
-      className="flex flex-col justify-between gap-1"
+      className='flex flex-col justify-between gap-1'
     >
       <img
-        src={props.location?.businessLocationImages?.[0] || props.location?.locationImagePath?.[0]}
-        alt="location"
-        className="w-full h-[200px]"
+        src={addWaterMarkToImage(props.location?.businessLocationImages[0])}
+        alt='location'
+        className='w-full h-[200px]'
       />
-      <h6 className="font-extrabold text-lg ">
+      <h6 className='font-extrabold text-lg '>
         {props.location?.locationName || props.location?.businessName}
       </h6>
-      <div className="flex flex-col gap-2">
-        <p>{props.location?.locationAddress || props.location?.businessAddress}</p>
-        <div className="flex items-center ms-auto">
-          <p className="!text-[#009f57] font-bold !text-xl pe-2">{props.location?.business?.rating || props.location?.rating}</p>
-          <IoIosStar fill="#E9A309" size={24} />
+      <div className='flex flex-col gap-2'>
+        <p>
+          {props.location?.locationAddress || props.location?.businessAddress}
+        </p>
+        <div className='flex items-center ms-auto'>
+          <p className='!text-[#009f57] font-bold !text-xl pe-2'>
+            {props.location?.business?.rating || props.location?.rating}
+          </p>
+          <IoIosStar fill='#E9A309' size={24} />
         </div>
       </div>
     </Box>

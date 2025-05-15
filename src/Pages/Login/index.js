@@ -17,7 +17,6 @@ import {
   useUserLoginMutation,
 } from '../../redux/Api/authApi';
 import { setUserType } from '../../redux/Slices/authSlice';
-import { toTitleCase } from '../../utils';
 
 const Login = () => {
   const dispatch = useDispatch();

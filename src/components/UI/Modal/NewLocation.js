@@ -1,38 +1,38 @@
-import { Box, Rating, Typography } from "@mui/material";
-import { Input, Modal, Select, notification } from "antd";
-import React, { useEffect, useState } from "react";
-import Dropzone from "react-dropzone";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+import { Box, Rating, Typography } from '@mui/material';
+import { Input, Modal, Select, notification } from 'antd';
+import React, { useEffect, useState } from 'react';
+import Dropzone from 'react-dropzone';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 import {
   useGetStatesQuery,
   useLazyGetCityQuery,
   useLazyGetLandmarksQuery,
   useLazyGetLgaQuery,
-} from "../../../redux/Api/geoApi";
+} from '../../../redux/Api/geoApi';
 import {
   useCreateLocationMutation,
   useGetCategoriesQuery,
-} from "../../../redux/Api/locationApi";
-import { Button } from "../Buttons";
-import Loader from "../Loader";
-import { ArrowCloud } from "../svgs/svgs";
+} from '../../../redux/Api/locationApi';
+import { Button } from '../Buttons';
+import Loader from '../Loader';
+import { ArrowCloud } from '../svgs/svgs';
 const { TextArea } = Input;
 const initialValues = {
-  locationName: "",
-  locationAddress: "",
-  locationDescription: "",
-  locationState: "",
-  locationCity: "",
-  locationLGA: "",
-  locationLandmark: "",
-  locationCategory: "",
-  locationSubCategory: "",
+  locationName: '',
+  locationAddress: '',
+  locationDescription: '',
+  locationState: '',
+  locationCity: '',
+  locationLGA: '',
+  locationLandmark: '',
+  locationCategory: '',
+  locationSubCategory: '',
   pictures: [],
   locationRating: 0,
-  locationAddedBy: sessionStorage.getItem("user_id"),
-  locationContact: "",
+  locationAddedBy: sessionStorage.getItem('user_id'),
+  locationContact: '',
 };
 
 const NewLocation = ({ open, setOpen }) => {
@@ -45,7 +45,6 @@ const NewLocation = ({ open, setOpen }) => {
   const [getLandMarks, { data: landmarks }] = useLazyGetLandmarksQuery();
   const [getLga, { data: lga }] = useLazyGetLgaQuery();
 
-  // const user = useSelector((state) => state.authuser);
   const [rating, setRating] = useState(2);
   const { data: categories } = useGetCategoriesQuery();
   const [subCat, setSubCat] = useState([]);
@@ -56,14 +55,14 @@ const NewLocation = ({ open, setOpen }) => {
       notification.error({
         message: error?.data?.error,
         duration: 3,
-        placement: "bottomRight",
+        placement: 'bottomRight',
       });
     }
     if (isSuccess) {
       notification.success({
-        message: "Location Created Successfully",
+        message: 'Location Created Successfully',
         duration: 3,
-        placement: "bottomRight",
+        placement: 'bottomRight',
       });
       const handleRefresh = () => {
         // Reload the entire page
@@ -83,16 +82,16 @@ const NewLocation = ({ open, setOpen }) => {
       formData.append(key, value);
     });
     values.pictures.forEach((file) => {
-      formData.append("pictures", file);
+      formData.append('pictures', file);
     });
     await createLocation(formData);
   };
   return (
-    <div className=" relative">
-      {" "}
+    <div className=' relative'>
+      {' '}
       {isLoading && <Loader />}
       <Modal
-        className=" mt-[7rem]"
+        className=' mt-[7rem]'
         open={open}
         footer={null}
         centered
@@ -102,7 +101,7 @@ const NewLocation = ({ open, setOpen }) => {
         <form onSubmit={handleFormSubmit}>
           <h3>Post a New Location</h3>
           <Dropzone
-            acceptedFiles=".jpg,.jpeg,.png"
+            acceptedFiles='.jpg,.jpeg,.png'
             multiple={true}
             onDrop={(acceptedFiles) => {
               // seValue("pictures", [...values.pictures, ...acceptedFiles]);
@@ -124,7 +123,7 @@ const NewLocation = ({ open, setOpen }) => {
                   ) : (
                     values.pictures.map((file, index) => (
                       <FlexBetween key={index}>
-                        <Typography sx={{ marginRight: "5px" }}>
+                        <Typography sx={{ marginRight: '5px' }}>
                           {file.name}
                         </Typography>
                       </FlexBetween>
@@ -134,12 +133,12 @@ const NewLocation = ({ open, setOpen }) => {
               </Container>
             )}
           </Dropzone>
-          <div className="d-flex justify-content-center my-3">
-            <Typography component="legend">Experience rating</Typography>
+          <div className='d-flex justify-content-center my-3'>
+            <Typography component='legend'>Experience rating</Typography>
             <Rating
-              name="simple-controlled"
+              name='simple-controlled'
               precision={0.5}
-              value={values.locationRating}
+              value={values.locationRating || rating}
               onChange={(event, newValue) => {
                 setRating(newValue);
                 setValues((prev) => ({ ...prev, locationRating: newValue }));
@@ -147,10 +146,10 @@ const NewLocation = ({ open, setOpen }) => {
             />
           </div>
           <InputContainer>
-            <div className="d-flex justify-content-between gap-4 mb-4">
+            <div className='d-flex justify-content-between gap-4 mb-4'>
               <Input
-                placeholder="Name"
-                name="locationName"
+                placeholder='Name'
+                name='locationName'
                 value={values.locationName}
                 required
                 onChange={(e) => {
@@ -162,8 +161,8 @@ const NewLocation = ({ open, setOpen }) => {
               />
 
               <Input
-                placeholder="Address"
-                name="locationAddress"
+                placeholder='Address'
+                name='locationAddress'
                 value={values.locationAddress}
                 required
                 onChange={(e) => {
@@ -174,12 +173,12 @@ const NewLocation = ({ open, setOpen }) => {
                 }}
               />
             </div>
-            <div className="flex gap-4 justify-between mb-4">
+            <div className='flex gap-4 justify-between mb-4'>
               <Select
-                className="!w-full"
-                placeholder="Location Category"
+                className='!w-full'
+                placeholder='Location Category'
                 onSelect={(value, Record) => {
-                  setSubCat("");
+                  setSubCat('');
 
                   setSubCat(Record?.sub);
                   setValues((prev) => ({
@@ -191,9 +190,9 @@ const NewLocation = ({ open, setOpen }) => {
               />
 
               <Select
-                className="!w-full"
-                placeholder="
-                Sub-Category"
+                className='!w-full'
+                placeholder='
+                Sub-Category'
                 onSelect={(value) => {
                   setValues((prev) => ({
                     ...prev,
@@ -203,12 +202,12 @@ const NewLocation = ({ open, setOpen }) => {
                 options={subCat}
               />
             </div>
-            <div className="flex justify-between gap-4 mb-4">
+            <div className='flex justify-between gap-4 mb-4'>
               <Select
-                className="!w-[50%]"
-                placeholder="Location State"
+                className='!w-[50%]'
+                placeholder='Location State'
                 onSelect={(value) => {
-                  console.log("clicked");
+                  console.log('clicked');
                   console.log(value);
 
                   getLga({ state: value.toUpperCase() });
@@ -223,10 +222,10 @@ const NewLocation = ({ open, setOpen }) => {
                 options={data}
               />
               <Select
-                className="!w-[50%]"
-                placeholder="Location City"
+                className='!w-[50%]'
+                placeholder='Location City'
                 onSelect={(value) => {
-                  console.log("clicked");
+                  console.log('clicked');
                   console.log(value);
                   setValues((prev) => ({
                     ...prev,
@@ -237,12 +236,12 @@ const NewLocation = ({ open, setOpen }) => {
                 options={cities}
               />
             </div>
-            <div className="flex justify-between gap-4 mb-4">
+            <div className='flex justify-between gap-4 mb-4'>
               <Select
-                className="!w-[50%]"
-                placeholder="Location LGA"
+                className='!w-[50%]'
+                placeholder='Location LGA'
                 onSelect={(value) => {
-                  console.log("clicked");
+                  console.log('clicked');
                   console.log(value);
                   setValues((prev) => ({
                     ...prev,
@@ -253,10 +252,9 @@ const NewLocation = ({ open, setOpen }) => {
                 options={lga}
               />
               <Select
-                className="!w-[50%]"
-                placeholder="Location Landmarks"
+                className='!w-[50%]'
+                placeholder='Location Landmarks'
                 onSelect={(value) => {
-                  console.log("clicked");
                   console.log(value);
                   setValues((prev) => ({
                     ...prev,
@@ -267,11 +265,11 @@ const NewLocation = ({ open, setOpen }) => {
                 options={landmarks}
               />
             </div>
-            <div className="flex justify-between gap-4 mb-4">
+            <div className='flex justify-between gap-4 mb-4'>
               <Input
-                placeholder="Phone Number"
-                className="w-[50%]"
-                name="locationContact"
+                placeholder='Phone Number'
+                className='w-[50%]'
+                name='locationContact'
                 value={values.locationContact}
                 required
                 onChange={(e) => {
@@ -283,9 +281,9 @@ const NewLocation = ({ open, setOpen }) => {
               />
             </div>
             <TextArea
-              placeholder="Please Give a detailed venturesome Description of your Location"
-              rows="6"
-              name="locationDescription"
+              placeholder='Please Give a detailed venturesome Description of your Location'
+              rows='6'
+              name='locationDescription'
               value={values.locationDescription}
               required
               onChange={(e) => {
@@ -295,7 +293,7 @@ const NewLocation = ({ open, setOpen }) => {
                 }));
               }}
             ></TextArea>
-            <Button color="green" type="submit">
+            <Button color='green' type='submit'>
               Post
             </Button>
           </InputContainer>
@@ -350,9 +348,9 @@ const InputContainer = styled.div`
 `;
 
 const FlexBetween = styled(Box)({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 });
 // input {
 //   border: 3px solid #d9d9d9;

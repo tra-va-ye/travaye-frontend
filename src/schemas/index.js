@@ -71,7 +71,7 @@ export const businessSignUpSchema = yup.object({
     .required('Field cannot be blank!'),
   address: yup
     .string()
-    .matches(/^[a-zA-Z0-9]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/, '🌚🌚🌚🌚')
+    .matches(/^[a-zA-Z0-9]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*[.]?$/, '🌚🌚🌚🌚')
     .min(8, 'Too Short for an address!')
     .max(150, 'Too Long')
     .required('Field cannot be blank!'),
