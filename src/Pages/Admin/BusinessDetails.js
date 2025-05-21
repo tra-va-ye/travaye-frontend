@@ -10,13 +10,12 @@ import {
 } from '../../redux/Api/adminApi';
 import { Image, notification } from 'antd';
 import Loader from '../../components/UI/Loader';
+import { addWaterMarkToImage } from '../../utils';
 
 const BusinessDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isFetching, isError, error } = useGetBusinessByIdQuery({ id });
-  const [cacVisible, setCACVisible] = useState(false);
-  const [addressVisible, setAddressVisible] = useState(false);
   const [imageVisible, setImageVisible] = useState(false);
   const [
     verifyBusiness,
@@ -202,48 +201,6 @@ const BusinessDetails = () => {
               </h4>
 
               <div className='flex flex-col gap-4'>
-                {/* <FileUpload className="my-0 px-4 py-2">
-                      CAC Registration Proof
-                      <button className="text-[rgb(157,157,157)] font-medium" onClick={() => setCACVisible(true)}>View</button>
-                      <div className="hidden">
-                        {
-                          !isError && (
-                            <Image.PreviewGroup items={[...data?.businessCacProofImageURL]} preview={{
-                              visible: cacVisible,
-                              zIndex: 1000,
-                              onVisibleChange: (value) => setCACVisible(value),
-                            }}>
-                              <Image
-                                width={200}
-                                src={data?.businessCacProofImageURL[0]}
-                              />
-                            </Image.PreviewGroup>
-                          )
-                        }
-                      </div>
-                    </FileUpload> */}
-
-                {/* <FileUpload className="my-0 px-4 py-2">
-                      Proof of Address
-                      <button className="text-[#9d9d9d] font-medium" onClick={() => setAddressVisible(true)}>View</button>
-                      <div className="hidden">
-                        {
-                          !isError && (
-                            <Image.PreviewGroup items={[...data?.businessProofAddressImageURL]} preview={{
-                              visible: addressVisible,
-                              zIndex: 1000,
-                              onVisibleChange: (value) => setAddressVisible(value),
-                            }}>
-                              <Image
-                                width={200}
-                                src={data?.businessProofAddressImageURL[0]}
-                              />
-                            </Image.PreviewGroup>
-                          )
-                        }
-                      </div>
-                    </FileUpload> */}
-
                 <FileUpload className='my-0 px-4 py-2'>
                   Pictures of Location
                   <button
@@ -255,7 +212,11 @@ const BusinessDetails = () => {
                   <div className='hidden'>
                     {!isError && (
                       <Image.PreviewGroup
-                        items={[...data?.businessLocationImages]}
+                        items={[
+                          ...data?.businessLocationImages.map((loc) =>
+                            addWaterMarkToImage(loc)
+                          ),
+                        ]}
                         preview={{
                           visible: imageVisible,
                           zIndex: 1000,
@@ -264,7 +225,9 @@ const BusinessDetails = () => {
                       >
                         <Image
                           width={200}
-                          src={data?.businessLocationImages[0]}
+                          src={addWaterMarkToImage(
+                            data?.businessLocationImages[0]
+                          )}
                         />
                       </Image.PreviewGroup>
                     )}

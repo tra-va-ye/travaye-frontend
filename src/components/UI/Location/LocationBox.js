@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { addWaterMarkToImage } from '../../../utils';
 
 const LocationBox = (props) => {
+  console.log(props?.location);
+
   return (
     <Box
       onClick={props.onClick}
@@ -10,7 +12,10 @@ const LocationBox = (props) => {
       className='flex flex-col justify-between gap-1'
     >
       <img
-        src={addWaterMarkToImage(props.location?.locationImages[0])}
+        src={addWaterMarkToImage(
+          props?.location?.business?.displayPhoto ||
+            props.location?.locationImages[0]
+        )}
         alt='location'
         className='w-full h-[200px]'
       />

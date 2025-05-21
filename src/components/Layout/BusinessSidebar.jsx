@@ -1,13 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useUpdateProfilePhotoMutation } from '../../redux/Api/authApi';
+import { useUpdateDisplayPhotoMutation } from '../../redux/Api/authApi';
 import Avatar from '../../assets/user-avatar.png';
 import { IoIosCamera } from 'react-icons/io';
 import { Spin } from 'antd';
 
 const Dashboard = ({ showDashboard, businessData }) => {
-  const [updateProfilePhoto, { isLoading: isPhotoLoading }] =
-    useUpdateProfilePhotoMutation();
+  const [updateDisplayPhoto, { isLoading: isPhotoLoading }] =
+    useUpdateDisplayPhotoMutation();
 
   return (
     <DashboardContainer showDashboard={showDashboard}>
@@ -15,19 +15,21 @@ const Dashboard = ({ showDashboard, businessData }) => {
         {isPhotoLoading && (
           <Spin className='absolute bottom-[50%] left-[50%]' />
         )}
-        <img
-          className='rounded-full w-[150px] h-[150px]'
-          src={businessData?.profilePhoto || Avatar}
-          alt='avatar'
-        />
+        <div className='w-[150px] h-[150px] rounded-full border-4 border-[#009F57] bg-white flex items-center justify-center'>
+          <img
+            className='rounded-full w-full h-full object-cover'
+            src={businessData?.displayPhoto || Avatar}
+            alt='avatar'
+          />
+        </div>
         <label htmlFor='photo'>
-          <IoIosCamera className='text-black text-[25px] absolute bottom-[15%] right-[5%] cursor-pointer !block' />
+          <IoIosCamera className='text-black text-4xl absolute bottom-[15%] right-[5%] cursor-pointer !block' />
         </label>
         <input
           onChange={(e) => {
             const profileData = new FormData();
             profileData.append('picture', e.target.files[0]);
-            updateProfilePhoto(profileData);
+            updateDisplayPhoto(profileData);
           }}
           id='photo'
           accept='image/*'

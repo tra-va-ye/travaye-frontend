@@ -18,6 +18,7 @@ import { Rating } from '@mui/material';
 import BusinessSupportModal from '../../components/UI/Modal/BusinessSupportModal';
 import Sidebar from '../../components/Layout/BusinessSidebar';
 import { addWaterMarkToImage } from '../../utils';
+import LocationImagesCarousel from '../../components/UI/Carousel/LocationImagesCarousel';
 
 const BusinessProfile = () => {
   // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
@@ -25,6 +26,7 @@ const BusinessProfile = () => {
   const [newLocationModal, setNewLocationModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [imageVisible, setImageVisible] = useState(false);
 
   const userType = useSelector((state) => state.auth.userType);
   const navigate = useNavigate();
@@ -83,60 +85,73 @@ const BusinessProfile = () => {
       <Sidebar showDashboard={showDashboard} businessData={businessData} />
       <Main>
         <button
-          className='fixed right-9 bottom-8 shadow-md rounded-full'
+          className='fixed right-9 bottom-8 shadow-md rounded-full z-30'
           onClick={() => setShowSupportModal(true)}
         >
           <ChatIcon />
         </button>
         <div className='mt-5 lg:mt-0'>
-          <div className='flex items-center justify-between'>
-            <H3
-              color='#009f57'
-              fontWeight='700'
-              className='mb-1 text-xl md:text-3xl'
-            >
-              Your Profile
-            </H3>
-            <button
-              className='text-[#E9A309] font-semibold underline !scale-100'
-              onClick={() => navigate('/settings')}
-            >
-              Settings{'>'}
-            </button>
-          </div>
-          <div className='flex gap-3 md:flex-row flex-col'>
-            <Swiper
-              className='!scale-100 w-full mx-auto'
-              slidesPerView={1}
-              modules={[Navigation]}
-              spaceBetween={20}
-              loop={true}
-              navigation
-            >
-              {businessData?.businessLocationImages.length === 0 && (
-                <h2 className='text-xl font-semibold'>No Images Found</h2>
-              )}
-              {businessData?.businessLocationImages?.map((imag, i) => (
-                <SwiperSlide key={i}>
-                  <img
-                    src={addWaterMarkToImage(imag)}
-                    className='h-[20rem] w-full rounded-lg border border-red-500'
-                    alt={`Poster ${i + 1}`}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-            <div className='flex-1'>
+          <div className='grid grid-cols-1 md:grid-cols-8 lg:grid-cols-7 gap-3 w-full'>
+            <div className='md:col-span-8 lg:col-span-7 flex items-center justify-between'>
+              <H3
+                color='#009f57'
+                fontWeight='700'
+                className='mb-1 text-xl md:text-3xl'
+              >
+                Your Profile
+              </H3>
+              <LocationImagesCarousel
+                businessData={businessData}
+                imageVisible={imageVisible}
+                isError={isError}
+                setImageVisible={setImageVisible}
+              />
+              <button
+                className='text-[#E9A309] font-semibold underline !scale-100'
+                onClick={() => navigate('/settings')}
+              >
+                Settings{'>'}
+              </button>
+            </div>
+            <div className='md:col-span-5 lg:col-span-5'>
+              <Swiper
+                className='!scale-100 w-full'
+                slidesPerView={1}
+                modules={[Navigation]}
+                spaceBetween={20}
+                loop={true}
+                navigation
+              >
+                {businessData?.businessLocationImages.length === 0 && (
+                  <h2 className='text-xl font-semibold'>No Images Found</h2>
+                )}
+                {businessData?.businessLocationImages?.map((imag, i) => (
+                  <SwiperSlide key={i}>
+                    <img
+                      src={addWaterMarkToImage(imag)}
+                      className='h-[20rem] w-full rounded-lg border border-red-500'
+                      alt={`Poster ${i + 1}`}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+            <div className='md:col-span-3 lg:col-span-2 flex flex-col'>
               <ReviewH4 className='text-2xl font-bold pt-2'>
                 Contact Info
               </ReviewH4>
-              <h4 className='font-semibold mt-2 text-nowrap'>
-                Email: {businessData?.businessEmail}
+              <h4 className='font-semibold mt-2'>
+                Email:{' '}
+                <span className='font-normal'>
+                  {businessData?.businessEmail}
+                </span>
               </h4>
               <h4 className='font-semibold mt-2'>
                 Phone:{' '}
-                {businessData?.businessTelephone &&
-                  `+234${businessData?.businessTelephone}`}
+                <span className='font-normal'>
+                  {businessData?.businessTelephone &&
+                    `+234${businessData?.businessTelephone}`}
+                </span>
               </h4>
             </div>
           </div>
@@ -187,7 +202,7 @@ const BusinessProfile = () => {
                               {review?.reviewerFullname}
                             </p>
                           </ReviewUser>
-                          <Rating value={review.reviewRating} readOnly />
+                          <Rating value={review?.reviewRating} readOnly />
                         </div>
 
                         <p className='py-2'>{review?.reviewDescription}</p>
@@ -331,7 +346,7 @@ export const Dashboard = styled.div`
   }
 
   @media (max-width: 950px) {
-    width: 34%;
+    width: 32%;
   }
 
   @media (max-width: 720px) {
@@ -370,6 +385,7 @@ export const Main = styled.div`
 
   @media (max-width: 1150px) {
     margin-left: 0;
+    padding: 20px;
   }
 
   @media (max-width: 576px) {
