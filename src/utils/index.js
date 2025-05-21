@@ -9,6 +9,6 @@ export function toTitleCase(str) {
 export function addWaterMarkToImage(imageUrl) {
   return imageUrl.replace(
     '/upload/',
-    '/upload/l_Assets:watermark/fl_layer_apply,g_south,y_40,o_75/'
+    '/upload/l_Assets:watermark/fl_layer_apply,g_north,y_45,o_75,w_800,h_250/'
   );
 }

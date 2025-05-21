@@ -12,14 +12,17 @@ import {
   useUpdateBusinessProfileMutation,
 } from '../../redux/Api/authApi';
 import { BsBoxArrowInLeft } from 'react-icons/bs';
-import Dashboard, {
-  TogleButton,
-} from '../../components/Layout/BusinessSidebar';
+import Sidebar, { TogleButton } from '../../components/Layout/BusinessSidebar';
 import { Button } from '../../components/UI/Buttons';
 import { FaEyeSlash } from 'react-icons/fa6';
 import { IoEyeSharp } from 'react-icons/io5';
 import { passwordRegex } from '../UserSettings';
 import { logout } from '../../redux/Slices/authSlice';
+import {
+  useGetStatesQuery,
+  useLazyGetCityQuery,
+  useLazyGetLgaQuery,
+} from '../../redux/Api/geoApi';
 
 const BusinessSettings = () => {
   const [seePass, setSeePass] = useState(false);
@@ -27,9 +30,9 @@ const BusinessSettings = () => {
   const [updateProfile] = useUpdateBusinessProfileMutation();
   const [deleteProfile] = useDeleteMyProfileMutation();
 
-  // const { data: states } = useGetStatesQuery();
-  // const [getCity, { data: city }] = useLazyGetCityQuery();
-  // const [getLga, { data: lga }] = useLazyGetLgaQuery();
+  const { data: states } = useGetStatesQuery();
+  const [getCity, { data: city }] = useLazyGetCityQuery();
+  const [getLga, { data: lga }] = useLazyGetLgaQuery();
   const { data: budgets } = useGetBudgetsQuery();
 
   const dispatch = useDispatch();
@@ -51,15 +54,6 @@ const BusinessSettings = () => {
   const [subData, setSubData] = useState([]);
 
   const businessData = useSelector((store) => store.auth.user);
-
-  // useEffect(() => {
-  //   // console.log(categories);
-  //   setSubData(
-  //     categories?.find((cat) => cat.value === businessData?.businessCategory)
-  //       ?.sub
-  //   );
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [businessInfo?.businessCategory, businessData?.businessCategory]);
 
   useEffect(() => {
     if (businessData) {
@@ -205,7 +199,7 @@ const BusinessSettings = () => {
           onClick={() => setShowDashboard((prev) => !prev)}
         />
       </TogleButton>
-      <Dashboard showDashboard={showDashboard} businessData={businessData} />
+      <Sidebar showDashboard={showDashboard} businessData={businessData} />
       <Main>
         <div className='w-full flex justify-between items-center mb-4 mt-5 md:mt-0'>
           <h3 className='text-2xl text-[#009F57] font-bold'>Settings</h3>
@@ -302,7 +296,7 @@ const BusinessSettings = () => {
               <div>
                 <label htmlFor='address'>Business State/City/LGA</label>
                 <div className='mt-2 mb-3.5 flex flex-wrap gap-3 md:gap-5'>
-                  <Select
+                  {/* <Select
                     placeholder='State'
                     className='flex-1'
                     value={businessInfo?.businessState}
@@ -316,6 +310,39 @@ const BusinessSettings = () => {
                     placeholder='LGA'
                     className='flex-1'
                     value={businessInfo?.businessLGA}
+                  /> */}
+                  <Select
+                    placeholder='State'
+                    onSelect={(value) => {
+                      getLga({ state: value.toUpperCase() });
+                      getCity({ state: value.toUpperCase() });
+                      handleChange('businessState', value);
+                    }}
+                    showSearch
+                    className='flex-1'
+                    options={states}
+                    value={businessInfo?.businessState}
+                  />
+                  <Select
+                    placeholder='City'
+                    showSearch
+                    onSelect={(value) => {
+                      handleChange('businessCity', value);
+                    }}
+                    // value={queryData.city}
+                    className='flex-1'
+                    options={city}
+                    value={businessInfo?.businessCity}
+                  />
+                  <Select
+                    placeholder='LGA'
+                    // showSearch
+                    onSelect={(value) => {
+                      handleChange('businessLGA', value);
+                    }}
+                    className='flex-1'
+                    value={businessInfo?.businessLGA}
+                    options={lga}
                   />
                 </div>
               </div>

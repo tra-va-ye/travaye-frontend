@@ -85,6 +85,30 @@ export const AuthApi = createApi({
       }),
       invalidatesTags: ['Profile', 'User'],
     }),
+    updateDisplayPhoto: builder.mutation({
+      query: (body) => ({
+        url: 'business/display-photo',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Profile', 'User'],
+    }),
+    addLocationImages: builder.mutation({
+      query: (body) => ({
+        url: 'business/location-images',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Profile', 'User'],
+    }),
+    deleteLocationImage: builder.mutation({
+      query: (body) => ({
+        url: 'business/location-images',
+        method: 'DELETE',
+        body,
+      }),
+      invalidatesTags: ['Profile', 'User'],
+    }),
     updateUserProfile: builder.mutation({
       query: (body) => ({
         url: 'user/edit-profile',
@@ -134,6 +158,9 @@ export const {
   useCodeVerifyMutation,
   useCompleteBusinessRegistrationMutation,
   useUpdateProfilePhotoMutation,
+  useUpdateDisplayPhotoMutation,
+  useAddLocationImagesMutation,
+  useDeleteLocationImageMutation,
   useUpdateUserProfileMutation,
   useUpdateBusinessProfileMutation,
   useResendVerificationMailMutation,

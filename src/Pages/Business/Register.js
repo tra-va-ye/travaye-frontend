@@ -17,6 +17,12 @@ import {
   useGetCategoriesQuery,
 } from '../../redux/Api/locationApi';
 import { toTitleCase } from '../../utils';
+import {
+  useLazyGetCityQuery,
+  useLazyGetLgaQuery,
+  useGetStatesQuery,
+} from '../../redux/Api/geoApi';
+
 const Flex = styled(Box)({
   display: 'flex',
   alignItems: 'center',
@@ -32,6 +38,11 @@ const Register = () => {
   const { data: budgets } = useGetBudgetsQuery();
   const [subData, setSubData] = useState([]);
   const [loading, setIsLoading] = useState(false);
+
+  // Address endpoints
+  const { data: states } = useGetStatesQuery();
+  const [getCity, { data: cities }] = useLazyGetCityQuery();
+  const [getLga, { data: lgas }] = useLazyGetLgaQuery();
 
   const [businessInfo, setBusinessInfo] = useState({
     businessName: '',
@@ -283,18 +294,44 @@ const Register = () => {
               <div className='mt-2 mb-[1rem] flex flex-wrap md:flex-row gap-3 md:gap-5'>
                 <Select
                   placeholder='State'
+                  onSelect={(value) => {
+                    getLga({ state: value.toUpperCase() });
+                    getCity({ state: value.toUpperCase() });
+                    handleChange('businessState', value);
+                  }}
+                  showSearch
                   className='flex-1'
-                  defaultValue={businessInfo?.businessState}
+                  options={states}
+                  value={businessInfo?.businessState}
                 />
                 <Select
                   placeholder='City'
+                  showSearch
+                  onSelect={(value) => {
+                    handleChange('businessCity', value);
+                  }}
+                  value={businessInfo?.businessCity}
+                  className='flex-1'
+                  options={cities}
+                />
+                {/* <Select
+                  placeholder='City'
                   defaultValue={businessInfo?.businessCity}
                   className='flex-1'
-                />
-                <Select
+                /> */}
+                {/* <Select
                   placeholder='LGA'
                   className='flex-1'
                   defaultValue={businessInfo?.businessLGA}
+                /> */}
+                <Select
+                  placeholder='LGA'
+                  showSearch
+                  onSelect={(value) => {
+                    handleChange('businessLGA', value);
+                  }}
+                  className='flex-1'
+                  options={lgas}
                 />
               </div>
             </div>
