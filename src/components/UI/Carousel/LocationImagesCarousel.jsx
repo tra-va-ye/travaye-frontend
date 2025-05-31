@@ -13,9 +13,7 @@ import {
   useAddLocationImagesMutation,
   useDeleteLocationImageMutation,
 } from '../../../redux/Api/authApi';
-import { UploadTwoTone } from '@mui/icons-material';
 import addImage from '../../../assets/add-image-icon.jpg';
-// import { Button } from '../Buttons';
 
 const LocationImagesCarousel = ({
   isError,
@@ -24,8 +22,7 @@ const LocationImagesCarousel = ({
   setImageVisible,
 }) => {
   const [current, setCurrent] = useState(0);
-  const [deleteImage, { data, isSuccess, error }] =
-    useDeleteLocationImageMutation();
+  const [deleteImage] = useDeleteLocationImageMutation();
   const [uploadImage] = useAddLocationImagesMutation();
   const [newImages, setNewImages] = useState([]);
   const fileInputRef = useRef(null);

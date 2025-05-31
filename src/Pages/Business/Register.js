@@ -52,9 +52,9 @@ const Register = () => {
     businessAddress: '',
     businessTelephone: '',
     businessAbout: '',
-    businessLGA: 'Lagos Mainland',
-    businessState: 'Lagos',
-    businessCity: 'Lagos',
+    businessLGA: '',
+    businessState: '',
+    businessCity: '',
     businessLocationImages: [],
     businessBudget: '',
   });
@@ -372,66 +372,6 @@ const Register = () => {
             <h6>
               Please ensure to upload clear, concise and correct documents.
             </h6>
-            {/* <Dropzone
-              acceptedFiles='.jpg,.jpeg,.png'
-              multiple={false}
-              onDrop={(acceptedFiles) =>
-                handleFileDrop(acceptedFiles, 'cacRegistrationProof')
-              }
-            >
-              {({ getRootProps, getInputProps }) => (
-                <section {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <FileUpload>
-                    {businessInfo.cacRegistrationProof.length === 0 ? (
-                      `CAC Registration Proof`
-                    ) : (
-                      <div className='flex gap-3 flex-wrap'>
-                        {businessInfo.cacRegistrationProof.map(
-                          (file, index) => (
-                            <Flex key={index}>
-                              <Typography sx={{ marginRight: '1px' }}>
-                                {file.name}
-                              </Typography>
-                            </Flex>
-                          )
-                        )}
-                      </div>
-                    )}{' '}
-                    <i>{CloudUpload}</i>
-                  </FileUpload>
-                </section>
-              )}
-            </Dropzone>
-            <Dropzone
-              acceptedFiles='.jpg,.jpeg,.png'
-              multiple={false}
-              onDrop={(acceptedFiles) =>
-                handleFileDrop(acceptedFiles, 'proofOfAddress')
-              }
-            >
-              {({ getRootProps, getInputProps }) => (
-                <section {...getRootProps()}>
-                  <input {...getInputProps()} />
-                  <FileUpload>
-                    {businessInfo.proofOfAddress.length === 0 ? (
-                      ` Proof Of Address (e.g Utility Bill)`
-                    ) : (
-                      <div className='flex gap-3 flex-wrap'>
-                        {businessInfo.proofOfAddress.map((file, index) => (
-                          <Flex key={index}>
-                            <Typography sx={{ marginRight: '1px' }}>
-                              {file.name}
-                            </Typography>
-                          </Flex>
-                        ))}
-                      </div>
-                    )}
-                    <i>{CloudUpload}</i>
-                  </FileUpload>
-                </section>
-              )}
-            </Dropzone> */}
             <Dropzone
               acceptedFiles='.jpg,.jpeg,.png'
               multiple={true}
