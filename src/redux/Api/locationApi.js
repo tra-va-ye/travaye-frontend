@@ -17,9 +17,8 @@ export const LocationApi = createApi({
       invalidatesTags: ["Locations"],
     }),
     getLocations: builder.query({
-      query: ({ page, count }) => ({
-        url: `locations`,
-        params: { page, count },
+      query: () => ({
+        url: `locations`
       }),
       transformResponse: (apiResponse) => {
         const newRes = apiResponse.data.filter(loc => loc.business?.businessVerified === "verified");
