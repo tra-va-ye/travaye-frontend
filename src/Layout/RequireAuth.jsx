@@ -19,7 +19,9 @@ const RequireAuth = () => {
     if (isSuccess && !isLoading) {
       saveDeviceMessagingToken(data?.user?._id);
     }
-    if (!isLoading) {
+    if (!isLoading && !isSuccess) {
+      console.log({ data, isSuccess, isLoading });
+
       if (!user?._id) {
         navigate('/login');
         dispatch(logout());

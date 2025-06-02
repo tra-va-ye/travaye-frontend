@@ -14,14 +14,12 @@ import 'swiper/css/bundle';
 import { Navigation } from 'swiper';
 import ChatIcon from '../../assets/Icons/ChatIcon';
 import { Rating } from '@mui/material';
-// import { calculateAverageRating } from '../LocationDetails';
 import BusinessSupportModal from '../../components/UI/Modal/BusinessSupportModal';
 import Sidebar from '../../components/Layout/BusinessSidebar';
 import { addWaterMarkToImage } from '../../utils';
 import LocationImagesCarousel from '../../components/UI/Carousel/LocationImagesCarousel';
 
 const BusinessProfile = () => {
-  // const [updateProfile, { isLoading }] = useUpdateProfilePhotoMutation();
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [newLocationModal, setNewLocationModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
@@ -34,25 +32,7 @@ const BusinessProfile = () => {
     setShowLocationModal((prevState) => !prevState);
   };
 
-  const [locations, setLocations] = useState([]);
-  const { data, isError, error, isSuccess } = useGetLocationsQuery({
-    page: 1,
-    count: 10,
-  });
   const businessData = useSelector((store) => store.auth.user);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setLocations(data?.data);
-    }
-    if (isError) {
-      notification.error({
-        message: error?.error,
-        duration: 3,
-        placement: 'bottomRight',
-      });
-    }
-  }, [data, error, isError, isSuccess, locations]);
 
   useEffect(() => {
     if (businessData) {
@@ -68,7 +48,7 @@ const BusinessProfile = () => {
           duration: 3,
           placement: 'bottomRight',
         });
-        navigate('/register');
+        // navigate('/register');
       }
     }
   }, [businessData, navigate, userType, businessData?.user]);
@@ -103,7 +83,7 @@ const BusinessProfile = () => {
               <LocationImagesCarousel
                 businessData={businessData}
                 imageVisible={imageVisible}
-                isError={isError}
+                isError={!businessData?.businessLocationImages}
                 setImageVisible={setImageVisible}
               />
               <button
