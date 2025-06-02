@@ -3,8 +3,6 @@ import styled from 'styled-components';
 import { addWaterMarkToImage } from '../../../utils';
 
 const LocationBox = (props) => {
-  console.log(props?.location);
-
   return (
     <Box
       onClick={props.onClick}
@@ -14,7 +12,8 @@ const LocationBox = (props) => {
       <img
         src={addWaterMarkToImage(
           props?.location?.business?.displayPhoto ||
-            props.location?.locationImages[0]
+            props.location?.locationImages[0] ||
+            'https://res.cloudinary.com/dnvgmb5ys/image/upload/v1689057426/cld-sample-2.jpg'
         )}
         alt='location'
         className='w-full h-[200px]'

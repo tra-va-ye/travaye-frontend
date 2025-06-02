@@ -1,30 +1,34 @@
-import { createApi } from "@reduxjs/toolkit/query/react";
-import { baseQueryWithInterceptor } from "../queryInterceptors";
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithInterceptor } from '../queryInterceptors';
 
 export const LocationApi = createApi({
-  reducerPath: "location",
+  reducerPath: 'location',
   baseQuery: baseQueryWithInterceptor,
   refetchOnReconnect: true,
   refetchOnUpdateTimeout: 50000,
-  tagTypes: ["Locations", "Location", "Trip", "LikedLocation", "User"],
+  tagTypes: ['Locations', 'Location', 'Trip', 'LikedLocation', 'User'],
   endpoints: (builder) => ({
     createLocation: builder.mutation({
       query: (body) => ({
-        url: "location",
-        method: "POST",
+        url: 'location',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Locations"],
+      invalidatesTags: ['Locations'],
     }),
     getLocations: builder.query({
       query: () => ({
-        url: `locations`
+        url: `locations`,
       }),
       transformResponse: (apiResponse) => {
-        const newRes = apiResponse.data.filter(loc => loc.business?.businessVerified === "verified");
-        return {...apiResponse, data: newRes };
+        console.log(apiResponse);
+
+        const newRes = apiResponse.filter(
+          (loc) => loc.business?.businessVerified === 'verified'
+        );
+        return { ...apiResponse, data: newRes };
       },
-      providesTags: ["Locations"],
+      providesTags: ['Locations'],
       refetchOnUpdate: true,
       refetchOnReconnect: true,
     }),
@@ -32,26 +36,28 @@ export const LocationApi = createApi({
       query: ({ id }) => ({
         url: `locations/${id}`,
       }),
-      providesTags: ["Location"],
+      providesTags: ['Location'],
     }),
     planATrip: builder.query({
       query: ({ state, city, category, lga, budget, subcategory }) =>
         `locations/plan?state=${state}&category=${category}&subcategory=${subcategory}&city=${city}&lga=${lga}&budget=${budget}`,
-      providesTags: ["Trip"],
+      providesTags: ['Trip'],
       transformResponse: (apiResponse) => {
-        const newRes = apiResponse.data.filter(loc => loc.business?.businessVerified === "verified");
-        return {...apiResponse, data: newRes };
+        const newRes = apiResponse.data.filter(
+          (loc) => loc.business?.businessVerified === 'verified'
+        );
+        return { ...apiResponse, data: newRes };
       },
     }),
     filterLocation: builder.query({
       query: () => `locations?filters=wildlife-attractions&location=lagos`,
-      providesTags: ["Location"],
+      providesTags: ['Location'],
       refetchOnUpdate: true,
       refetchOnReconnect: true,
     }),
     getCategories: builder.query({
       query: () => ({
-        url: "categories",
+        url: 'categories',
       }),
       transformResponse: (res) => {
         const result = res.map((e) => ({
@@ -67,46 +73,46 @@ export const LocationApi = createApi({
     }),
     addLocationToLikedLocations: builder.mutation({
       query: (body) => ({
-        url: "locations/like",
-        method: "POST",
+        url: 'locations/like',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Location", "Profile"],
+      invalidatesTags: ['Location', 'Profile'],
     }),
     logLocationVisit: builder.mutation({
-      query: ({location}) => ({
+      query: ({ location }) => ({
         url: `locations/visits?location=${location}`,
-        method: "PUT",
+        method: 'PUT',
       }),
-      invalidatesTags: [""],
+      invalidatesTags: [''],
     }),
     unlikeLocation: builder.mutation({
       query: (body) => ({
-        url: "locations/unlike",
-        method: "POST",
+        url: 'locations/unlike',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Location", "Profile"],
+      invalidatesTags: ['Location', 'Profile'],
     }),
     reviewLocation: builder.mutation({
       query: (body) => ({
-        url: "locations/review",
-        method: "POST",
+        url: 'locations/review',
+        method: 'POST',
         body,
       }),
-      invalidatesTags: ["Location", "User"],
+      invalidatesTags: ['Location', 'User'],
     }),
     deleteLocationReview: builder.mutation({
       query: (body) => ({
-        url: "locations/review",
-        method: "DELETE",
+        url: 'locations/review',
+        method: 'DELETE',
         body,
       }),
-      invalidatesTags: ["Location", "User"],
+      invalidatesTags: ['Location', 'User'],
     }),
     getStates: builder.query({
       query: () => ({
-        url: "states",
+        url: 'states',
       }),
       // transformResponse: (apiResponse) => {
       //   const res = Object.entries(apiResponse).map(([key, value]) => ({
@@ -119,9 +125,9 @@ export const LocationApi = createApi({
     }),
     getBudgets: builder.query({
       query: () => ({
-        url: 'budgets'
-      })
-    })
+        url: 'budgets',
+      }),
+    }),
   }),
 });
 
@@ -139,5 +145,5 @@ export const {
   useDeleteLocationReviewMutation,
   useGetStatesQuery,
   useGetBudgetsQuery,
-  useLogLocationVisitMutation
+  useLogLocationVisitMutation,
 } = LocationApi;
