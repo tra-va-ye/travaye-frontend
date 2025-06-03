@@ -1,27 +1,26 @@
-import { notification } from "antd";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
-import Loader from "../../components/UI/Loader";
-import LocationBox from "../../components/UI/Location/LocationBox";
-import { CiSearch } from "react-icons/ci";
-import { useGetLocationsQuery } from "../../redux/Api/locationApi";
+import { notification } from 'antd';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Loader from '../../components/UI/Loader';
+import LocationBox from '../../components/UI/Location/LocationBox';
+import { CiSearch } from 'react-icons/ci';
+import { useGetLocationsQuery } from '../../redux/Api/locationApi';
 
-const locationFilters = ["All", "Abuja", "Ibadan", "Lagos"];
+const locationFilters = ['All', 'Abuja', 'Ibadan', 'Lagos'];
 
 const Locations = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [locations, setLocations] = useState([]);
-  const [selectedLocationStates, updateSelectedLocationStates] = useState(["All"]);
+  const [selectedLocationStates, updateSelectedLocationStates] = useState([
+    'All',
+  ]);
 
   // Categories and locationCity are queries for the backend and they are in array formats
   // I am joining every element in the array using .join() to make the request query a single query in a request to avoid server overload
   // and making replacing spaces with hyphens and making them lowercase
 
-  const { data, isError, error, isLoading } = useGetLocationsQuery({
-    page: 1,
-    count: 10,
-  });
+  const { data, isError, error, isLoading } = useGetLocationsQuery();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,14 +31,18 @@ const Locations = () => {
       notification.error({
         message: error?.error,
         duration: 3,
-        placement: "bottomRight",
+        placement: 'bottomRight',
       });
     }
   }, [data, error?.error, isError]);
 
   useEffect(() => {
     if (searchTerm) {
-      const searched = searchTerm && data?.data?.filter((loc) => loc?.locationName?.toLowerCase().includes(searchTerm.toLowerCase()));
+      const searched =
+        searchTerm &&
+        data?.data?.filter((loc) =>
+          loc?.locationName?.toLowerCase().includes(searchTerm.toLowerCase())
+        );
       setLocations(searched);
     } else {
       data && setLocations(data?.data);
@@ -47,10 +50,13 @@ const Locations = () => {
   }, [searchTerm, data]);
 
   useEffect(() => {
-    const loweredStates = selectedLocationStates.map(el => el.toLowerCase());
-    const filtered = data?.data.filter((locate) => loweredStates.includes(locate.locationState.toLowerCase()));
-    selectedLocationStates[0] === 'All' ? setLocations(data?.data)
-    : setLocations(filtered);
+    const loweredStates = selectedLocationStates.map((el) => el.toLowerCase());
+    const filtered = data?.data.filter((locate) =>
+      loweredStates.includes(locate.locationState.toLowerCase())
+    );
+    selectedLocationStates[0] === 'All'
+      ? setLocations(data?.data)
+      : setLocations(filtered);
   }, [selectedLocationStates, data]);
 
   return (
@@ -59,50 +65,54 @@ const Locations = () => {
         <Loader />
       ) : (
         <>
-          <div className="main w-full">
+          <div className='main w-full'>
             <Heading>
               <h4>Businesses and Locations</h4>
               {/* <MenuOpenIcon onClick={toggleSidebar} /> */}
             </Heading>
             <SearchContainer>
-              <div className="relative flex-1">
+              <div className='relative flex-1'>
                 <input
                   value={searchTerm}
-                  placeholder="Search Location by name..."
+                  placeholder='Search Location by name...'
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border-none bg-transparent w-full ps-8 md:ps-10 text-lg placeholder:text-[#d1d1d1] outline-none"
+                  className='border-none bg-transparent w-full ps-8 md:ps-10 text-lg placeholder:text-[#d1d1d1] outline-none'
                 />
-                <CiSearch className="absolute left-1 top-1 text-xl" />
+                <CiSearch className='absolute left-1 top-1 text-xl' />
               </div>
-              <div className="flex gap-3">
-                {
-                  locationFilters.map((filter) => (
-                    <FilterButton
-                      value={filter}
-                      key={filter}
-                      active={selectedLocationStates.includes(filter)}
-                      onClick={() => {
-                        if (filter !== "All") {
-                          if (selectedLocationStates.includes(filter)) {
-                            updateSelectedLocationStates((prevState) => prevState.filter((value) => value !== filter));
-                          } else {
-                            const newArray = selectedLocationStates.filter((value) => value !== "All");
-                            updateSelectedLocationStates([...newArray, filter]);
-                          }
+              <div className='flex gap-3'>
+                {locationFilters.map((filter) => (
+                  <FilterButton
+                    value={filter}
+                    key={filter}
+                    active={selectedLocationStates.includes(filter)}
+                    onClick={() => {
+                      if (filter !== 'All') {
+                        if (selectedLocationStates.includes(filter)) {
+                          updateSelectedLocationStates((prevState) =>
+                            prevState.filter((value) => value !== filter)
+                          );
                         } else {
-                          updateSelectedLocationStates(['All']);
+                          const newArray = selectedLocationStates.filter(
+                            (value) => value !== 'All'
+                          );
+                          updateSelectedLocationStates([...newArray, filter]);
                         }
-                      }}
-                    >
-                      {filter}
-                    </FilterButton>
-                  ))
-                }
+                      } else {
+                        updateSelectedLocationStates(['All']);
+                      }
+                    }}
+                  >
+                    {filter}
+                  </FilterButton>
+                ))}
               </div>
             </SearchContainer>
-            <div className="mt-5">
+            <div className='mt-5'>
               <div>
-                <h6 style={{ color: "#e9a009" }} className="text-xl font-bold">Locations</h6>
+                <h6 style={{ color: '#e9a009' }} className='text-xl font-bold'>
+                  Locations
+                </h6>
                 <GridContainer>
                   {locations?.map((location, i) => {
                     return (
@@ -120,99 +130,6 @@ const Locations = () => {
               </div>
             </div>
           </div>
-          {/* <SideBar showSidebar={showSidebar}>
-            <h6>Categories</h6>
-            <ul>
-              {categories.map((category, i) => {
-                return (
-                  <CategoryListItem
-                    key={i}
-                    active={selectedCategories.includes(category)}
-                    onClick={() => {
-                      if (category !== "All") {
-                        if (selectedCategories.includes(category)) {
-                          updateSelectedCategories((prevState) => {
-                            return prevState.filter(
-                              (value) => value !== category
-                            );
-                          });
-                        } else {
-                          updateSelectedCategories((prevState) => {
-                            const newArray = prevState.filter(
-                              (value) => value !== "All"
-                            );
-                            return [...newArray, category];
-                          });
-                        }
-                      } else {
-                        updateSelectedCategories(["All"]);
-                      }
-                      setShowSidebar(false);
-                    }}
-                  >
-                    {category}
-                  </CategoryListItem>
-                );
-              })}
-            </ul>
-            <div></div>
-            <h6>Filter By:</h6>
-            <span className="text-[#009F57]">Category</span>
-            <div className="mt-2 flex flex-wrap md:flex-nowrap md:flex-row gap-3 md:gap-5">
-              <Select
-                placeholder="Category"
-                showSearch
-                onSelect={(value) => {
-                  setSubData([]);
-                  // setQueryData((prev) => ({ ...prev, category: value }));
-                  setSubData(
-                    locationCategories.find((cat) => cat.value === value)
-                      ?.sub || []
-                  );
-                }}
-                // className="w-full md:w-[50%]"
-                className="!w-[250px]"
-                options={locationCategories}
-              />
-              <Select
-                placeholder="Sub Category"
-                showSearch
-                onSelect={(value) => {
-                  // setQueryData((prev) => ({
-                  //   ...prev,
-                  //   subcategory: value,
-                  // }));
-                }}
-                // className="w-full md:w-[50%]"
-                className="!w-[250px]"
-                options={subData}
-              />
-            </div>
-            <span className="text-[#009F57]">City</span>
-            <Select
-              placeholder="City"
-              showSearch
-              onSelect={(value) => {
-                // setQueryData((prev) => ({ ...prev, city: value }));
-              }}
-              // value={queryData.city}
-              className="!w-[200px]"
-              options={states}
-            />
-            <span className="text-[#009F57]">Budget</span>
-            <div className="mt-2 flex gap-3">
-              <span>
-                <label>From</label>
-                <Input />
-              </span>
-              <span>
-                <label>To</label>
-                <Input />
-              </span>
-            </div>
-            <span className="text-[#009F57]">Rating</span>
-            <Rate value={0} />
-          </SideBar> */}
         </>
       )}
     </Container>
@@ -267,15 +184,15 @@ const Heading = styled.div`
 
 const FilterButton = styled.button`
   background: #ffffff;
-  border: 2px solid ${(props) => (props.active ? "#009f57" : "#f0f0f0")};
+  border: 2px solid ${(props) => (props.active ? '#009f57' : '#f0f0f0')};
   border-radius: 16px;
-  color: ${(props) => (props.active ? "white" : "#9d9d9d")};
+  color: ${(props) => (props.active ? 'white' : '#9d9d9d')};
   font-weight: 600;
   padding: 4px 12px;
   font-size: 14px;
-  
-  background-color: ${(props) => props.active && "#009f57"};
-  
+
+  background-color: ${(props) => props.active && '#009f57'};
+
   @media (min-width: 520px) {
     padding: 4px 16px;
     /* margin: 10px; */
@@ -293,13 +210,13 @@ const SearchContainer = styled.section`
   gap: 24px;
   justify-content: space-between;
   align-items: center;
-  
-  background-color: ${(props) => props.active && "#009f57"};
-  
+
+  background-color: ${(props) => props.active && '#009f57'};
+
   @media (max-width: 768px) {
     gap: 20px;
     flex-direction: column;
-    
+
     div {
       width: 100%;
     }
