@@ -24,10 +24,11 @@ const Locations = () => {
   useEffect(() => {
     planATrip(state)
       .unwrap()
-      .then((res) => console.log(res))
+      // .then((res) => console.log(res))
       .catch((err) => console.error(err));
   }, [state, planATrip]);
 
+  // console.log(data?.data);
   return (
     <>
       {isLoading && <Loader />}
@@ -61,7 +62,8 @@ const Locations = () => {
                     {
                       categories?.find(
                         (cat) =>
-                          cat?.value === e?.locationCategory.replace('&', '%26')
+                          cat?.value ===
+                          e?.locationCategory?.replace('&', '%26')
                       )?.label
                     }
                   </h6>
