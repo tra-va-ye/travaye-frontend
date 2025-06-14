@@ -35,7 +35,10 @@ const AddedLocations = () => {
           >
             <div className='col-span-4 sm:col-span-2'>
               <img
-                src={addWaterMarkToImage(e?.business.businessLocationImages[0])}
+                src={addWaterMarkToImage(
+                  e?.business.businessLocationImages[0],
+                  20
+                )}
                 alt='Location '
                 className='rounded-xl h-36 md:!h-[9.3rem] w-3/4 mx-auto sm:!mx-0 sm:w-auto'
                 width={180}

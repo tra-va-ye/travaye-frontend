@@ -189,12 +189,12 @@ const BusinessProfile = () => {
                         <div>
                           <div className='flex gap-3 rounded-lg overflow-hidden mt-1 flex-container'>
                             <Image.PreviewGroup
-                              preview={{
-                                onChange: (current, prev) =>
-                                  console.log(
-                                    `current index: ${current}, prev index: ${prev}`
-                                  ),
-                              }}
+                            // preview={{
+                            //   onChange: (current, prev) =>
+                            //     console.log(
+                            //       `current index: ${current}, prev index: ${prev}`
+                            //     ),
+                            // }}
                             >
                               {review?.reviewImagePaths?.map((image, key) => {
                                 return (

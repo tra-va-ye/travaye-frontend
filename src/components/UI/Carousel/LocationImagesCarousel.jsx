@@ -93,7 +93,7 @@ const LocationImagesCarousel = ({
           <Image.PreviewGroup
             items={[
               ...businessData?.businessLocationImages?.map((loc) =>
-                addWaterMarkToImage(loc)
+                addWaterMarkToImage(loc, 90, 800)
               ),
               addImage,
             ]}
@@ -178,10 +178,7 @@ const LocationImagesCarousel = ({
               },
             }}
           >
-            <Image
-              width={360}
-              //   src={addWaterMarkToImage(businessData?.businessLocationImages[0])}
-            />
+            <Image width={360} />
           </Image.PreviewGroup>
         )}
       </div>
