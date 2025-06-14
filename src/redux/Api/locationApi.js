@@ -21,8 +21,6 @@ export const LocationApi = createApi({
         url: `locations`,
       }),
       transformResponse: (apiResponse) => {
-        console.log(apiResponse);
-
         const newRes = apiResponse.filter(
           (loc) => loc.business?.businessVerified === 'verified'
         );

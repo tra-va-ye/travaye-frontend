@@ -24,11 +24,9 @@ const Locations = () => {
   useEffect(() => {
     planATrip(state)
       .unwrap()
-      // .then((res) => console.log(res))
       .catch((err) => console.error(err));
   }, [state, planATrip]);
 
-  // console.log(data?.data);
   return (
     <>
       {isLoading && <Loader />}
@@ -46,12 +44,14 @@ const Locations = () => {
               <div className='flex items-stretch gap-4 col-span-9 md:col-span-6 lg:col-span-4'>
                 <img
                   src={addWaterMarkToImage(
-                    e?.business.businessLocationImages[0]
+                    e?.business.businessLocationImages[0],
+                    20
                   )}
                   alt=''
                   className='rounded-xl'
                   height={128}
                   width={160}
+                  loading='lazy'
                 />
                 <div className='flex flex-col justify-evenly flex-1'>
                   <p className='text-xl mb-0'>{e?.business.businessName}</p>
