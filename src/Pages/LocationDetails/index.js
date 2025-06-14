@@ -185,7 +185,7 @@ const LocationDetails = () => {
               <Image.PreviewGroup
                 items={[
                   ...location?.business?.businessLocationImages?.map((loc) =>
-                    addWaterMarkToImage(loc)
+                    addWaterMarkToImage(loc, 90, 800)
                   ),
                 ]}
                 preview={{
@@ -217,7 +217,7 @@ const LocationDetails = () => {
                 {location?.business?.businessLocationImages?.map((imag, i) => (
                   <SwiperSlide key={i}>
                     <img
-                      src={addWaterMarkToImage(imag)}
+                      src={addWaterMarkToImage(imag, 50, 800)}
                       className='h-[25rem] rounded-lg border border-red-500 w-5/6'
                       alt={`Poster ${i + 1}`}
                     />

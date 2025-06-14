@@ -13,7 +13,8 @@ const LocationBox = (props) => {
         src={addWaterMarkToImage(
           props?.location?.business?.displayPhoto ||
             props.location?.locationImages[0] ||
-            'https://res.cloudinary.com/dnvgmb5ys/image/upload/v1689057426/cld-sample-2.jpg'
+            'https://res.cloudinary.com/dnvgmb5ys/image/upload/v1689057426/cld-sample-2.jpg',
+          20
         )}
         alt='location'
         className='w-full h-[200px]'
