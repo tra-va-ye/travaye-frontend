@@ -47,7 +47,6 @@ const BusinessDetails = () => {
     if (isLoading || isFetching) return;
     if (!verifiedData && !verifyError) return;
     if (isVerifyError) {
-      // console.log(verifyError);
       notification.error({
         message: verifyError?.data?.message,
         duration: 3,
@@ -75,8 +74,6 @@ const BusinessDetails = () => {
       closeIcon: <Button className='!text-sm px-1.5 py-1 !ml-5'>Yes</Button>,
       onClose: async () => {
         const response = await deleteProfile({ id: data._id });
-        console.log(response);
-
         if (response?.data?.message) {
           notification.success({
             message: response?.data?.message,

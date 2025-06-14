@@ -76,7 +76,6 @@ const NewLocation = ({ open, setOpen }) => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    console.log(values);
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       formData.append(key, value);
@@ -207,9 +206,6 @@ const NewLocation = ({ open, setOpen }) => {
                 className='!w-[50%]'
                 placeholder='Location State'
                 onSelect={(value) => {
-                  console.log('clicked');
-                  console.log(value);
-
                   getLga({ state: value.toUpperCase() });
                   getCity({ state: value.toUpperCase() });
                   getLandMarks({ state: value.toUpperCase() });
@@ -225,8 +221,6 @@ const NewLocation = ({ open, setOpen }) => {
                 className='!w-[50%]'
                 placeholder='Location City'
                 onSelect={(value) => {
-                  console.log('clicked');
-                  console.log(value);
                   setValues((prev) => ({
                     ...prev,
                     locationCity: value,
@@ -241,8 +235,6 @@ const NewLocation = ({ open, setOpen }) => {
                 className='!w-[50%]'
                 placeholder='Location LGA'
                 onSelect={(value) => {
-                  console.log('clicked');
-                  console.log(value);
                   setValues((prev) => ({
                     ...prev,
                     locationLGA: value,
@@ -255,7 +247,6 @@ const NewLocation = ({ open, setOpen }) => {
                 className='!w-[50%]'
                 placeholder='Location Landmarks'
                 onSelect={(value) => {
-                  console.log(value);
                   setValues((prev) => ({
                     ...prev,
                     locationLandmark: value,
